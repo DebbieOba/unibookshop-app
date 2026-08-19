@@ -1,0 +1,96 @@
+{
+  "schools": [
+    {
+      "name": "School of Engineering and Engineering Technology",
+      "departments": [
+        "Agricultural Engineering",
+        "Biomedical Engineering",
+        "Chemical Engineering",
+        "Civil Engineering",
+        "Computer Engineering",
+        "Electrical and Electronics Engineering",
+        "Industrial and Production Engineering",
+        "Information and Communication Engineering",
+        "Mechanical Engineering",
+        "Mechatronics Engineering",
+        "Metallurgical and Materials Engineering",
+        "Mining Engineering"
+      ]
+    },
+    {
+      "name": "School of Computing",
+      "departments": [
+        "Computer Science",
+        "Cyber Security",
+        "Information Systems",
+        "Information Technology",
+        "Software Engineering"
+      ]
+    },
+    {
+      "name": "School of Agriculture and Agricultural Technology",
+      "departments": [
+        "Agricultural Extension and Communication Technology",
+        "Agricultural and Resource Economics",
+        "Animal Production and Health",
+        "Crop, Soil and Pest Management",
+        "Ecotourism and Wildlife Management",
+        "Fisheries and Aquaculture Technology",
+        "Food Science and Technology",
+        "Forestry and Wood Technology",
+        "Nutrition and Dietetics"
+      ]
+    },
+    {
+      "name": "School of Environmental Technology",
+      "departments": [
+        "Architecture",
+        "Building Technology",
+        "Estate Management",
+        "Industrial Design",
+        "Quantity Surveying",
+        "Surveying and Geoinformatics",
+        "Urban and Regional Planning"
+      ]
+    },
+    {
+      "name": "School of Basic Medical Sciences",
+      "departments": [
+        "Human Anatomy",
+        "Biomedical Technology",
+        "Medical Laboratory Science",
+        "Medicine and Surgery",
+        "Physiology"
+      ]
+    },
+    {
+      "name": "School of Physical Sciences",
+      "departments": ["Chemistry", "Mathematical Sciences", "Physics", "Statistics"]
+    },
+    {
+      "name": "School of Life Sciences",
+      "departments": ["Biochemistry", "Biology", "Biotechnology", "Microbiology"]
+    },
+    {
+      "name": "School of Earth and Mineral Sciences",
+      "departments": [
+        "Applied Geology",
+        "Applied Geophysics",
+        "Marine Science and Technology",
+        "Meteorology and Climate Science",
+        "Remote Sensing and Geoinformatics"
+      ]
+    },
+    {
+      "name": "School of Logistics and Innovation Technology",
+      "departments": [
+        "Business Information Technology",
+        "Business Management Technology",
+        "Entrepreneurship Management Technology",
+        "Logistics and Transport Technology",
+        "Project Management Technology",
+        "Security and Investment Management Technology"
+      ]
+    }
+  ]
+}

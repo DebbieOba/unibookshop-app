@@ -1,0 +1,430 @@
+// Prisma schema — single Postgres (Supabase) database for the whole modular monolith.
+// Models are grouped by owning module (see backend-architecture.md §5) even though they
+// live in one file, since Prisma doesn't support per-module schema files.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // Supabase transaction pooler (pgbouncer) — runtime queries
+  directUrl = env("DIRECT_URL") // Supabase direct connection — migrations only
+}
+
+// --- Shared enums ---
+
+enum Role {
+  student
+  admin
+}
+
+enum AccountState {
+  PENDING
+  APPROVED
+  REJECTED
+  RESTRICTED
+}
+
+enum OrderStatus {
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum DeliveryMethod {
+  PICKUP
+  DELIVERY
+}
+
+enum PaymentProviderName {
+  PAYSTACK
+  FLUTTERWAVE
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  APPROVAL
+  BROADCAST
+  NEW_ARRIVAL
+}
+
+enum PromoType {
+  PERCENT
+  FIXED
+}
+
+enum ListingCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ListingStatus {
+  AVAILABLE
+  SOLD
+  REMOVED
+}
+
+enum InventoryMovementType {
+  RESTOCK
+  DAMAGE
+  CORRECTION
+  RETURN
+  MANUAL_REDUCTION
+}
+
+// --- Auth ---
+
+model Bookshop {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  slug          String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  users         User[]
+  books         Book[]
+  categories    Category[]
+  schools       School[]
+  levels        Level[]
+  orders        Order[]
+  promoCodes    PromoCode[]
+  listings      Listing[]
+  notifications Notification[]
+}
+
+model User {
+  id                String       @id @default(uuid())
+  email             String       @unique
+  matricNumber      String?      @unique
+  passwordHash      String
+  role              Role         @default(student)
+  accountState      AccountState @default(PENDING)
+  pushToken         String?
+  // Set when accountState is RESTRICTED, cleared on restore — durable "why,"
+  // since AuditLog has no payload column to hold it.
+  restrictionReason String?
+  departmentId      String?
+  department        Department?  @relation(fields: [departmentId], references: [id])
+  levelId           String?
+  level             Level?       @relation(fields: [levelId], references: [id])
+  bookshopId        String?
+  bookshop          Bookshop?    @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  profile                Profile?
+  addresses              Address[]
+  orders                 Order[]
+  ratings                Rating[]
+  favourites             Favourite[]
+  notificationRecipients NotificationRecipient[]
+  auditLogs              AuditLog[]
+  listings               Listing[]
+  preOrderReservations   PreOrderReservation[]
+  inventoryMovements     InventoryMovement[]
+}
+
+// --- Users (profile) ---
+
+model Profile {
+  id                      String   @id @default(uuid())
+  userId                  String   @unique
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName                String
+  avatarUrl               String?
+  phone                   String?
+  interests               String[]
+  notificationPreferences Json     @default("{\"push\": true, \"email\": true}")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String?
+  street    String
+  city      String
+  state     String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+// --- Admin (Schools / Departments / Levels) ---
+
+model School {
+  id          String       @id @default(uuid())
+  name        String
+  bookshopId  String?
+  bookshop    Bookshop?    @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  departments Department[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([bookshopId, name])
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  name      String
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+}
+
+model Level {
+  id         String    @id @default(uuid())
+  name       String
+  bookshopId String?
+  bookshop   Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  users      User[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([bookshopId, name])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  action     String
+  targetId   String?
+  targetType String?
+  createdAt  DateTime @default(now())
+}
+
+// --- Catalogue ---
+
+model Category {
+  id         String    @id @default(uuid())
+  name       String
+  bookshopId String?
+  bookshop   Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  books      Book[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([bookshopId, name])
+}
+
+model Book {
+  id               String    @id @default(uuid())
+  title            String
+  author           String
+  description      String?
+  price            Decimal   @db.Decimal(10, 2)
+  costPrice        Decimal   @default(0) @db.Decimal(10, 2)
+  // Undiscounted reference price. When set and greater than `price`, the book
+  // is "on sale" — powers the Book Details savings line, the Home "Bookstore
+  // Savings" tracker, and the Home/Store "Shop Sale" banner. Never fabricated
+  // client-side — see CurriculaMobileDesignSystem.md "Do not use fake discounts".
+  compareAtPrice   Decimal?  @db.Decimal(10, 2)
+  // Course this book is required reading for (e.g. "CSC 301" / "Software
+  // Engineering") — admin-tagged, optional. Powers the Home "Required
+  // Syllabus" tracker.
+  courseCode       String?
+  courseTitle      String?
+  isPreOrder       Boolean   @default(false)
+  releaseDate      DateTime?
+  coverUrl         String?
+  categoryId       String
+  category         Category  @relation(fields: [categoryId], references: [id])
+  stockQuantity    Int       @default(0)
+  // Per-book override of the admin dashboard's global low-stock constant.
+  // Null means "use the global default" — see InventoryService.getSummary.
+  reorderThreshold Int?
+  attributes       Json?
+  bookshopId       String?
+  bookshop         Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  ratings              Rating[]
+  favourites           Favourite[]
+  orderItems           OrderItem[]
+  preOrderReservations PreOrderReservation[]
+  inventoryMovements   InventoryMovement[]
+
+  @@index([title])
+  @@index([courseCode])
+}
+
+// Discrete, timestamped record of every admin-initiated stock change — see
+// StockService.adjustStock. Never a silent count edit.
+model InventoryMovement {
+  id                String                @id @default(uuid())
+  bookId            String
+  book              Book                  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  type              InventoryMovementType
+  quantityDelta     Int
+  reason            String
+  resultingQuantity Int
+  actorId           String
+  actor             User                  @relation(fields: [actorId], references: [id])
+  createdAt         DateTime              @default(now())
+
+  @@index([bookId])
+  @@index([createdAt])
+}
+
+model PreOrderReservation {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@unique([bookId, userId])
+}
+
+model Favourite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
+}
+
+// --- Order ---
+
+model Order {
+  id                String              @id @default(uuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id])
+  status            OrderStatus         @default(PROCESSING)
+  deliveryMethod    DeliveryMethod
+  addressId         String?
+  address           Address?            @relation(fields: [addressId], references: [id])
+  // subtotalAmount is pre-discount; totalAmount is what was actually charged
+  // (subtotalAmount - discountAmount) — totalAmount is what payment providers
+  // are initialized with, unchanged from before this field split.
+  subtotalAmount    Decimal?            @db.Decimal(10, 2)
+  discountAmount    Decimal             @default(0) @db.Decimal(10, 2)
+  promoCodeId       String?
+  promoCode         PromoCode?          @relation(fields: [promoCodeId], references: [id])
+  totalAmount       Decimal             @db.Decimal(10, 2)
+  paymentProvider   PaymentProviderName
+  paymentReference  String?             @unique
+  // Set when an admin manually cancels/completes the order via
+  // PATCH /admin/orders/:id/status — mandatory (DTO-level) for CANCELLED.
+  adminStatusReason String?
+  bookshopId        String?
+  bookshop          Bookshop?           @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id                     String   @id @default(uuid())
+  orderId                String
+  order                  Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  bookId                 String
+  book                   Book     @relation(fields: [bookId], references: [id])
+  titleSnapshot          String
+  unitPrice              Decimal  @db.Decimal(10, 2)
+  compareAtPriceSnapshot Decimal? @db.Decimal(10, 2)
+  costPriceSnapshot      Decimal  @default(0) @db.Decimal(10, 2)
+  quantity               Int
+}
+
+// --- Promotions ---
+
+model PromoCode {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  type          PromoType
+  value         Decimal   @db.Decimal(10, 2)
+  minSubtotal   Decimal?  @db.Decimal(10, 2)
+  maxDiscount   Decimal?  @db.Decimal(10, 2)
+  expiresAt     DateTime?
+  usageLimit    Int?
+  timesRedeemed Int       @default(0)
+  active        Boolean   @default(true)
+  bookshopId    String?
+  bookshop      Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orders Order[]
+}
+
+// --- Exchange (contact-only used-textbook listing board) ---
+
+model Listing {
+  id          String           @id @default(uuid())
+  sellerId    String
+  seller      User             @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  title       String
+  author      String?
+  courseCode  String?
+  condition   ListingCondition
+  price       Decimal          @db.Decimal(10, 2)
+  description String?
+  images      String[]
+  status      ListingStatus    @default(AVAILABLE)
+  bookshopId  String?
+  bookshop    Bookshop?        @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([status])
+  @@index([sellerId])
+}
+
+// --- Notification ---
+
+model Notification {
+  id         String           @id @default(uuid())
+  type       NotificationType
+  title      String
+  body       String
+  bookshopId String?
+  bookshop   Bookshop?        @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt  DateTime         @default(now())
+
+  recipients NotificationRecipient[]
+}
+
+model NotificationRecipient {
+  id             String       @id @default(uuid())
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@unique([notificationId, userId])
+}
