@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 
 @Injectable()
@@ -28,6 +32,8 @@ export class PreOrdersService {
   }
 
   async cancel(userId: string, bookId: string) {
-    await this.prisma.preOrderReservation.deleteMany({ where: { userId, bookId } });
+    await this.prisma.preOrderReservation.deleteMany({
+      where: { userId, bookId },
+    });
   }
 }

@@ -24,9 +24,16 @@ export class InventoryService {
     ]);
 
     const lowStock = stockLevels.filter(
-      (book) => book.stockQuantity <= (book.reorderThreshold ?? GLOBAL_LOW_STOCK_THRESHOLD),
+      (book) =>
+        book.stockQuantity <=
+        (book.reorderThreshold ?? GLOBAL_LOW_STOCK_THRESHOLD),
     ).length;
 
-    return { totalBooks, lowStock, outOfStock, lowStockThreshold: GLOBAL_LOW_STOCK_THRESHOLD };
+    return {
+      totalBooks,
+      lowStock,
+      outOfStock,
+      lowStockThreshold: GLOBAL_LOW_STOCK_THRESHOLD,
+    };
   }
 }

@@ -20,7 +20,8 @@ export class BookLookupService {
       id: book.id,
       title: book.title,
       price: Number(book.price),
-      compareAtPrice: book.compareAtPrice !== null ? Number(book.compareAtPrice) : null,
+      compareAtPrice:
+        book.compareAtPrice !== null ? Number(book.compareAtPrice) : null,
       costPrice: Number(book.costPrice),
     };
   }

@@ -44,14 +44,25 @@ describe('RBAC regression (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api/v1', { exclude: ['health'] });
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
 
     prisma = moduleFixture.get(PrismaService);
     const passwordHash = await argon2.hash(password);
 
     const admin = await prisma.user.create({
-      data: { email: adminEmail, passwordHash, role: 'admin', accountState: 'APPROVED' },
+      data: {
+        email: adminEmail,
+        passwordHash,
+        role: 'admin',
+        accountState: 'APPROVED',
+      },
     });
     const approvedStudent = await prisma.user.create({
       data: {
@@ -91,11 +102,19 @@ describe('RBAC regression (e2e)', () => {
       },
     });
     restrictableStudentId = restrictableStudent.id;
-    createdUserIds.push(admin.id, approvedStudent.id, pendingStudent.id, restrictedStudent.id, restrictableStudent.id);
+    createdUserIds.push(
+      admin.id,
+      approvedStudent.id,
+      pendingStudent.id,
+      restrictedStudent.id,
+      restrictableStudent.id,
+    );
 
     // Throwaway category + book for the inventory-adjust RBAC test — deleted
     // in afterAll, never touches the real seeded catalogue.
-    const testCategory = await prisma.category.create({ data: { name: `RBAC Test Category ${Date.now()}` } });
+    const testCategory = await prisma.category.create({
+      data: { name: `RBAC Test Category ${Date.now()}` },
+    });
     testCategoryId = testCategory.id;
     const testBook = await prisma.book.create({
       data: {
@@ -109,16 +128,21 @@ describe('RBAC regression (e2e)', () => {
     testBookId = testBook.id;
 
     const login = (identifier: string) =>
-      request(app.getHttpServer()).post('/api/v1/auth/login').send({ identifier, password });
+      request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({ identifier, password });
 
     adminToken = (await login(adminEmail)).body.accessToken;
     approvedStudentToken = (await login(approvedStudentEmail)).body.accessToken;
     pendingStudentToken = (await login(pendingStudentEmail)).body.accessToken;
-    restrictedStudentToken = (await login(restrictedStudentEmail)).body.accessToken;
+    restrictedStudentToken = (await login(restrictedStudentEmail)).body
+      .accessToken;
   }, 30000); // compiling AppModule + real Supabase/Redis round-trips exceeds Jest's 5s default
 
   afterAll(async () => {
-    await prisma.inventoryMovement.deleteMany({ where: { bookId: testBookId } });
+    await prisma.inventoryMovement.deleteMany({
+      where: { bookId: testBookId },
+    });
     await prisma.book.delete({ where: { id: testBookId } });
     await prisma.category.delete({ where: { id: testCategoryId } });
     // NotificationRecipient/Profile cascade on user delete (onDelete: Cascade).
@@ -265,14 +289,18 @@ describe('RBAC regression (e2e)', () => {
     // real order needs to exist for this test to be meaningful.
     it('rejects an unauthenticated request with 401', async () => {
       await request(app.getHttpServer())
-        .patch('/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status')
+        .patch(
+          '/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status',
+        )
         .send({ status: 'CANCELLED', reason: 'RBAC test' })
         .expect(401);
     });
 
     it('rejects an approved student with 403', async () => {
       await request(app.getHttpServer())
-        .patch('/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status')
+        .patch(
+          '/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status',
+        )
         .set('Authorization', `Bearer ${approvedStudentToken}`)
         .send({ status: 'CANCELLED', reason: 'RBAC test' })
         .expect(403);

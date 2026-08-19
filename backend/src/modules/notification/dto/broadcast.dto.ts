@@ -10,7 +10,10 @@ export class BroadcastDto {
   @IsString()
   body!: string;
 
-  @ApiPropertyOptional({ enum: ['student', 'admin', 'all'], default: 'student' })
+  @ApiPropertyOptional({
+    enum: ['student', 'admin', 'all'],
+    default: 'student',
+  })
   @IsOptional()
   @IsIn(['student', 'admin', 'all'])
   audience?: 'student' | 'admin' | 'all';

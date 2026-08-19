@@ -3,7 +3,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { DashboardService } from '../services/dashboard.service';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -19,7 +22,10 @@ export class DashboardController {
   }
 
   @Get('profit-loss')
-  getProfitLoss(@Query('range') range: string, @CurrentUser() user: CurrentUserPayload) {
+  getProfitLoss(
+    @Query('range') range: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     if (!user.bookshopId) {
       throw new Error('User has no bookshop associated');
     }

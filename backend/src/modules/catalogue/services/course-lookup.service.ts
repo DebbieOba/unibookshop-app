@@ -20,16 +20,28 @@ export interface SyllabusBook {
 export class CourseLookupService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listCourseBooksFor(departmentId?: string, level?: string): Promise<SyllabusBook[]> {
+  async listCourseBooksFor(
+    departmentId?: string,
+    level?: string,
+  ): Promise<SyllabusBook[]> {
     if (!departmentId && !level) return [];
 
     const filters: Prisma.BookWhereInput[] = [{ courseCode: { not: null } }];
-    if (departmentId) filters.push({ attributes: { path: ['departmentId'], equals: departmentId } });
+    if (departmentId)
+      filters.push({
+        attributes: { path: ['departmentId'], equals: departmentId },
+      });
     if (level) filters.push({ attributes: { path: ['level'], equals: level } });
 
     const books = await this.prisma.book.findMany({
       where: { AND: filters },
-      select: { id: true, title: true, price: true, courseCode: true, courseTitle: true },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        courseCode: true,
+        courseTitle: true,
+      },
     });
 
     return books

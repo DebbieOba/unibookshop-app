@@ -40,16 +40,23 @@ export class CheckoutService {
     }
 
     for (const item of items) {
-      const available = await this.stock.checkAvailability(item.bookId, item.quantity);
+      const available = await this.stock.checkAvailability(
+        item.bookId,
+        item.quantity,
+      );
       if (!available) {
-        throw new BadRequestException(`Insufficient stock for "${item.book.title}"`);
+        throw new BadRequestException(
+          `Insufficient stock for "${item.book.title}"`,
+        );
       }
     }
 
     // Re-validate the promo fresh at checkout rather than trusting the cart's
     // cached discount — the code, its usage limit, or the subtotal itself may
     // have changed since it was applied.
-    const promo = promoCode ? await this.promoCodes.validate(promoCode, subtotal) : null;
+    const promo = promoCode
+      ? await this.promoCodes.validate(promoCode, subtotal)
+      : null;
     const discountAmount = promo?.discountAmount ?? 0;
     const total = Math.max(0, subtotal - discountAmount);
 
@@ -90,14 +97,18 @@ export class CheckoutService {
       await this.promoCodes.redeem(promo.id);
     }
 
-    const provider = dto.paymentProvider === 'PAYSTACK' ? this.paystack : this.flutterwave;
+    const provider =
+      dto.paymentProvider === 'PAYSTACK' ? this.paystack : this.flutterwave;
     const { redirectUrl, reference } = await provider.initialize({
       id: order.id,
       totalAmount: total,
       userEmail: user.email,
     });
 
-    await this.prisma.order.update({ where: { id: order.id }, data: { paymentReference: reference } });
+    await this.prisma.order.update({
+      where: { id: order.id },
+      data: { paymentReference: reference },
+    });
     await this.cart.clear(user.id);
 
     return { orderId: order.id, redirectUrl };
@@ -138,7 +149,8 @@ export class CheckoutService {
       return order; // already resolved (or never got a reference) — nothing to check
     }
 
-    const provider = order.paymentProvider === 'PAYSTACK' ? this.paystack : this.flutterwave;
+    const provider =
+      order.paymentProvider === 'PAYSTACK' ? this.paystack : this.flutterwave;
     const status = await provider.verify(order.paymentReference);
     if (status === 'PENDING') return order;
 
@@ -154,14 +166,20 @@ export class CheckoutService {
    * StockService.reserveStock) rather than a read-then-write, so this can't
    * race a webhook/verify-payment resolving the same order concurrently.
    */
-  async adminUpdateStatus(orderId: string, status: 'CANCELLED' | 'COMPLETED', reason?: string) {
+  async adminUpdateStatus(
+    orderId: string,
+    status: 'CANCELLED' | 'COMPLETED',
+    reason?: string,
+  ) {
     const result = await this.prisma.order.updateMany({
       where: { id: orderId, status: 'PROCESSING' },
       data: { status, adminStatusReason: reason ?? null },
     });
 
     if (result.count === 0) {
-      const current = await this.prisma.order.findUnique({ where: { id: orderId } });
+      const current = await this.prisma.order.findUnique({
+        where: { id: orderId },
+      });
       if (!current) throw new NotFoundException('Order not found');
       throw new ConflictException(
         `Order is already ${current.status} — no further status changes allowed`,
@@ -181,7 +199,9 @@ export class CheckoutService {
       }
     }
 
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: order.userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: order.userId },
+    });
     await this.notify.notifyUser(user, {
       type: 'ORDER_UPDATE',
       title: status === 'COMPLETED' ? 'Order completed' : 'Order cancelled',
@@ -195,11 +215,18 @@ export class CheckoutService {
     return order;
   }
 
-  private async applyPaymentStatus(order: Order, items: OrderItem[], status: 'SUCCESSFUL' | 'FAILED') {
+  private async applyPaymentStatus(
+    order: Order,
+    items: OrderItem[],
+    status: 'SUCCESSFUL' | 'FAILED',
+  ) {
     const newStatus = status === 'SUCCESSFUL' ? 'COMPLETED' : 'CANCELLED';
     if (newStatus === order.status) return order; // idempotent — already applied
 
-    const updated = await this.prisma.order.update({ where: { id: order.id }, data: { status: newStatus } });
+    const updated = await this.prisma.order.update({
+      where: { id: order.id },
+      data: { status: newStatus },
+    });
 
     if (newStatus === 'CANCELLED') {
       // Stock was decremented at checkout time (reserveStock) against the
@@ -210,7 +237,9 @@ export class CheckoutService {
       }
     }
 
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: order.userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: order.userId },
+    });
     await this.notify.notifyUser(user, {
       type: 'ORDER_UPDATE',
       title: newStatus === 'COMPLETED' ? 'Order confirmed' : 'Order cancelled',

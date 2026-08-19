@@ -4,7 +4,11 @@ import { CrudService } from '../../../common/crud.service';
 import { CreateSchoolDto, UpdateSchoolDto } from '../dto/school.dto';
 
 @Injectable()
-export class SchoolsService extends CrudService<any, CreateSchoolDto, UpdateSchoolDto> {
+export class SchoolsService extends CrudService<
+  any,
+  CreateSchoolDto,
+  UpdateSchoolDto
+> {
   constructor(prisma: PrismaService) {
     super(prisma.school);
   }

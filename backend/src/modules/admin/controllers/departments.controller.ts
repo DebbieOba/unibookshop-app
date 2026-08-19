@@ -1,12 +1,32 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
 import { DepartmentsService } from '../services/departments.service';
-import { CreateDepartmentDto, UpdateDepartmentDto } from '../dto/department.dto';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CreateDepartmentDto,
+  UpdateDepartmentDto,
+} from '../dto/department.dto';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 
 @ApiTags('admin')
 @UseInterceptors(AuditLogInterceptor)
@@ -29,7 +49,10 @@ export class DepartmentsController {
   @Roles('admin')
   @AuditAction('department.create')
   @Post()
-  create(@Body() dto: CreateDepartmentDto, @CurrentUser() user: CurrentUserPayload) {
+  create(
+    @Body() dto: CreateDepartmentDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.departmentsService.create(dto, user.bookshopId);
   }
 
@@ -38,7 +61,11 @@ export class DepartmentsController {
   @Roles('admin')
   @AuditAction('department.update')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateDepartmentDto, @CurrentUser() user: CurrentUserPayload) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateDepartmentDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.departmentsService.update(id, dto, user.bookshopId);
   }
 

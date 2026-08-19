@@ -61,18 +61,28 @@ describe('Happy path (e2e)', () => {
 
     app = moduleFixture.createNestApplication({ rawBody: true });
     app.setGlobalPrefix('api/v1', { exclude: ['health'] });
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
 
     prisma = moduleFixture.get(PrismaService);
 
-    const school = await prisma.school.create({ data: { name: `Happy Path School ${suffix}` } });
+    const school = await prisma.school.create({
+      data: { name: `Happy Path School ${suffix}` },
+    });
     schoolId = school.id;
     const department = await prisma.department.create({
       data: { name: `Happy Path Dept ${suffix}`, schoolId },
     });
     departmentId = department.id;
-    const category = await prisma.category.create({ data: { name: `Happy Path Category ${suffix}` } });
+    const category = await prisma.category.create({
+      data: { name: `Happy Path Category ${suffix}` },
+    });
     categoryId = category.id;
     const book = await prisma.book.create({
       data: {
@@ -87,22 +97,35 @@ describe('Happy path (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (orderId) await prisma.order.delete({ where: { id: orderId } }).catch(() => {});
-    await prisma.user.deleteMany({ where: { id: { in: [studentUserId].filter(Boolean) } } });
-    if (bookId) await prisma.book.delete({ where: { id: bookId } }).catch(() => {});
-    if (categoryId) await prisma.category.delete({ where: { id: categoryId } }).catch(() => {});
-    if (departmentId) await prisma.department.delete({ where: { id: departmentId } }).catch(() => {});
-    if (schoolId) await prisma.school.delete({ where: { id: schoolId } }).catch(() => {});
+    if (orderId)
+      await prisma.order.delete({ where: { id: orderId } }).catch(() => {});
+    await prisma.user.deleteMany({
+      where: { id: { in: [studentUserId].filter(Boolean) } },
+    });
+    if (bookId)
+      await prisma.book.delete({ where: { id: bookId } }).catch(() => {});
+    if (categoryId)
+      await prisma.category
+        .delete({ where: { id: categoryId } })
+        .catch(() => {});
+    if (departmentId)
+      await prisma.department
+        .delete({ where: { id: departmentId } })
+        .catch(() => {});
+    if (schoolId)
+      await prisma.school.delete({ where: { id: schoolId } }).catch(() => {});
     await app.close();
   }, 15000);
 
   it('registers a new student (auto-approved)', async () => {
-    const res = await request(app.getHttpServer()).post('/api/v1/auth/register').send({
-      email: studentEmail,
-      password,
-      fullName: 'Happy Path Student',
-      departmentId,
-    });
+    const res = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        email: studentEmail,
+        password,
+        fullName: 'Happy Path Student',
+        departmentId,
+      });
 
     expect(res.status).toBe(201);
     expect(res.body.accountState).toBe('APPROVED');
@@ -129,7 +152,9 @@ describe('Happy path (e2e)', () => {
       .set('Authorization', `Bearer ${studentToken}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.data.some((b: { id: string }) => b.id === bookId)).toBe(true);
+    expect(res.body.data.some((b: { id: string }) => b.id === bookId)).toBe(
+      true,
+    );
   });
 
   it('favourites the book', async () => {
@@ -167,7 +192,10 @@ describe('Happy path (e2e)', () => {
   it('confirms the order via the payment webhook', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/payments/paystack/webhook')
-      .send({ event: 'charge.success', data: { reference: orderId, status: 'SUCCESSFUL' } });
+      .send({
+        event: 'charge.success',
+        data: { reference: orderId, status: 'SUCCESSFUL' },
+      });
 
     expect(res.status).toBe(201);
   });

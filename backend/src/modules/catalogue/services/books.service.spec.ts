@@ -35,18 +35,34 @@ describe('BooksService', () => {
   describe('update', () => {
     it('throws NotFoundException when the book does not exist', async () => {
       prisma.book.findUnique.mockResolvedValue(null);
-      await expect(service.update('missing', { title: 'X' })).rejects.toThrow(NotFoundException);
+      await expect(service.update('missing', { title: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('rejects a compareAtPrice that is not greater than price', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'b1', price: 1000, isPreOrder: false });
-      await expect(service.update('b1', { compareAtPrice: 900 })).rejects.toThrow(BadRequestException);
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'b1',
+        price: 1000,
+        isPreOrder: false,
+      });
+      await expect(
+        service.update('b1', { compareAtPrice: 900 }),
+      ).rejects.toThrow(BadRequestException);
       expect(prisma.book.update).not.toHaveBeenCalled();
     });
 
     it('does nothing pre-order-related on a plain update', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'b1', price: 1000, isPreOrder: false });
-      prisma.book.update.mockResolvedValue({ id: 'b1', title: 'Updated', isPreOrder: false });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'b1',
+        price: 1000,
+        isPreOrder: false,
+      });
+      prisma.book.update.mockResolvedValue({
+        id: 'b1',
+        title: 'Updated',
+        isPreOrder: false,
+      });
 
       await service.update('b1', { title: 'Updated' });
 
@@ -55,11 +71,28 @@ describe('BooksService', () => {
     });
 
     it('notifies every reserver and clears reservations when a pre-order book becomes available', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'b1', price: 1000, isPreOrder: true, title: 'Old Title' });
-      prisma.book.update.mockResolvedValue({ id: 'b1', title: 'Advanced Circuits', isPreOrder: false });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'b1',
+        price: 1000,
+        isPreOrder: true,
+        title: 'Old Title',
+      });
+      prisma.book.update.mockResolvedValue({
+        id: 'b1',
+        title: 'Advanced Circuits',
+        isPreOrder: false,
+      });
       prisma.preOrderReservation.findMany.mockResolvedValue([
-        { userId: 'u1', bookId: 'b1', user: { id: 'u1', email: 'a@example.com' } },
-        { userId: 'u2', bookId: 'b1', user: { id: 'u2', email: 'b@example.com' } },
+        {
+          userId: 'u1',
+          bookId: 'b1',
+          user: { id: 'u1', email: 'a@example.com' },
+        },
+        {
+          userId: 'u2',
+          bookId: 'b1',
+          user: { id: 'u2', email: 'b@example.com' },
+        },
       ]);
 
       await service.update('b1', { isPreOrder: false, stockQuantity: 20 });
@@ -67,13 +100,22 @@ describe('BooksService', () => {
       expect(notify.notifyUser).toHaveBeenCalledTimes(2);
       expect(notify.notifyUser).toHaveBeenCalledWith(
         { id: 'u1', email: 'a@example.com' },
-        expect.objectContaining({ type: 'NEW_ARRIVAL', title: 'Pre-order now available' }),
+        expect.objectContaining({
+          type: 'NEW_ARRIVAL',
+          title: 'Pre-order now available',
+        }),
       );
-      expect(prisma.preOrderReservation.deleteMany).toHaveBeenCalledWith({ where: { bookId: 'b1' } });
+      expect(prisma.preOrderReservation.deleteMany).toHaveBeenCalledWith({
+        where: { bookId: 'b1' },
+      });
     });
 
     it('does not notify when isPreOrder stays true', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'b1', price: 1000, isPreOrder: true });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'b1',
+        price: 1000,
+        isPreOrder: true,
+      });
       prisma.book.update.mockResolvedValue({ id: 'b1', isPreOrder: true });
 
       await service.update('b1', { stockQuantity: 5 });

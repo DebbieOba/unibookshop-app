@@ -3,4 +3,5 @@
 // the mobile side at mobile/src/lib/validation.ts's MATRIC_NUMBER_REGEX —
 // keep all three in sync.
 export const MATRIC_NUMBER_REGEX = /^[A-Za-z]{2,5}\/\d{2}\/\d{3,5}$/;
-export const MATRIC_NUMBER_MESSAGE = 'Matric number must be in the format EEE/34/1234';
+export const MATRIC_NUMBER_MESSAGE =
+  'Matric number must be in the format EEE/34/1234';

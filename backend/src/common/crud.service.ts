@@ -23,7 +23,10 @@ export abstract class CrudService<T, CreateDto, UpdateDto> {
       this.delegate.findMany({ where, skip: (page - 1) * limit, take: limit }),
       this.delegate.count({ where }),
     ]);
-    return { data, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   findOne(id: string) {
@@ -42,8 +45,14 @@ export abstract class CrudService<T, CreateDto, UpdateDto> {
   async update(id: string, dto: UpdateDto, bookshopId?: string | null) {
     if (bookshopId) {
       const existing: any = await this.findOne(id);
-      if (existing && existing.bookshopId && existing.bookshopId !== bookshopId) {
-        throw new BadRequestException('You do not have access to this resource');
+      if (
+        existing &&
+        existing.bookshopId &&
+        existing.bookshopId !== bookshopId
+      ) {
+        throw new BadRequestException(
+          'You do not have access to this resource',
+        );
       }
     }
     return this.delegate.update({ where: { id }, data: dto });
@@ -52,8 +61,14 @@ export abstract class CrudService<T, CreateDto, UpdateDto> {
   async remove(id: string, bookshopId?: string | null) {
     if (bookshopId) {
       const existing: any = await this.findOne(id);
-      if (existing && existing.bookshopId && existing.bookshopId !== bookshopId) {
-        throw new BadRequestException('You do not have access to this resource');
+      if (
+        existing &&
+        existing.bookshopId &&
+        existing.bookshopId !== bookshopId
+      ) {
+        throw new BadRequestException(
+          'You do not have access to this resource',
+        );
       }
     }
     return this.delegate.delete({ where: { id } });

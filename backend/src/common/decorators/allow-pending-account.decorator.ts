@@ -8,4 +8,5 @@ export const ALLOW_PENDING_ACCOUNT_KEY = 'allowPendingAccount';
  * needs (checking their own status, logging out). Every other endpoint stays
  * blocked by default; see backend-architecture.md §10.2.
  */
-export const AllowPendingAccount = () => SetMetadata(ALLOW_PENDING_ACCOUNT_KEY, true);
+export const AllowPendingAccount = () =>
+  SetMetadata(ALLOW_PENDING_ACCOUNT_KEY, true);

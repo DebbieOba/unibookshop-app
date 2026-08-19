@@ -1,11 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto } from '../dto/create-category.dto';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 
 @ApiTags('catalogue')
 @Controller('categories')
@@ -22,7 +34,10 @@ export class CategoriesController {
   @UseGuards(RolesGuard)
   @Roles('admin')
   @Post()
-  create(@Body() dto: CreateCategoryDto, @CurrentUser() user: CurrentUserPayload) {
+  create(
+    @Body() dto: CreateCategoryDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.categoriesService.create(dto, user.bookshopId);
   }
 

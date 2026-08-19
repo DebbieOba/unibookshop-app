@@ -21,7 +21,7 @@ export class RedisService extends Redis implements OnModuleDestroy {
       if (!this.hasLoggedConnectionError) {
         this.logger.warn(
           `Redis connection failed (${err.message}) — retrying in the background. ` +
-            'Run `docker compose -f docker-compose.dev.yml up` if it\'s not running locally.',
+            "Run `docker compose -f docker-compose.dev.yml up` if it's not running locally.",
         );
         this.hasLoggedConnectionError = true;
       }

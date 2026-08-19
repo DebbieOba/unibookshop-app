@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { CartService } from '../services/cart.service';
 import { CartItemDto } from '../dto/cart-item.dto';
 import { ApplyPromoDto } from '../dto/apply-promo.dto';
@@ -22,7 +25,10 @@ export class CartController {
   }
 
   @Delete(':bookId')
-  removeLine(@CurrentUser() user: CurrentUserPayload, @Param('bookId') bookId: string) {
+  removeLine(
+    @CurrentUser() user: CurrentUserPayload,
+    @Param('bookId') bookId: string,
+  ) {
     return this.cartService.removeLine(user.id, bookId);
   }
 
@@ -32,7 +38,10 @@ export class CartController {
   }
 
   @Post('promo')
-  applyPromo(@CurrentUser() user: CurrentUserPayload, @Body() dto: ApplyPromoDto) {
+  applyPromo(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body() dto: ApplyPromoDto,
+  ) {
     return this.cartService.applyPromo(user.id, dto.code);
   }
 

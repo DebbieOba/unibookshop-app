@@ -23,7 +23,13 @@ import { PreOrdersService } from './services/pre-orders.service';
   // that belongs behind Order/Admin's coordination layer. Notification stays
   // a pure leaf either way (still depends on nothing), so this adds no cycle.
   imports: [ObjectStorageModule, NotificationModule],
-  controllers: [BooksController, CategoriesController, FavouritesController, RatingsController, PreOrdersController],
+  controllers: [
+    BooksController,
+    CategoriesController,
+    FavouritesController,
+    RatingsController,
+    PreOrdersController,
+  ],
   providers: [
     BooksService,
     CategoriesService,

@@ -13,8 +13,9 @@ services:
     rootDir: backend
 
     # --- Build ---
-    # `npm ci` for a clean, lock-file-exact install; `nest build` compiles TS.
-    buildCommand: npm ci && npm run build
+    # Installs all dependencies (including devDependencies required for Nest CLI compile)
+    # and then builds the NestJS application.
+    buildCommand: npm install --include=dev && npm run build
 
     # --- Start ---
     # `prisma migrate deploy` applies any pending migrations before the server

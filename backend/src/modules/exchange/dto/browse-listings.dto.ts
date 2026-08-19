@@ -16,7 +16,10 @@ export class BrowseListingsDto extends PaginationDto {
   @IsIn(CONDITIONS)
   condition?: (typeof CONDITIONS)[number];
 
-  @ApiPropertyOptional({ default: false, description: 'Only the current user’s own listings (any status)' })
+  @ApiPropertyOptional({
+    default: false,
+    description: 'Only the current user’s own listings (any status)',
+  })
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean()

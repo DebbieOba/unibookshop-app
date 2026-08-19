@@ -26,10 +26,10 @@ export class AccountStateGuard implements CanActivate {
       return true;
     }
 
-    const allowPending = this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_ACCOUNT_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const allowPending = this.reflector.getAllAndOverride<boolean>(
+      ALLOW_PENDING_ACCOUNT_KEY,
+      [context.getHandler(), context.getClass()],
+    );
     if (allowPending) {
       return true;
     }

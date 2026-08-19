@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { NotifyService } from '../../notification/notification.public-api';
 
@@ -37,7 +41,8 @@ export class ApprovalsService {
       type: 'APPROVAL',
       // APPROVAL covers both outcomes — emailTemplateId disambiguates which
       // copy EmailChannel sends (see notify-channel.interface.ts).
-      emailTemplateId: decision === 'APPROVED' ? 'account-approved' : 'account-rejected',
+      emailTemplateId:
+        decision === 'APPROVED' ? 'account-approved' : 'account-rejected',
       title: decision === 'APPROVED' ? 'Account approved' : 'Account rejected',
       body:
         decision === 'APPROVED'

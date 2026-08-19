@@ -12,7 +12,12 @@ import { CheckoutService } from './services/checkout.service';
 import { InsightsService } from './services/insights.service';
 
 @Module({
-  imports: [CatalogueModule, NotificationModule, PromotionsModule, PaymentsModule],
+  imports: [
+    CatalogueModule,
+    NotificationModule,
+    PromotionsModule,
+    PaymentsModule,
+  ],
   controllers: [CartController, OrdersController, PaymentsWebhookController],
   providers: [CartService, OrdersService, CheckoutService, InsightsService],
 })

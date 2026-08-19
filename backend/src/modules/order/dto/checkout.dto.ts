@@ -6,7 +6,10 @@ export class CheckoutDto {
   @IsIn(['PICKUP', 'DELIVERY'])
   deliveryMethod!: 'PICKUP' | 'DELIVERY';
 
-  @ApiPropertyOptional({ format: 'uuid', description: 'Required when deliveryMethod is DELIVERY' })
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Required when deliveryMethod is DELIVERY',
+  })
   @IsOptional()
   @IsUUID()
   addressId?: string;

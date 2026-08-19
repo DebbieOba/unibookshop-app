@@ -36,15 +36,20 @@ export class SisService {
     if (!this.isConfigured) return null; // not configured yet — fine for scaffolding/dev
 
     try {
-      const response = await axios.get(`${this.baseUrl}/students/${matricNumber}`, {
-        headers: { Authorization: `Bearer ${this.apiKey}` },
-      });
+      const response = await axios.get(
+        `${this.baseUrl}/students/${matricNumber}`,
+        {
+          headers: { Authorization: `Bearer ${this.apiKey}` },
+        },
+      );
       return response.data ?? null;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         return null;
       }
-      this.logger.warn(`SIS lookup failed for ${matricNumber}: ${(error as Error).message}`);
+      this.logger.warn(
+        `SIS lookup failed for ${matricNumber}: ${(error as Error).message}`,
+      );
       throw error;
     }
   }

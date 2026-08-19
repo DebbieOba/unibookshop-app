@@ -3,7 +3,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
 import { AllowPendingAccount } from '../../../common/decorators/allow-pending-account.decorator';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -33,7 +36,10 @@ export class AuthController {
 
   @Public()
   @UseGuards(AuthGuard('local'))
-  @ApiOperation({ summary: 'Log in with email/matric + password (works for any account state)' })
+  @ApiOperation({
+    summary:
+      'Log in with email/matric + password (works for any account state)',
+  })
   @ApiBody({ type: LoginDto })
   @Post('login')
   login(@CurrentUser() user: any) {
@@ -41,7 +47,9 @@ export class AuthController {
   }
 
   @Public()
-  @ApiOperation({ summary: 'Exchange a refresh token for a new access/refresh pair' })
+  @ApiOperation({
+    summary: 'Exchange a refresh token for a new access/refresh pair',
+  })
   @Post('refresh')
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refreshToken);
@@ -57,7 +65,9 @@ export class AuthController {
 
   @AllowPendingAccount()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get the current user — also used to poll approval status' })
+  @ApiOperation({
+    summary: 'Get the current user — also used to poll approval status',
+  })
   @Get('me')
   me(@CurrentUser() user: CurrentUserPayload) {
     return user;
@@ -78,9 +88,18 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Change password while authenticated (requires current password)' })
+  @ApiOperation({
+    summary: 'Change password while authenticated (requires current password)',
+  })
   @Post('change-password')
-  changePassword(@CurrentUser() user: CurrentUserPayload, @Body() dto: ChangePasswordDto) {
-    return this.authService.changePassword(user.id, dto.currentPassword, dto.newPassword);
+  changePassword(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(
+      user.id,
+      dto.currentPassword,
+      dto.newPassword,
+    );
   }
 }

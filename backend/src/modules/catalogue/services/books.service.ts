@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { UploadService } from '../../../integrations/object-storage/upload.service';
@@ -87,9 +91,18 @@ export class BooksService {
     return book;
   }
 
-  private assertValidCompareAtPrice(price: number, compareAtPrice: number | null | undefined) {
-    if (compareAtPrice !== undefined && compareAtPrice !== null && compareAtPrice <= price) {
-      throw new BadRequestException('compareAtPrice must be greater than price');
+  private assertValidCompareAtPrice(
+    price: number,
+    compareAtPrice: number | null | undefined,
+  ) {
+    if (
+      compareAtPrice !== undefined &&
+      compareAtPrice !== null &&
+      compareAtPrice <= price
+    ) {
+      throw new BadRequestException(
+        'compareAtPrice must be greater than price',
+      );
     }
   }
 
@@ -105,11 +118,18 @@ export class BooksService {
 
   async update(id: string, dto: UpdateBookDto, bookshopId?: string | null) {
     const existing = await this.findOne(id);
-    if (bookshopId && existing.bookshopId && existing.bookshopId !== bookshopId) {
+    if (
+      bookshopId &&
+      existing.bookshopId &&
+      existing.bookshopId !== bookshopId
+    ) {
       throw new BadRequestException('You do not have access to this book');
     }
     if (dto.compareAtPrice !== undefined) {
-      this.assertValidCompareAtPrice(dto.price ?? Number(existing.price), dto.compareAtPrice);
+      this.assertValidCompareAtPrice(
+        dto.price ?? Number(existing.price),
+        dto.compareAtPrice,
+      );
     }
 
     const updated = await this.prisma.book.update({ where: { id }, data: dto });
@@ -142,18 +162,33 @@ export class BooksService {
 
   async remove(id: string, bookshopId?: string | null) {
     const existing = await this.findOne(id);
-    if (bookshopId && existing.bookshopId && existing.bookshopId !== bookshopId) {
+    if (
+      bookshopId &&
+      existing.bookshopId &&
+      existing.bookshopId !== bookshopId
+    ) {
       throw new BadRequestException('You do not have access to this book');
     }
     return this.prisma.book.delete({ where: { id } });
   }
 
-  async uploadCover(id: string, fileBuffer: Buffer, bookshopId?: string | null) {
+  async uploadCover(
+    id: string,
+    fileBuffer: Buffer,
+    bookshopId?: string | null,
+  ) {
     const existing = await this.findOne(id);
-    if (bookshopId && existing.bookshopId && existing.bookshopId !== bookshopId) {
+    if (
+      bookshopId &&
+      existing.bookshopId &&
+      existing.bookshopId !== bookshopId
+    ) {
       throw new BadRequestException('You do not have access to this book');
     }
-    const coverUrl = await this.uploadService.uploadImage(fileBuffer, 'book-covers');
+    const coverUrl = await this.uploadService.uploadImage(
+      fileBuffer,
+      'book-covers',
+    );
     return this.prisma.book.update({ where: { id }, data: { coverUrl } });
   }
 }

@@ -1,10 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { CrudService } from '../../../common/crud.service';
-import { CreateDepartmentDto, UpdateDepartmentDto } from '../dto/department.dto';
+import {
+  CreateDepartmentDto,
+  UpdateDepartmentDto,
+} from '../dto/department.dto';
 
 @Injectable()
-export class DepartmentsService extends CrudService<any, CreateDepartmentDto, UpdateDepartmentDto> {
+export class DepartmentsService extends CrudService<
+  any,
+  CreateDepartmentDto,
+  UpdateDepartmentDto
+> {
   constructor(private readonly prisma: PrismaService) {
     super(prisma.department);
   }
@@ -20,12 +27,17 @@ export class DepartmentsService extends CrudService<any, CreateDepartmentDto, Up
       }),
       this.prisma.department.count({ where }),
     ]);
-    return { data, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   override async create(dto: CreateDepartmentDto, bookshopId?: string | null) {
     if (bookshopId) {
-      const school = await this.prisma.school.findUnique({ where: { id: dto.schoolId } });
+      const school = await this.prisma.school.findUnique({
+        where: { id: dto.schoolId },
+      });
       if (!school || (school.bookshopId && school.bookshopId !== bookshopId)) {
         throw new BadRequestException('Invalid school selection');
       }

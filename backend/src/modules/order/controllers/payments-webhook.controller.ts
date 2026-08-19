@@ -1,4 +1,11 @@
-import { Controller, Headers, Inject, Post, Req, type RawBodyRequest } from '@nestjs/common';
+import {
+  Controller,
+  Headers,
+  Inject,
+  Post,
+  Req,
+  type RawBodyRequest,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
@@ -27,7 +34,10 @@ export class PaymentsWebhookController {
     @Headers('x-paystack-signature') signature: string,
   ) {
     const event = await this.paystack.handleWebhook(req.rawBody!, signature);
-    await this.checkoutService.handlePaymentEvent(event.reference, event.status);
+    await this.checkoutService.handlePaymentEvent(
+      event.reference,
+      event.status,
+    );
     return { received: true };
   }
 
@@ -38,7 +48,10 @@ export class PaymentsWebhookController {
     @Headers('verif-hash') signature: string,
   ) {
     const event = await this.flutterwave.handleWebhook(req.rawBody!, signature);
-    await this.checkoutService.handlePaymentEvent(event.reference, event.status);
+    await this.checkoutService.handlePaymentEvent(
+      event.reference,
+      event.status,
+    );
     return { received: true };
   }
 }

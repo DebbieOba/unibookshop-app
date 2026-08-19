@@ -15,7 +15,10 @@ export class CreateListingDto {
   @IsString()
   author?: string;
 
-  @ApiPropertyOptional({ description: 'e.g. "CSC 301" — helps buyers searching for their course books' })
+  @ApiPropertyOptional({
+    description:
+      'e.g. "CSC 301" — helps buyers searching for their course books',
+  })
   @IsOptional()
   @IsString()
   courseCode?: string;

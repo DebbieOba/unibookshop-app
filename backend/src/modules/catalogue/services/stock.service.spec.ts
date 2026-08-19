@@ -32,7 +32,9 @@ describe('StockService', () => {
       // adjustStock runs inside $transaction — the mock just invokes the
       // callback with the same mocked client, same idiom every Nest+Prisma
       // test needing $transaction coverage uses.
-      $transaction: jest.fn((callback: (tx: unknown) => unknown) => callback(prisma)),
+      $transaction: jest.fn((callback: (tx: unknown) => unknown) =>
+        callback(prisma),
+      ),
     };
 
     const module = await Test.createTestingModule({
@@ -44,18 +46,26 @@ describe('StockService', () => {
 
   describe('checkAvailability', () => {
     it('returns true when stock covers the requested quantity', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'book-1', stockQuantity: 5 });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'book-1',
+        stockQuantity: 5,
+      });
       await expect(service.checkAvailability('book-1', 3)).resolves.toBe(true);
     });
 
     it('returns false when stock is insufficient', async () => {
-      prisma.book.findUnique.mockResolvedValue({ id: 'book-1', stockQuantity: 1 });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'book-1',
+        stockQuantity: 1,
+      });
       await expect(service.checkAvailability('book-1', 3)).resolves.toBe(false);
     });
 
     it('throws NotFoundException when the book does not exist', async () => {
       prisma.book.findUnique.mockResolvedValue(null);
-      await expect(service.checkAvailability('missing', 1)).rejects.toThrow(NotFoundException);
+      await expect(service.checkAvailability('missing', 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -74,7 +84,9 @@ describe('StockService', () => {
       // insufficient stock surfaces — the where clause is what makes this
       // atomic instead of a check-then-write race condition.
       prisma.book.updateMany.mockResolvedValue({ count: 0 });
-      await expect(service.reserveStock('book-1', 100)).rejects.toThrow(BadRequestException);
+      await expect(service.reserveStock('book-1', 100)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -92,7 +104,11 @@ describe('StockService', () => {
   describe('adjustStock', () => {
     it('rejects a zero delta before touching the database', async () => {
       await expect(
-        service.adjustStock('book-1', { type: 'CORRECTION', quantityDelta: 0, reason: 'oops' }, 'admin-1'),
+        service.adjustStock(
+          'book-1',
+          { type: 'CORRECTION', quantityDelta: 0, reason: 'oops' },
+          'admin-1',
+        ),
       ).rejects.toThrow(BadRequestException);
       expect(prisma.$transaction).not.toHaveBeenCalled();
     });
@@ -121,12 +137,18 @@ describe('StockService', () => {
           actorId: 'admin-1',
         },
       });
-      expect(result).toEqual({ book: { id: 'book-1', stockQuantity: 12 }, movement: { id: 'move-1' } });
+      expect(result).toEqual({
+        book: { id: 'book-1', stockQuantity: 12 },
+        movement: { id: 'move-1' },
+      });
     });
 
     it('reduces stock atomically for a negative delta within available stock', async () => {
       prisma.book.updateMany.mockResolvedValue({ count: 1 });
-      prisma.book.findUniqueOrThrow.mockResolvedValue({ id: 'book-1', stockQuantity: 3 });
+      prisma.book.findUniqueOrThrow.mockResolvedValue({
+        id: 'book-1',
+        stockQuantity: 3,
+      });
       prisma.inventoryMovement.create.mockResolvedValue({ id: 'move-2' });
 
       await service.adjustStock(
@@ -140,16 +162,28 @@ describe('StockService', () => {
         data: { stockQuantity: { increment: -2 } },
       });
       expect(prisma.inventoryMovement.create).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ quantityDelta: -2, resultingQuantity: 3 }) }),
+        expect.objectContaining({
+          data: expect.objectContaining({
+            quantityDelta: -2,
+            resultingQuantity: 3,
+          }),
+        }),
       );
     });
 
     it('rejects a reduction that would take stock below zero, and writes no movement', async () => {
       prisma.book.updateMany.mockResolvedValue({ count: 0 });
-      prisma.book.findUnique.mockResolvedValue({ id: 'book-1', stockQuantity: 1 });
+      prisma.book.findUnique.mockResolvedValue({
+        id: 'book-1',
+        stockQuantity: 1,
+      });
 
       await expect(
-        service.adjustStock('book-1', { type: 'DAMAGE', quantityDelta: -5, reason: 'Water damage' }, 'admin-1'),
+        service.adjustStock(
+          'book-1',
+          { type: 'DAMAGE', quantityDelta: -5, reason: 'Water damage' },
+          'admin-1',
+        ),
       ).rejects.toThrow(BadRequestException);
       expect(prisma.inventoryMovement.create).not.toHaveBeenCalled();
     });
@@ -159,7 +193,11 @@ describe('StockService', () => {
       prisma.book.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.adjustStock('missing', { type: 'CORRECTION', quantityDelta: -1, reason: 'n/a' }, 'admin-1'),
+        service.adjustStock(
+          'missing',
+          { type: 'CORRECTION', quantityDelta: -1, reason: 'n/a' },
+          'admin-1',
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });

@@ -11,10 +11,13 @@ export function PasswordResetEmail({ token }: PasswordResetEmailProps) {
   const resetUrl = `curricula://reset-password?token=${encodeURIComponent(token)}`;
 
   return (
-    <EmailLayout previewText="Reset your CURRICULA password" heading="Reset your password">
+    <EmailLayout
+      previewText="Reset your CURRICULA password"
+      heading="Reset your password"
+    >
       <Text>
-        We received a request to reset your password. This link expires in 30 minutes — if you
-        didn't request this, you can safely ignore this email.
+        We received a request to reset your password. This link expires in 30
+        minutes — if you didn't request this, you can safely ignore this email.
       </Text>
       <Button
         href={resetUrl}

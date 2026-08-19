@@ -38,28 +38,35 @@ describe('UsersService', () => {
 
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: 'user-1' },
-        data: { departmentId: undefined, levelId: undefined, matricNumber: 'eee/34/1234' },
+        data: {
+          departmentId: undefined,
+          levelId: undefined,
+          matricNumber: 'eee/34/1234',
+        },
       });
     });
 
     it('surfaces a 409 ConflictException when the matric number is already taken', async () => {
-      const p2002 = new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
-        code: 'P2002',
-        clientVersion: 'test',
-      });
+      const p2002 = new Prisma.PrismaClientKnownRequestError(
+        'Unique constraint failed',
+        {
+          code: 'P2002',
+          clientVersion: 'test',
+        },
+      );
       prisma.user.update.mockRejectedValue(p2002);
 
-      await expect(service.updateProfile('user-1', { matricNumber: 'EEE/34/1234' })).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(
+        service.updateProfile('user-1', { matricNumber: 'EEE/34/1234' }),
+      ).rejects.toThrow(ConflictException);
       expect(prisma.profile.update).not.toHaveBeenCalled();
     });
 
     it('rethrows unrelated errors instead of masking them as a conflict', async () => {
       prisma.user.update.mockRejectedValue(new Error('connection lost'));
-      await expect(service.updateProfile('user-1', { matricNumber: 'EEE/34/1234' })).rejects.toThrow(
-        'connection lost',
-      );
+      await expect(
+        service.updateProfile('user-1', { matricNumber: 'EEE/34/1234' }),
+      ).rejects.toThrow('connection lost');
     });
 
     it('does not touch User at all when neither department, level, nor matricNumber changed', async () => {

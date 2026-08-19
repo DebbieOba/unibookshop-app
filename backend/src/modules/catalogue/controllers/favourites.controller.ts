@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { FavouritesService } from '../services/favourites.service';
 import { AddFavouriteDto } from '../dto/add-favourite.dto';
 
@@ -21,7 +24,10 @@ export class FavouritesController {
   }
 
   @Delete(':bookId')
-  remove(@CurrentUser() user: CurrentUserPayload, @Param('bookId') bookId: string) {
+  remove(
+    @CurrentUser() user: CurrentUserPayload,
+    @Param('bookId') bookId: string,
+  ) {
     return this.favouritesService.remove(user.id, bookId);
   }
 }

@@ -10,7 +10,10 @@ interface AccountRestrictedEmailProps {
 // OrderReceiptEmail already uses for status-change copy.
 export function AccountRestrictedEmail({ body }: AccountRestrictedEmailProps) {
   return (
-    <EmailLayout previewText="Your account has been restricted" heading="Account restricted">
+    <EmailLayout
+      previewText="Your account has been restricted"
+      heading="Account restricted"
+    >
       <Text>{body}</Text>
     </EmailLayout>
   );

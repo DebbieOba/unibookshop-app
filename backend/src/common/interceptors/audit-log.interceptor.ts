@@ -1,4 +1,9 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable, tap } from 'rxjs';
 import { PrismaService } from '../../database/postgres/prisma.service';
@@ -21,7 +26,10 @@ export class AuditLogInterceptor implements NestInterceptor {
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const action = this.reflector.get<string>(AUDIT_ACTION_KEY, context.getHandler());
+    const action = this.reflector.get<string>(
+      AUDIT_ACTION_KEY,
+      context.getHandler(),
+    );
     if (!action) {
       return next.handle();
     }

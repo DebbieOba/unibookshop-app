@@ -52,12 +52,20 @@ export class PaystackProvider implements PaymentProvider {
    * secret key — see backend-architecture.md §10.3. An unsigned or
    * mis-signed webhook is rejected before its payload is ever trusted.
    */
-  async handleWebhook(rawBody: Buffer, signature: string): Promise<PaymentEvent> {
-    const expected = createHmac('sha512', this.secretKey).update(rawBody).digest('hex');
+  async handleWebhook(
+    rawBody: Buffer,
+    signature: string,
+  ): Promise<PaymentEvent> {
+    const expected = createHmac('sha512', this.secretKey)
+      .update(rawBody)
+      .digest('hex');
 
     const expectedBuf = Buffer.from(expected, 'utf8');
     const signatureBuf = Buffer.from(signature ?? '', 'utf8');
-    if (expectedBuf.length !== signatureBuf.length || !timingSafeEqual(expectedBuf, signatureBuf)) {
+    if (
+      expectedBuf.length !== signatureBuf.length ||
+      !timingSafeEqual(expectedBuf, signatureBuf)
+    ) {
       throw new UnauthorizedException('Invalid Paystack webhook signature');
     }
 

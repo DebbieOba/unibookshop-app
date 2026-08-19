@@ -26,8 +26,15 @@ export class UploadService implements OnModuleInit {
           // describeException, which needed this fix too — a raw object
           // rejection was logging as an unhelpful "[object Object]").
           if (error || !result) {
-            const reason = error && typeof error === 'object' && 'message' in error ? String((error as { message: unknown }).message) : 'Unknown Cloudinary error';
-            return reject(new Error(`Cloudinary upload failed: ${reason}`, { cause: error }));
+            const reason =
+              error && typeof error === 'object' && 'message' in error
+                ? String((error as { message: unknown }).message)
+                : 'Unknown Cloudinary error';
+            return reject(
+              new Error(`Cloudinary upload failed: ${reason}`, {
+                cause: error,
+              }),
+            );
           }
           resolve(result.secure_url);
         },

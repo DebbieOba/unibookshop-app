@@ -15,7 +15,10 @@ export class AdjustInventoryDto {
   @IsIn(MOVEMENT_TYPES)
   type!: InventoryMovementType;
 
-  @ApiProperty({ description: 'Signed change to apply — positive to increase, negative to decrease' })
+  @ApiProperty({
+    description:
+      'Signed change to apply — positive to increase, negative to decrease',
+  })
   @IsInt()
   @NotEquals(0)
   quantityDelta!: number;

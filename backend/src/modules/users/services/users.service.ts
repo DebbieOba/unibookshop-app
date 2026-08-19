@@ -1,4 +1,9 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { UploadService } from '../../../integrations/object-storage/upload.service';
@@ -42,7 +47,9 @@ export class UsersService {
     const { departmentId, levelId, matricNumber, ...profileFields } = dto;
 
     if (departmentId || levelId || matricNumber !== undefined) {
-      const normalizedMatric = matricNumber ? matricNumber.trim().toLowerCase() : matricNumber;
+      const normalizedMatric = matricNumber
+        ? matricNumber.trim().toLowerCase()
+        : matricNumber;
       try {
         await this.prisma.user.update({
           where: { id: userId },
@@ -52,8 +59,13 @@ export class UsersService {
         // P2002 = unique constraint violation — User.matricNumber is @unique
         // (schema.prisma), so this is the "someone else already has this
         // matric number" case, not a real server error.
-        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-          throw new ConflictException('This matric number is already registered to another account');
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === 'P2002'
+        ) {
+          throw new ConflictException(
+            'This matric number is already registered to another account',
+          );
         }
         throw err;
       }
@@ -69,7 +81,10 @@ export class UsersService {
   }
 
   async uploadAvatar(userId: string, fileBuffer: Buffer) {
-    const avatarUrl = await this.uploadService.uploadImage(fileBuffer, 'avatars');
+    const avatarUrl = await this.uploadService.uploadImage(
+      fileBuffer,
+      'avatars',
+    );
     return this.prisma.profile.update({
       where: { userId },
       data: { avatarUrl },
@@ -79,10 +94,16 @@ export class UsersService {
     });
   }
 
-  async updateNotificationPreferences(userId: string, dto: UpdateNotificationPreferencesDto) {
-    const current = await this.prisma.profile.findUniqueOrThrow({ where: { userId } });
+  async updateNotificationPreferences(
+    userId: string,
+    dto: UpdateNotificationPreferencesDto,
+  ) {
+    const current = await this.prisma.profile.findUniqueOrThrow({
+      where: { userId },
+    });
     const existing =
-      current.notificationPreferences && typeof current.notificationPreferences === 'object'
+      current.notificationPreferences &&
+      typeof current.notificationPreferences === 'object'
         ? (current.notificationPreferences as Record<string, boolean>)
         : {};
 
@@ -106,13 +127,19 @@ export class UsersService {
   }
 
   private async assertOwnsAddress(userId: string, addressId: string) {
-    const address = await this.prisma.address.findUnique({ where: { id: addressId } });
+    const address = await this.prisma.address.findUnique({
+      where: { id: addressId },
+    });
     if (!address) throw new NotFoundException('Address not found');
     if (address.userId !== userId) throw new ForbiddenException();
     return address;
   }
 
-  async updateAddress(userId: string, addressId: string, dto: UpdateAddressDto) {
+  async updateAddress(
+    userId: string,
+    addressId: string,
+    dto: UpdateAddressDto,
+  ) {
     await this.assertOwnsAddress(userId, addressId);
     return this.prisma.address.update({ where: { id: addressId }, data: dto });
   }
@@ -125,12 +152,21 @@ export class UsersService {
   async setDefaultAddress(userId: string, addressId: string) {
     await this.assertOwnsAddress(userId, addressId);
     await this.prisma.$transaction([
-      this.prisma.address.updateMany({ where: { userId }, data: { isDefault: false } }),
-      this.prisma.address.update({ where: { id: addressId }, data: { isDefault: true } }),
+      this.prisma.address.updateMany({
+        where: { userId },
+        data: { isDefault: false },
+      }),
+      this.prisma.address.update({
+        where: { id: addressId },
+        data: { isDefault: true },
+      }),
     ]);
   }
 
   setPushToken(userId: string, token: string) {
-    return this.prisma.user.update({ where: { id: userId }, data: { pushToken: token } });
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { pushToken: token },
+    });
   }
 }

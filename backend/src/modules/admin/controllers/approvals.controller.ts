@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { IsIn } from 'class-validator';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
 import { ApprovalsService } from '../services/approvals.service';
 import { RestrictUserDto } from '../dto/restrict-user.dto';
 

@@ -16,13 +16,19 @@ import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
 import { BrowseBooksDto } from '../dto/browse-books.dto';
 import { BooksService } from '../services/books.service';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
 
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 
 @ApiTags('catalogue')
 @UseInterceptors(AuditLogInterceptor)
@@ -56,7 +62,11 @@ export class BooksController {
   @Roles('admin')
   @AuditAction('book.update')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateBookDto, @CurrentUser() user: CurrentUserPayload) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.booksService.update(id, dto, user.bookshopId);
   }
 

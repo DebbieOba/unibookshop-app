@@ -1,0 +1,68 @@
+# render.yaml — Render Blueprint for the CURRICULA backend.
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: curricula-backend
+    runtime: node
+
+    # --- Build ---
+    # Installs all dependencies (including devDependencies required for Nest CLI compile)
+    # and then builds the NestJS application.
+    buildCommand: npm install --include=dev && npm run build
+
+    # --- Start ---
+    # `prisma migrate deploy` applies any pending migrations before the server
+    # starts. It is idempotent (safe to run on every deploy).
+    startCommand: npm run migrate:deploy && npm run start:prod
+
+    # --- Runtime ---
+    plan: free                # change to `starter` or higher for production SLAs
+    autoDeploy: true          # re-deploy on every push to the linked branch
+
+    # --- Health check ---
+    # Render will wait for this path to return 2xx before marking the deploy healthy.
+    healthCheckPath: /health
+
+    # --- Environment variables ---
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_ACCESS_TTL
+        value: 15m
+      - key: JWT_REFRESH_TTL
+        value: 30d
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: FLUTTERWAVE_SECRET_KEY
+        sync: false
+      - key: FLUTTERWAVE_WEBHOOK_SECRET_HASH
+        sync: false
+      - key: FCM_PROJECT_ID
+        sync: false
+      - key: FCM_CLIENT_EMAIL
+        sync: false
+      - key: FCM_PRIVATE_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SIS_BASE_URL
+        sync: false
+      - key: SIS_API_KEY
+        sync: false

@@ -1,4 +1,13 @@
-import { Body, Container, Head, Heading, Html, Preview, Section, Text } from '@react-email/components';
+import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Section,
+  Text,
+} from '@react-email/components';
 
 // Dark-theme brand colors, matching design-system.md §2.
 const colors = {
@@ -16,12 +25,22 @@ interface EmailLayoutProps {
   children: React.ReactNode;
 }
 
-export function EmailLayout({ previewText, heading, children }: EmailLayoutProps) {
+export function EmailLayout({
+  previewText,
+  heading,
+  children,
+}: EmailLayoutProps) {
   return (
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
-      <Body style={{ backgroundColor: colors.background, fontFamily: 'sans-serif', margin: 0 }}>
+      <Body
+        style={{
+          backgroundColor: colors.background,
+          fontFamily: 'sans-serif',
+          margin: 0,
+        }}
+      >
         <Container
           style={{
             backgroundColor: colors.surface,
@@ -32,11 +51,27 @@ export function EmailLayout({ previewText, heading, children }: EmailLayoutProps
             maxWidth: 480,
           }}
         >
-          <Text style={{ color: colors.primary, fontWeight: 700, fontSize: 14, marginBottom: 24, letterSpacing: 2 }}>
+          <Text
+            style={{
+              color: colors.primary,
+              fontWeight: 700,
+              fontSize: 14,
+              marginBottom: 24,
+              letterSpacing: 2,
+            }}
+          >
             CURRICULA
           </Text>
-          <Heading style={{ color: colors.textPrimary, fontSize: 22 }}>{heading}</Heading>
-          <Section style={{ color: colors.textSecondary, fontSize: 14, lineHeight: '22px' }}>
+          <Heading style={{ color: colors.textPrimary, fontSize: 22 }}>
+            {heading}
+          </Heading>
+          <Section
+            style={{
+              color: colors.textSecondary,
+              fontSize: 14,
+              lineHeight: '22px',
+            }}
+          >
             {children}
           </Section>
         </Container>

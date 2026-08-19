@@ -1,9 +1,23 @@
-import { Body, Controller, Get, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { StockService } from '../../catalogue/catalogue.public-api';
 import { InventoryService } from '../services/inventory.service';
 import { AdjustInventoryDto } from '../dto/adjust-inventory.dto';

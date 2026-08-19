@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PaystackProvider } from './paystack.provider';
 import { FlutterwaveProvider } from './flutterwave.provider';
-import { PAYSTACK_PROVIDER, FLUTTERWAVE_PROVIDER } from './payment-provider.interface';
+import {
+  PAYSTACK_PROVIDER,
+  FLUTTERWAVE_PROVIDER,
+} from './payment-provider.interface';
 
 @Module({
   providers: [

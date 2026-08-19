@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { PreOrdersService } from '../services/pre-orders.service';
 import { ReservePreOrderDto } from '../dto/reserve-pre-order.dto';
 
@@ -20,12 +23,18 @@ export class PreOrdersController {
   }
 
   @Post()
-  reserve(@CurrentUser() user: CurrentUserPayload, @Body() dto: ReservePreOrderDto) {
+  reserve(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body() dto: ReservePreOrderDto,
+  ) {
     return this.preOrdersService.reserve(user.id, dto.bookId);
   }
 
   @Delete(':bookId')
-  cancel(@CurrentUser() user: CurrentUserPayload, @Param('bookId') bookId: string) {
+  cancel(
+    @CurrentUser() user: CurrentUserPayload,
+    @Param('bookId') bookId: string,
+  ) {
     return this.preOrdersService.cancel(user.id, bookId);
   }
 }

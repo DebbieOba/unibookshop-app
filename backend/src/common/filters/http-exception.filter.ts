@@ -19,7 +19,9 @@ function describeException(exception: unknown): string {
     // `cause` (e.g. UploadService wrapping a raw Cloudinary error object)
     // carries the actually-useful detail — surface it too, not just the
     // wrapper's message.
-    return exception.cause !== undefined ? `${base}\nCaused by: ${inspect(exception.cause, { depth: 5 })}` : base;
+    return exception.cause !== undefined
+      ? `${base}\nCaused by: ${inspect(exception.cause, { depth: 5 })}`
+      : base;
   }
   return inspect(exception, { depth: 5 });
 }
@@ -51,7 +53,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // client only ever sees the generic "Internal server error" message
     // above. Without this, a bug here is invisible outside a debugger.
     if (!isHttpException || statusCode >= 500) {
-      this.logger.error(`${request.method} ${request.url} -> ${statusCode}`, describeException(exception));
+      this.logger.error(
+        `${request.method} ${request.url} -> ${statusCode}`,
+        describeException(exception),
+      );
     }
 
     response.status(statusCode).json({

@@ -18,7 +18,10 @@ export class FlutterwaveProvider implements PaymentProvider {
 
   constructor(config: ConfigService) {
     this.secretKey = config.get<string>('FLUTTERWAVE_SECRET_KEY', '');
-    this.webhookSecretHash = config.get<string>('FLUTTERWAVE_WEBHOOK_SECRET_HASH', '');
+    this.webhookSecretHash = config.get<string>(
+      'FLUTTERWAVE_WEBHOOK_SECRET_HASH',
+      '',
+    );
   }
 
   async initialize(order: PaymentOrderInput): Promise<PaymentInitResult> {
@@ -56,7 +59,10 @@ export class FlutterwaveProvider implements PaymentProvider {
    * verification is a direct (constant-time) string comparison, not a
    * signature computation. See backend-architecture.md §10.3/§12.
    */
-  async handleWebhook(rawBody: Buffer, signature: string): Promise<PaymentEvent> {
+  async handleWebhook(
+    rawBody: Buffer,
+    signature: string,
+  ): Promise<PaymentEvent> {
     const expectedBuf = Buffer.from(this.webhookSecretHash, 'utf8');
     const signatureBuf = Buffer.from(signature ?? '', 'utf8');
     if (

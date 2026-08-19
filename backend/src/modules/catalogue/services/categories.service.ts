@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 
@@ -27,7 +31,11 @@ export class CategoriesService {
   async remove(id: string, bookshopId?: string | null) {
     const existing = await this.prisma.category.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException('Category not found');
-    if (bookshopId && existing.bookshopId && existing.bookshopId !== bookshopId) {
+    if (
+      bookshopId &&
+      existing.bookshopId &&
+      existing.bookshopId !== bookshopId
+    ) {
       throw new BadRequestException('You do not have access to this category');
     }
     return this.prisma.category.delete({ where: { id } });

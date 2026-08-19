@@ -1,5 +1,17 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, RequestTimeoutException } from '@nestjs/common';
-import { Observable, TimeoutError, catchError, throwError, timeout } from 'rxjs';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+  RequestTimeoutException,
+} from '@nestjs/common';
+import {
+  Observable,
+  TimeoutError,
+  catchError,
+  throwError,
+  timeout,
+} from 'rxjs';
 
 const REQUEST_TIMEOUT_MS = 30_000;
 
@@ -13,14 +25,22 @@ const REQUEST_TIMEOUT_MS = 30_000;
 export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
-    const isSlowRoute = request?.url?.includes('/webhook') || request?.url?.includes('/cover') || request?.url?.includes('/avatar');
+    const isSlowRoute =
+      request?.url?.includes('/webhook') ||
+      request?.url?.includes('/cover') ||
+      request?.url?.includes('/avatar');
     const limit = isSlowRoute ? REQUEST_TIMEOUT_MS * 2 : REQUEST_TIMEOUT_MS;
 
     return next.handle().pipe(
       timeout(limit),
       catchError((err) => {
         if (err instanceof TimeoutError) {
-          return throwError(() => new RequestTimeoutException('The request took too long to process'));
+          return throwError(
+            () =>
+              new RequestTimeoutException(
+                'The request took too long to process',
+              ),
+          );
         }
         return throwError(() => err);
       }),

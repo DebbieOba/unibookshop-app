@@ -27,7 +27,12 @@ export class InsightsService {
   async getSavingsSummary(userId: string): Promise<SavingsSummary> {
     const items = await this.prisma.orderItem.findMany({
       where: { order: { userId, status: 'COMPLETED' } },
-      select: { unitPrice: true, compareAtPriceSnapshot: true, quantity: true, orderId: true },
+      select: {
+        unitPrice: true,
+        compareAtPriceSnapshot: true,
+        quantity: true,
+        orderId: true,
+      },
     });
 
     let totalSaved = 0;
@@ -44,9 +49,17 @@ export class InsightsService {
     }
 
     const retailEquivalent = totalSpent + totalSaved;
-    const percentageSaved = retailEquivalent > 0 ? Math.round((totalSaved / retailEquivalent) * 100) : 0;
+    const percentageSaved =
+      retailEquivalent > 0
+        ? Math.round((totalSaved / retailEquivalent) * 100)
+        : 0;
 
-    return { totalSaved: Math.round(totalSaved), totalSpent: Math.round(totalSpent), percentageSaved, orderCount: orderIds.size };
+    return {
+      totalSaved: Math.round(totalSaved),
+      totalSpent: Math.round(totalSpent),
+      percentageSaved,
+      orderCount: orderIds.size,
+    };
   }
 
   /** Powers the Home "My Required Syllabus" tracker. */
@@ -57,13 +70,19 @@ export class InsightsService {
     });
     if (!user.departmentId && !user.levelId) return [];
 
-    const courseBooks = await this.courseLookup.listCourseBooksFor(user.departmentId ?? undefined, user.level?.name);
+    const courseBooks = await this.courseLookup.listCourseBooksFor(
+      user.departmentId ?? undefined,
+      user.level?.name,
+    );
     if (courseBooks.length === 0) return [];
 
     const ownedBookIds = new Set(
       (
         await this.prisma.orderItem.findMany({
-          where: { order: { userId, status: { in: ['PROCESSING', 'COMPLETED'] } }, bookId: { in: courseBooks.map((b) => b.id) } },
+          where: {
+            order: { userId, status: { in: ['PROCESSING', 'COMPLETED'] } },
+            bookId: { in: courseBooks.map((b) => b.id) },
+          },
           select: { bookId: true },
         })
       ).map((i) => i.bookId),
@@ -82,6 +101,8 @@ export class InsightsService {
       byCourse.set(book.courseCode, existing);
     }
 
-    return Array.from(byCourse.values()).sort((a, b) => a.courseCode.localeCompare(b.courseCode));
+    return Array.from(byCourse.values()).sort((a, b) =>
+      a.courseCode.localeCompare(b.courseCode),
+    );
   }
 }

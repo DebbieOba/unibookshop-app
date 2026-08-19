@@ -3,7 +3,10 @@ import { PrismaService } from '../../../database/postgres/prisma.service';
 import { InAppChannel } from '../channels/in-app.channel';
 import { PushChannel } from '../channels/push.channel';
 import { EmailChannel } from '../channels/email.channel';
-import { NotificationPayload, NotifyUser } from '../channels/notify-channel.interface';
+import {
+  NotificationPayload,
+  NotifyUser,
+} from '../channels/notify-channel.interface';
 
 @Injectable()
 export class NotifyService {
@@ -15,7 +18,10 @@ export class NotifyService {
   ) {}
 
   /** InAppChannel always runs; Push/Email are best-effort fan-out on top of it. */
-  async notifyUser(user: NotifyUser, notification: NotificationPayload): Promise<void> {
+  async notifyUser(
+    user: NotifyUser,
+    notification: NotificationPayload,
+  ): Promise<void> {
     await this.inApp.send(user, notification);
     await Promise.allSettled([
       this.push.send(user, notification),
@@ -23,12 +29,17 @@ export class NotifyService {
     ]);
   }
 
-  async broadcast(notification: NotificationPayload, audience: 'student' | 'admin' | 'all' = 'student') {
+  async broadcast(
+    notification: NotificationPayload,
+    audience: 'student' | 'admin' | 'all' = 'student',
+  ) {
     const where = audience === 'all' ? {} : { role: audience };
     const users = await this.prisma.user.findMany({
       where: { ...where, accountState: 'APPROVED' },
       select: { id: true, email: true },
     });
-    await Promise.allSettled(users.map((u) => this.notifyUser(u, notification)));
+    await Promise.allSettled(
+      users.map((u) => this.notifyUser(u, notification)),
+    );
   }
 }

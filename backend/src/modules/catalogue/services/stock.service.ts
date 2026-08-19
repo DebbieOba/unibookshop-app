@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Book, InventoryMovement, InventoryMovementType } from '@prisma/client';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 
@@ -60,7 +64,9 @@ export class StockService {
         if (result.count === 0) {
           const existing = await tx.book.findUnique({ where: { id: bookId } });
           if (!existing) throw new NotFoundException('Book not found');
-          throw new BadRequestException('Adjustment would reduce stock below zero');
+          throw new BadRequestException(
+            'Adjustment would reduce stock below zero',
+          );
         }
         book = await tx.book.findUniqueOrThrow({ where: { id: bookId } });
       } else {

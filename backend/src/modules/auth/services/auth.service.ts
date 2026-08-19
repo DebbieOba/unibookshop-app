@@ -57,22 +57,30 @@ export class AuthService {
       try {
         const record = await this.sis.lookupStudent(dto.matricNumber);
         if (!record) {
-          throw new BadRequestException('Matric number not found in university records');
+          throw new BadRequestException(
+            'Matric number not found in university records',
+          );
         }
       } catch (error) {
         if (error instanceof BadRequestException) throw error;
         // SIS reachable-but-erroring (network/5xx) fails open — we don't want
         // a third-party outage to block every registration. A confirmed
         // "not found" (handled above) is the only case that blocks.
-        this.logger.warn(`SIS lookup errored for ${dto.matricNumber}, allowing registration to proceed`);
+        this.logger.warn(
+          `SIS lookup errored for ${dto.matricNumber}, allowing registration to proceed`,
+        );
       }
     }
 
     let bookshopId = dto.bookshopId;
-    let userRole = (dto.role === 'admin' || dto.role === 'student') ? dto.role : 'student';
+    let userRole =
+      dto.role === 'admin' || dto.role === 'student' ? dto.role : 'student';
 
     if (dto.bookshopName) {
-      const slug = dto.bookshopName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const slug = dto.bookshopName
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-');
       const bookshop = await this.prisma.bookshop.create({
         data: {
           name: dto.bookshopName.trim(),
@@ -108,7 +116,9 @@ export class AuthService {
         // Signup only collects email/matric + password now — fullName is
         // filled in properly on CompleteProfileScreen right after. Profile
         // .fullName is non-nullable, so this is just a placeholder until then.
-        profile: { create: { fullName: dto.fullName ?? dto.email.split('@')[0] } },
+        profile: {
+          create: { fullName: dto.fullName ?? dto.email.split('@')[0] },
+        },
       },
     });
     return { id: user.id, accountState: user.accountState };
@@ -122,19 +132,25 @@ export class AuthService {
       where: {
         OR: [
           { email: { equals: normalizedIdentifier, mode: 'insensitive' } },
-          { matricNumber: { equals: normalizedIdentifier, mode: 'insensitive' } },
+          {
+            matricNumber: { equals: normalizedIdentifier, mode: 'insensitive' },
+          },
         ],
       },
     });
 
     if (!user) {
-      this.logger.warn(`Login failed: no user found for identifier="${normalizedIdentifier}"`);
+      this.logger.warn(
+        `Login failed: no user found for identifier="${normalizedIdentifier}"`,
+      );
       return null;
     }
 
     const valid = await argon2.verify(user.passwordHash, password);
     if (!valid) {
-      this.logger.warn(`Login failed: password mismatch for user="${user.email}"`);
+      this.logger.warn(
+        `Login failed: password mismatch for user="${user.email}"`,
+      );
       return null;
     }
 
@@ -149,7 +165,12 @@ export class AuthService {
    * §10.2) still blocks every other endpoint for non-approved accounts;
    * `/auth/me` and `/auth/logout` are the deliberate exceptions.
    */
-  async login(user: { id: string; email: string; role: string; accountState: string }) {
+  async login(user: {
+    id: string;
+    email: string;
+    role: string;
+    accountState: string;
+  }) {
     return this.issueTokenPair(user.id, user.email, user.role);
   }
 
@@ -163,13 +184,17 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const stored = await this.redis.get(`refresh:${payload.sub}:${payload.jti}`);
+    const stored = await this.redis.get(
+      `refresh:${payload.sub}:${payload.jti}`,
+    );
     if (!stored) {
       throw new UnauthorizedException('Refresh token revoked or expired');
     }
     await this.redis.del(`refresh:${payload.sub}:${payload.jti}`);
 
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: payload.sub } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: payload.sub },
+    });
     return this.issueTokenPair(user.id, user.email, user.role);
   }
 
@@ -183,7 +208,12 @@ export class AuthService {
     if (!user) return; // don't leak account existence
 
     const token = randomUUID();
-    await this.redis.set(`password-reset:${token}`, user.id, 'EX', RESET_TTL_SECONDS);
+    await this.redis.set(
+      `password-reset:${token}`,
+      user.id,
+      'EX',
+      RESET_TTL_SECONDS,
+    );
     await this.email.send({
       to: user.email,
       templateId: 'password-reset',
@@ -197,21 +227,33 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired reset token');
     }
     const passwordHash = await argon2.hash(newPassword);
-    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
     await this.redis.del(`password-reset:${token}`);
     await this.logout(userId); // revoke every existing refresh token
   }
 
   /** Authenticated change-password (Settings, screen 16) — distinct from the
    * forgot/reset flow above, which doesn't require knowing the old password. */
-  async changePassword(userId: string, currentPassword: string, newPassword: string) {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     const valid = await argon2.verify(user.passwordHash, currentPassword);
     if (!valid) {
       throw new UnauthorizedException('Current password is incorrect');
     }
     const passwordHash = await argon2.hash(newPassword);
-    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
     await this.logout(userId); // revoke every existing refresh token except this request
   }
 
@@ -232,7 +274,12 @@ export class AuthService {
         expiresIn: this.config.get('JWT_REFRESH_TTL', '30d'),
       },
     );
-    await this.redis.set(`refresh:${userId}:${jti}`, '1', 'EX', REFRESH_TTL_SECONDS);
+    await this.redis.set(
+      `refresh:${userId}:${jti}`,
+      '1',
+      'EX',
+      REFRESH_TTL_SECONDS,
+    );
 
     return { accessToken, refreshToken };
   }

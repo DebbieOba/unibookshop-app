@@ -1,5 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsIn, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
@@ -34,7 +42,10 @@ export class BrowseBooksDto extends PaginationDto {
   @IsBoolean()
   inStockOnly?: boolean;
 
-  @ApiPropertyOptional({ default: false, description: 'Only books where compareAtPrice > price' })
+  @ApiPropertyOptional({
+    default: false,
+    description: 'Only books where compareAtPrice > price',
+  })
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean()
@@ -46,7 +57,9 @@ export class BrowseBooksDto extends PaginationDto {
   @IsBoolean()
   isPreOrder?: boolean;
 
-  @ApiPropertyOptional({ description: 'Exact course code match, e.g. "CSC 301"' })
+  @ApiPropertyOptional({
+    description: 'Exact course code match, e.g. "CSC 301"',
+  })
   @IsOptional()
   @IsString()
   courseCode?: string;

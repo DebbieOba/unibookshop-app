@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
 
@@ -33,13 +37,20 @@ export class OrdersService {
     if (order.userId !== requestingUser.id && requestingUser.role !== 'admin') {
       throw new ForbiddenException();
     }
-    if (requestingUser.role === 'admin' && requestingUser.bookshopId && order.bookshopId !== requestingUser.bookshopId) {
+    if (
+      requestingUser.role === 'admin' &&
+      requestingUser.bookshopId &&
+      order.bookshopId !== requestingUser.bookshopId
+    ) {
       throw new ForbiddenException('You do not have access to this order');
     }
     return order;
   }
 
-  findAllForAdmin(status?: 'PROCESSING' | 'COMPLETED' | 'CANCELLED', bookshopId?: string | null) {
+  findAllForAdmin(
+    status?: 'PROCESSING' | 'COMPLETED' | 'CANCELLED',
+    bookshopId?: string | null,
+  ) {
     return this.prisma.order.findMany({
       where: {
         ...(status && { status }),

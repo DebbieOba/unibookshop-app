@@ -1,4 +1,4 @@
- import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 
 @Injectable()
@@ -11,20 +11,33 @@ export class DashboardService {
       ? { bookshopId, accountState: 'PENDING' }
       : { accountState: 'PENDING' };
 
-    const [totalUsers, pendingApprovals, totalBooks, totalOrders, recentOrders] =
-      await Promise.all([
-        this.prisma.user.count({ where: bookshopId ? { bookshopId } : undefined }),
-        this.prisma.user.count({ where: wherePendingApprovals as any }),
-        this.prisma.book.count({ where }),
-        this.prisma.order.count({ where }),
-        this.prisma.order.findMany({
-          where,
-          take: 5,
-          orderBy: { createdAt: 'desc' },
-        }),
-      ]);
+    const [
+      totalUsers,
+      pendingApprovals,
+      totalBooks,
+      totalOrders,
+      recentOrders,
+    ] = await Promise.all([
+      this.prisma.user.count({
+        where: bookshopId ? { bookshopId } : undefined,
+      }),
+      this.prisma.user.count({ where: wherePendingApprovals as any }),
+      this.prisma.book.count({ where }),
+      this.prisma.order.count({ where }),
+      this.prisma.order.findMany({
+        where,
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
 
-    return { totalUsers, pendingApprovals, totalBooks, totalOrders, recentOrders };
+    return {
+      totalUsers,
+      pendingApprovals,
+      totalBooks,
+      totalOrders,
+      recentOrders,
+    };
   }
 
   async getProfitLoss(bookshopId: string, range = '30d') {
@@ -55,7 +68,16 @@ export class DashboardService {
       },
     });
 
-    const dailyMap = new Map<string, { date: string; revenue: number; cost: number; profit: number; orderCount: number }>();
+    const dailyMap = new Map<
+      string,
+      {
+        date: string;
+        revenue: number;
+        cost: number;
+        profit: number;
+        orderCount: number;
+      }
+    >();
 
     // Pre-populate dailyMap with all days in range to avoid gaps
     const length = range === '7d' ? 7 : range === '30d' ? 30 : 0;
@@ -64,7 +86,13 @@ export class DashboardService {
         const d = new Date();
         d.setDate(today.getDate() - i);
         const dateStr = d.toISOString().split('T')[0];
-        dailyMap.set(dateStr, { date: dateStr, revenue: 0, cost: 0, profit: 0, orderCount: 0 });
+        dailyMap.set(dateStr, {
+          date: dateStr,
+          revenue: 0,
+          cost: 0,
+          profit: 0,
+          orderCount: 0,
+        });
       }
     }
 
@@ -85,7 +113,13 @@ export class DashboardService {
       totalCost += cost;
       totalProfit += profit;
 
-      const existing = dailyMap.get(dateStr) || { date: dateStr, revenue: 0, cost: 0, profit: 0, orderCount: 0 };
+      const existing = dailyMap.get(dateStr) || {
+        date: dateStr,
+        revenue: 0,
+        cost: 0,
+        profit: 0,
+        orderCount: 0,
+      };
       existing.revenue += revenue;
       existing.cost += cost;
       existing.profit += profit;
@@ -93,8 +127,11 @@ export class DashboardService {
       dailyMap.set(dateStr, existing);
     }
 
-    const dailyBreakdown = Array.from(dailyMap.values()).sort((a, b) => b.date.localeCompare(a.date));
-    const profitMargin = totalRevenue > 0 ? Math.round((totalProfit / totalRevenue) * 100) : 0;
+    const dailyBreakdown = Array.from(dailyMap.values()).sort((a, b) =>
+      b.date.localeCompare(a.date),
+    );
+    const profitMargin =
+      totalRevenue > 0 ? Math.round((totalProfit / totalRevenue) * 100) : 0;
 
     // Growth comparison calculation
     let previousPeriodRevenue = 0;
@@ -127,12 +164,19 @@ export class DashboardService {
       previousPeriodProfit = previousPeriodRevenue - prevCost;
     }
 
-    const revenueGrowth = previousPeriodRevenue > 0
-      ? Math.round(((totalRevenue - previousPeriodRevenue) / previousPeriodRevenue) * 100)
-      : 0;
-    const profitGrowth = previousPeriodProfit > 0
-      ? Math.round(((totalProfit - previousPeriodProfit) / previousPeriodProfit) * 100)
-      : 0;
+    const revenueGrowth =
+      previousPeriodRevenue > 0
+        ? Math.round(
+            ((totalRevenue - previousPeriodRevenue) / previousPeriodRevenue) *
+              100,
+          )
+        : 0;
+    const profitGrowth =
+      previousPeriodProfit > 0
+        ? Math.round(
+            ((totalProfit - previousPeriodProfit) / previousPeriodProfit) * 100,
+          )
+        : 0;
 
     return {
       summary: {

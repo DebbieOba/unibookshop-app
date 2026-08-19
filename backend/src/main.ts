@@ -17,7 +17,11 @@ async function bootstrap() {
   app.use(helmet());
   app.setGlobalPrefix('api/v1', { exclude: ['health'] });
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
   );
   app.enableCors();
 

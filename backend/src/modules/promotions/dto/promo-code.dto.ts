@@ -1,5 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsDateString, IsIn, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreatePromoCodeDto {
@@ -11,7 +20,10 @@ export class CreatePromoCodeDto {
   @IsIn(['PERCENT', 'FIXED'])
   type!: 'PERCENT' | 'FIXED';
 
-  @ApiProperty({ minimum: 0, description: 'Percent (0-100) or a fixed naira amount, depending on type' })
+  @ApiProperty({
+    minimum: 0,
+    description: 'Percent (0-100) or a fixed naira amount, depending on type',
+  })
   @IsNumber()
   @Min(0)
   value!: number;
@@ -23,7 +35,10 @@ export class CreatePromoCodeDto {
   @Min(0)
   minSubtotal?: number;
 
-  @ApiPropertyOptional({ minimum: 0, description: 'Caps the discount amount — mainly useful for PERCENT codes' })
+  @ApiPropertyOptional({
+    minimum: 0,
+    description: 'Caps the discount amount — mainly useful for PERCENT codes',
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

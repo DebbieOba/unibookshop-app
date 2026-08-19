@@ -1,7 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { ListingsService } from '../services/listings.service';
 import { BrowseListingsDto } from '../dto/browse-listings.dto';
 import { CreateListingDto } from '../dto/create-listing.dto';
@@ -17,7 +31,10 @@ export class ListingsController {
   constructor(private readonly listingsService: ListingsService) {}
 
   @Get()
-  findAll(@Query() query: BrowseListingsDto, @CurrentUser() user: CurrentUserPayload) {
+  findAll(
+    @Query() query: BrowseListingsDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.listingsService.findAll(query, user.id);
   }
 
@@ -38,7 +55,11 @@ export class ListingsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @CurrentUser() user: CurrentUserPayload, @Body() dto: UpdateListingDto) {
+  update(
+    @Param('id') id: string,
+    @CurrentUser() user: CurrentUserPayload,
+    @Body() dto: UpdateListingDto,
+  ) {
     return this.listingsService.update(id, user, dto);
   }
 

@@ -28,7 +28,12 @@ export class FcmService implements OnModuleInit {
     });
   }
 
-  async sendToDevice(deviceToken: string, title: string, body: string, data?: Record<string, string>) {
+  async sendToDevice(
+    deviceToken: string,
+    title: string,
+    body: string,
+    data?: Record<string, string>,
+  ) {
     if (!this.app) return;
     await getMessaging(this.app).send({
       token: deviceToken,

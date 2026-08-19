@@ -1,9 +1,25 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
 import { OrdersService } from '../services/orders.service';
 import { CheckoutService } from '../services/checkout.service';
 import { InsightsService } from '../services/insights.service';
@@ -54,7 +70,10 @@ export class OrdersController {
    * for a LAN-only dev backend, can never arrive at all).
    */
   @Post('orders/:id/verify-payment')
-  verifyPayment(@Param('id') id: string, @CurrentUser() user: CurrentUserPayload) {
+  verifyPayment(
+    @Param('id') id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.checkoutService.verifyPayment(id, user);
   }
 
@@ -62,7 +81,8 @@ export class OrdersController {
   @Roles('admin')
   @Get('admin/orders')
   findAllForAdmin(
-    @Query('status') status: 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | undefined,
+    @Query('status')
+    status: 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | undefined,
     @CurrentUser() user: CurrentUserPayload,
   ) {
     return this.ordersService.findAllForAdmin(status, user.bookshopId);
@@ -71,7 +91,10 @@ export class OrdersController {
   @UseGuards(RolesGuard)
   @Roles('admin')
   @Get('admin/orders/:id')
-  findOneForAdmin(@Param('id') id: string, @CurrentUser() user: CurrentUserPayload) {
+  findOneForAdmin(
+    @Param('id') id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.ordersService.findOne(id, user);
   }
 

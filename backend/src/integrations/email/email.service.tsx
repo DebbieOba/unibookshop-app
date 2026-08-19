@@ -32,7 +32,10 @@ const SUBJECT_BY_TEMPLATE: Record<EmailTemplateId, string> = {
   'order-receipt': 'Your order update',
 };
 
-function renderTemplate(templateId: EmailTemplateId, data: Record<string, unknown>) {
+function renderTemplate(
+  templateId: EmailTemplateId,
+  data: Record<string, unknown>,
+) {
   switch (templateId) {
     case 'password-reset':
       return <PasswordResetEmail token={data.token as string} />;
@@ -45,7 +48,12 @@ function renderTemplate(templateId: EmailTemplateId, data: Record<string, unknow
     case 'account-restored':
       return <AccountRestoredEmail />;
     case 'order-receipt':
-      return <OrderReceiptEmail title={data.title as string} body={data.body as string} />;
+      return (
+        <OrderReceiptEmail
+          title={data.title as string}
+          body={data.body as string}
+        />
+      );
   }
 }
 
@@ -68,7 +76,9 @@ export class EmailService {
 
   async send({ to, templateId, data }: SendEmailInput): Promise<void> {
     if (!this.resend) {
-      this.logger.warn(`RESEND_API_KEY not set — skipping "${templateId}" email to ${to}`);
+      this.logger.warn(
+        `RESEND_API_KEY not set — skipping "${templateId}" email to ${to}`,
+      );
       return;
     }
 

@@ -1,12 +1,29 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../common/decorators/public.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { AuditAction, AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import {
+  AuditAction,
+  AuditLogInterceptor,
+} from '../../../common/interceptors/audit-log.interceptor';
 import { SchoolsService } from '../services/schools.service';
 import { CreateSchoolDto, UpdateSchoolDto } from '../dto/school.dto';
-import { CurrentUser, type CurrentUserPayload } from '../../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../../../common/decorators/current-user.decorator';
 
 // GET is public — Registration (screen 4) and Preferences (screen 7) need this
 // dropdown data before/without an approved session. Mutations are admin-only.
@@ -27,7 +44,10 @@ export class SchoolsController {
   @Roles('admin')
   @AuditAction('school.create')
   @Post()
-  create(@Body() dto: CreateSchoolDto, @CurrentUser() user: CurrentUserPayload) {
+  create(
+    @Body() dto: CreateSchoolDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.schoolsService.create(dto, user.bookshopId);
   }
 
@@ -36,7 +56,11 @@ export class SchoolsController {
   @Roles('admin')
   @AuditAction('school.update')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateSchoolDto, @CurrentUser() user: CurrentUserPayload) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateSchoolDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     return this.schoolsService.update(id, dto, user.bookshopId);
   }
 

@@ -10,18 +10,33 @@ export interface PromoValidationResult {
 }
 
 @Injectable()
-export class PromoCodesService extends CrudService<any, CreatePromoCodeDto, UpdatePromoCodeDto> {
+export class PromoCodesService extends CrudService<
+  any,
+  CreatePromoCodeDto,
+  UpdatePromoCodeDto
+> {
   constructor(private readonly prisma: PrismaService) {
     super(prisma.promoCode);
   }
 
   override create(dto: CreatePromoCodeDto, bookshopId?: string | null) {
-    return this.prisma.promoCode.create({ data: { ...dto, code: dto.code.toUpperCase(), ...(bookshopId && { bookshopId }) } });
+    return this.prisma.promoCode.create({
+      data: {
+        ...dto,
+        code: dto.code.toUpperCase(),
+        ...(bookshopId && { bookshopId }),
+      },
+    });
   }
 
   /** Re-validates server-side at cart-apply time AND again at checkout — never trust a client-supplied discount. */
-  async validate(code: string, subtotal: number): Promise<PromoValidationResult> {
-    const promo = await this.prisma.promoCode.findUnique({ where: { code: code.trim().toUpperCase() } });
+  async validate(
+    code: string,
+    subtotal: number,
+  ): Promise<PromoValidationResult> {
+    const promo = await this.prisma.promoCode.findUnique({
+      where: { code: code.trim().toUpperCase() },
+    });
     if (!promo || !promo.active) {
       throw new BadRequestException('Invalid promo code');
     }
@@ -29,21 +44,32 @@ export class PromoCodesService extends CrudService<any, CreatePromoCodeDto, Upda
       throw new BadRequestException('This promo code has expired');
     }
     if (promo.usageLimit !== null && promo.timesRedeemed >= promo.usageLimit) {
-      throw new BadRequestException('This promo code has reached its usage limit');
+      throw new BadRequestException(
+        'This promo code has reached its usage limit',
+      );
     }
     const minSubtotal = promo.minSubtotal ? Number(promo.minSubtotal) : 0;
     if (subtotal < minSubtotal) {
-      throw new BadRequestException(`This promo code requires a minimum subtotal of ₦${minSubtotal.toLocaleString()}`);
+      throw new BadRequestException(
+        `This promo code requires a minimum subtotal of ₦${minSubtotal.toLocaleString()}`,
+      );
     }
 
-    let discount = promo.type === 'PERCENT' ? (subtotal * Number(promo.value)) / 100 : Number(promo.value);
-    if (promo.maxDiscount !== null) discount = Math.min(discount, Number(promo.maxDiscount));
+    let discount =
+      promo.type === 'PERCENT'
+        ? (subtotal * Number(promo.value)) / 100
+        : Number(promo.value);
+    if (promo.maxDiscount !== null)
+      discount = Math.min(discount, Number(promo.maxDiscount));
     discount = Math.min(Math.round(discount), subtotal);
 
     return { id: promo.id, code: promo.code, discountAmount: discount };
   }
 
   async redeem(id: string) {
-    await this.prisma.promoCode.update({ where: { id }, data: { timesRedeemed: { increment: 1 } } });
+    await this.prisma.promoCode.update({
+      where: { id },
+      data: { timesRedeemed: { increment: 1 } },
+    });
   }
 }

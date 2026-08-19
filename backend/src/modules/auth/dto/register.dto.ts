@@ -1,6 +1,16 @@
-import { IsEmail, IsOptional, IsString, IsUUID, Matches, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MATRIC_NUMBER_MESSAGE, MATRIC_NUMBER_REGEX } from '../../../common/validators/matric-number.validator';
+import {
+  MATRIC_NUMBER_MESSAGE,
+  MATRIC_NUMBER_REGEX,
+} from '../../../common/validators/matric-number.validator';
 
 export class RegisterDto {
   @ApiProperty()
