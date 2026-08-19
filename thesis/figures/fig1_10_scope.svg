@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="394" viewBox="0 0 840 394" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="840" height="394" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="839" height="359" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="30" y="20" width="380" height="320" rx="10" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="220" y="45" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">IN SCOPE</text>
+<text x="55" y="75" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Student catalogue browse/search/filter</text>
+<text x="55" y="115" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Cart, checkout, Paystack &amp; Flutterwave</text>
+<text x="55" y="155" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Admin catalogue &amp; inventory CRUD</text>
+<text x="55" y="195" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Push + email notifications</text>
+<text x="55" y="235" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Org-structure (School→Dept→Level)</text>
+<text x="55" y="275" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• FUTA's 57-department catalogue seed</text>
+<rect x="430" y="20" width="380" height="320" rx="10" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="620" y="45" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">OUT OF SCOPE</text>
+<text x="455" y="75" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Physical delivery logistics/couriering</text>
+<text x="455" y="115" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Multi-university catalogue federation</text>
+<text x="455" y="155" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Peer-to-peer payment splitting</text>
+<text x="455" y="195" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Digital book lending/reading</text>
+<text x="455" y="235" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Warehouse robotics or IoT shelving</text>
+<text x="455" y="275" font-size="11" text-anchor="start" font-weight="normal" font-style="normal" fill="#1F2937">• Non-FUTA institutional rollout (this study)</text>
+<text x="420.0" y="382" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 1.10. Boundary of the present study: what the system does and deliberately does not attempt.</text>
+
+</svg>

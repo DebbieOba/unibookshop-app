@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="312" viewBox="0 0 800 312" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="800" height="312" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="799" height="277" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="60.0" y="20" width="620.0" height="46" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="370.0" y="42" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">App installed — 100%</text>
+<rect x="128.2" y="82" width="483.6" height="46" rx="6" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="370.0" y="104" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Notifications enabled — 78%</text>
+<rect x="202.6" y="144" width="334.8" height="46" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="370.0" y="166" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Opens after a push — 54%</text>
+<rect x="242.9" y="206" width="254.2" height="46" rx="6" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="370.0" y="228" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Completes action — 41%</text>
+<text x="400.0" y="300" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 2.7. Illustrative engagement funnel showing the documented retention lift attributable to push notifications (Homfeldt &amp; Kähler, 2026).</text>
+
+</svg>

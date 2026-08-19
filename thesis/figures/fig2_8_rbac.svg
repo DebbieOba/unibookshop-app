@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="314" viewBox="0 0 700 314" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="700" height="314" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="699" height="279" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="60" cy="46.82" r="6.82" fill="#E8C4A0" stroke="#64748B" stroke-width="0.868"/>
+<path d="M47.6,78.44 C47.6,58.6 51.32,52.4 60,52.4 C68.68,52.4 72.4,58.6 72.4,78.44 Z" fill="#64748B" stroke="#64748B" stroke-width="1"/>
+<text x="60" y="89.6" font-size="7.13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Student</text>
+<circle cx="60" cy="196.82" r="6.82" fill="#E8C4A0" stroke="#64748B" stroke-width="0.868"/>
+<path d="M47.6,228.44 C47.6,208.6 51.32,202.4 60,202.4 C68.68,202.4 72.4,208.6 72.4,228.44 Z" fill="#64748B" stroke="#64748B" stroke-width="1"/>
+<text x="60" y="239.6" font-size="7.13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Admin</text>
+<rect x="220" y="30" width="160" height="45" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="300.0" y="52.5" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Role: STUDENT</text>
+<rect x="220" y="180" width="160" height="45" rx="8" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="300.0" y="202.5" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Role: ADMIN</text>
+<line x1="120" y1="55" x2="220" y2="52" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="120" y1="245" x2="220" y2="202" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="460" y="15" width="200" height="40" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="560.0" y="35.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Catalogue: read-only</text>
+<rect x="460" y="65" width="200" height="40" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="560.0" y="85.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Cart / checkout: own orders</text>
+<rect x="460" y="165" width="200" height="40" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="560.0" y="185.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Catalogue: full CRUD</text>
+<rect x="460" y="215" width="200" height="40" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="560.0" y="235.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Orders: all students</text>
+<line x1="380" y1="45" x2="460" y2="35" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="380" y1="55" x2="460" y2="85" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="380" y1="200" x2="460" y2="185" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="380" y1="210" x2="460" y2="235" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="350.0" y="302" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 2.8. Role-based access control concept applied in the same codebase (Sandhu et al., 1996): identical app, permissions gated by role.</text>
+
+</svg>

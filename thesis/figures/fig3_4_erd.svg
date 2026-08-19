@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="454" viewBox="0 0 900 454" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="900" height="454" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="899" height="419" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="20" y="20" width="160" height="90" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="100.0" y="36" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">User</text>
+<line x1="20" y1="42" x2="180" y2="42" stroke="#3B4E8F" stroke-width="1"/>
+<text x="28" y="56" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="28" y="70" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">email / matric</text>
+<text x="28" y="84" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">role</text>
+<text x="28" y="98" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">departmentId (FK)</text>
+<rect x="220" y="20" width="150" height="60" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="295.0" y="36" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">School</text>
+<line x1="220" y1="42" x2="370" y2="42" stroke="#3B4E8F" stroke-width="1"/>
+<text x="228" y="56" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="228" y="70" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">name</text>
+<rect x="410" y="20" width="160" height="75" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="490.0" y="36" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Department</text>
+<line x1="410" y1="42" x2="570" y2="42" stroke="#3B4E8F" stroke-width="1"/>
+<text x="418" y="56" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="418" y="70" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">schoolId (FK)</text>
+<text x="418" y="84" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">name</text>
+<rect x="610" y="20" width="140" height="60" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="680.0" y="36" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Level</text>
+<line x1="610" y1="42" x2="750" y2="42" stroke="#3B4E8F" stroke-width="1"/>
+<text x="618" y="56" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="618" y="70" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">value</text>
+<rect x="20" y="160" width="170" height="105" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="105.0" y="176" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Book</text>
+<line x1="20" y1="182" x2="190" y2="182" stroke="#3B4E8F" stroke-width="1"/>
+<text x="28" y="196" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="28" y="210" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">title</text>
+<text x="28" y="224" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">price</text>
+<text x="28" y="238" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">departmentId (FK)</text>
+<text x="28" y="252" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">levelId (FK)</text>
+<rect x="240" y="160" width="150" height="60" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="315.0" y="176" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Category</text>
+<line x1="240" y1="182" x2="390" y2="182" stroke="#3B4E8F" stroke-width="1"/>
+<text x="248" y="196" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="248" y="210" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">name</text>
+<rect x="20" y="310" width="190" height="75" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="115.0" y="326" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Cart / CartItem</text>
+<line x1="20" y1="332" x2="210" y2="332" stroke="#3B4E8F" stroke-width="1"/>
+<text x="28" y="346" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="28" y="360" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">userId (FK)</text>
+<text x="28" y="374" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">bookId (FK)</text>
+<rect x="260" y="310" width="170" height="90" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="345.0" y="326" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Order</text>
+<line x1="260" y1="332" x2="430" y2="332" stroke="#3B4E8F" stroke-width="1"/>
+<text x="268" y="346" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="268" y="360" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">userId (FK)</text>
+<text x="268" y="374" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">status</text>
+<text x="268" y="388" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">totalAmount</text>
+<rect x="470" y="310" width="180" height="75" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="560.0" y="326" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">OrderItem</text>
+<line x1="470" y1="332" x2="650" y2="332" stroke="#3B4E8F" stroke-width="1"/>
+<text x="478" y="346" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="478" y="360" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">orderId (FK)</text>
+<text x="478" y="374" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">bookId (FK)</text>
+<rect x="700" y="160" width="170" height="75" rx="6" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="785.0" y="176" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Notification</text>
+<line x1="700" y1="182" x2="870" y2="182" stroke="#3B4E8F" stroke-width="1"/>
+<text x="708" y="196" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">id (PK)</text>
+<text x="708" y="210" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">userId (FK)</text>
+<text x="708" y="224" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#475569">type</text>
+<line x1="295.0" y1="50.0" x2="490.0" y2="57.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="490.0" y1="57.5" x2="105.0" y2="212.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="680.0" y1="50.0" x2="105.0" y2="212.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="100.0" y1="65.0" x2="490.0" y2="57.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="105.0" y1="212.5" x2="315.0" y2="190.0" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="100.0" y1="65.0" x2="115.0" y2="347.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="115.0" y1="347.5" x2="105.0" y2="212.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="100.0" y1="65.0" x2="345.0" y2="355.0" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="345.0" y1="355.0" x2="560.0" y2="347.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="560.0" y1="347.5" x2="105.0" y2="212.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<line x1="100.0" y1="65.0" x2="785.0" y2="197.5" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2,2"/>
+<text x="450.0" y="442" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 3.4. Simplified entity-relationship diagram of the core CURRICULA schema (conventions after Chen, 1976).</text>
+
+</svg>

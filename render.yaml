@@ -1,0 +1,101 @@
+# render.yaml — Render Blueprint for the CURRICULA backend.
+# https://render.com/docs/blueprint-spec
+#
+# One-time setup after connecting the repo on Render:
+#   1. Set all env vars marked `sync: false` in the Render dashboard.
+#   2. Provide a Redis service URL in REDIS_URL (e.g. Upstash free tier).
+#   3. Deploy — `prisma migrate deploy` runs automatically before app start.
+
+services:
+  - type: web
+    name: curricula-backend
+    runtime: node
+    rootDir: backend
+
+    # --- Build ---
+    # `npm ci` for a clean, lock-file-exact install; `nest build` compiles TS.
+    buildCommand: npm ci && npm run build
+
+    # --- Start ---
+    # `prisma migrate deploy` applies any pending migrations before the server
+    # starts. It is idempotent (safe to run on every deploy) and uses the
+    # DATABASE_URL / DIRECT_URL env vars already set below.
+    startCommand: npm run migrate:deploy && npm run start:prod
+
+    # --- Runtime ---
+    plan: free                # change to `starter` or higher for production SLAs
+    autoDeploy: true          # re-deploy on every push to the linked branch
+
+    # --- Health check ---
+    # Render will wait for this path to return 2xx before marking the deploy
+    # healthy. The /health endpoint is @Public() and always returns 200.
+    healthCheckPath: /health
+
+    # --- Environment variables ---
+    # Values marked `sync: false` must be set manually in the Render dashboard.
+    # Values with a `value` are safe defaults (non-secret).
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # PORT is automatically injected by Render — no need to set it manually.
+      # main.ts reads process.env.PORT, so this is just documentation.
+      # - key: PORT
+      #   value: 10000
+
+      # Supabase — Transaction pooler (pgbouncer). Runtime queries.
+      - key: DATABASE_URL
+        sync: false
+
+      # Supabase — Direct connection. Used only by `prisma migrate deploy`.
+      - key: DIRECT_URL
+        sync: false
+
+      # Redis — use Upstash free tier (rediss:// for TLS) or any hosted Redis.
+      - key: REDIS_URL
+        sync: false
+
+      # JWT — generate strong secrets: `openssl rand -hex 32`
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_ACCESS_TTL
+        value: 15m
+      - key: JWT_REFRESH_TTL
+        value: 30d
+
+      # Payment providers (optional — app degrades gracefully if not set)
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: FLUTTERWAVE_SECRET_KEY
+        sync: false
+      - key: FLUTTERWAVE_WEBHOOK_SECRET_HASH
+        sync: false
+
+      # Firebase Cloud Messaging (optional — push notifications)
+      - key: FCM_PROJECT_ID
+        sync: false
+      - key: FCM_CLIENT_EMAIL
+        sync: false
+      # FCM private key contains literal \n — paste the full PEM block.
+      - key: FCM_PRIVATE_KEY
+        sync: false
+
+      # Resend — transactional email (optional — app logs a warning if not set)
+      - key: RESEND_API_KEY
+        sync: false
+
+      # Cloudinary — image uploads (optional)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+      # University SIS integration (optional)
+      - key: SIS_BASE_URL
+        sync: false
+      - key: SIS_API_KEY
+        sync: false

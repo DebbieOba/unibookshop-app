@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="870" height="324" viewBox="0 0 870 324" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="870" height="324" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="869" height="289" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="60" cy="66.82" r="6.82" fill="#E8C4A0" stroke="#64748B" stroke-width="0.868"/>
+<path d="M47.6,98.44 C47.6,78.6 51.32,72.4 60,72.4 C68.68,72.4 72.4,78.6 72.4,98.44 Z" fill="#64748B" stroke="#64748B" stroke-width="1"/>
+<text x="60" y="109.6" font-size="7.13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Student</text>
+<circle cx="60" cy="236.82" r="6.82" fill="#E8C4A0" stroke="#64748B" stroke-width="0.868"/>
+<path d="M47.6,268.44 C47.6,248.6 51.32,242.4 60,242.4 C68.68,242.4 72.4,248.6 72.4,268.44 Z" fill="#64748B" stroke="#64748B" stroke-width="1"/>
+<text x="60" y="279.6" font-size="7.13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Admin</text>
+<rect x="180" y="30" width="190" height="60" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="275.0" y="60.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">CURRICULA Mobile App (Expo)</text>
+<line x1="120" y1="75" x2="180" y2="60" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M120,245 Q150,150 180,90" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="430" y="30" width="190" height="60" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="525.0" y="60.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">NestJS API (role-aware)</text>
+<line x1="370" y1="60" x2="430" y2="60" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M680,21.200000000000003 v47.599999999999994 a75.0,11.200000000000001 0 0 0 150,0 v-47.599999999999994" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<ellipse cx="755.0" cy="21.200000000000003" rx="75.0" ry="11.200000000000001" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="755.0" y="50.6" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">PostgreSQL (Supabase)</text>
+<line x1="580" y1="45" x2="680" y2="45" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M680,119.6 v40.8 a75.0,9.6 0 0 0 150,0 v-40.8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<ellipse cx="755.0" cy="119.6" rx="75.0" ry="9.6" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="755.0" y="144.8" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Redis (cache/cart)</text>
+<path d="M580,75 Q630,100 680,130" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="430" y="200" width="190" height="55" rx="8" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="525.0" y="227.5" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Paystack / Flutterwave</text>
+<line x1="525" y1="90" x2="525" y2="200" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="220" y="200" width="150" height="55" rx="8" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="295.0" y="219.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Push (FCM) + Email</text>
+<text x="295.0" y="236.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">(Resend)</text>
+<path d="M400,130 Q360,170 340,200" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="435.0" y="312" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 1.5. Conceptual solution: one role-aware mobile app replacing paper, shelves, and phone calls with a shared source of truth.</text>
+
+</svg>

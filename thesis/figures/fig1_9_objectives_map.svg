@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="334" viewBox="0 0 800 334" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="800" height="334" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="799" height="299" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="30" y="20" width="300" height="50" rx="8" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="180.0" y="45.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Shelf-by-shelf search</text>
+<rect x="470" y="20" width="300" height="50" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="620.0" y="45.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Searchable digital catalogue</text>
+<line x1="330" y1="45" x2="470" y2="45" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="30" y="90" width="300" height="50" rx="8" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="180.0" y="115.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Owner-only pricing</text>
+<rect x="470" y="90" width="300" height="50" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="620.0" y="115.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Server-side price of record</text>
+<line x1="330" y1="115" x2="470" y2="115" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="30" y="160" width="300" height="50" rx="8" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="180.0" y="185.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Rep→owner confirmation delay</text>
+<rect x="470" y="160" width="300" height="50" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="620.0" y="185.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Real-time stock/price, no phone calls</text>
+<line x1="330" y1="185" x2="470" y2="185" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="30" y="230" width="300" height="50" rx="8" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="180.0" y="255.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">No low-cost automation option</text>
+<rect x="470" y="230" width="300" height="50" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="620.0" y="255.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Free-tier cloud stack, one codebase</text>
+<line x1="330" y1="255" x2="470" y2="255" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="400.0" y="322" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 1.9. Each stated objective (Section 1.4) is a direct response to one identified problem (Section 1.2).</text>
+
+</svg>

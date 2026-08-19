@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="514" viewBox="0 0 500 514" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="500" height="514" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="499" height="479" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="80" y="40" width="380" height="380" rx="0" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+<line x1="270.0" y1="40" x2="270.0" y2="420" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="80" y1="230.0" x2="460" y2="230.0" stroke="#CBD5E1" stroke-width="1"/>
+<text x="270.0" y="442" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Effort -&gt;</text>
+<text x="35" y="230.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Impact -&gt;</text>
+<text x="88" y="54" font-size="9" text-anchor="start" font-weight="italic" font-style="normal" fill="#475569">High impact, low effort (do first)</text>
+<circle cx="384" cy="192" r="7" fill="#3B4E8F"/>
+<text x="384.0" y="171.25" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Offline catalogue</text>
+<text x="384.0" y="184.75" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">cache</text>
+<circle cx="232" cy="325" r="7" fill="#2F7D5C"/>
+<text x="232.0" y="304.25" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Complete audit</text>
+<text x="232.0" y="317.75" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">logging</text>
+<circle cx="289" cy="287" r="7" fill="#2F7D5C"/>
+<text x="289.0" y="266.25" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Expand test</text>
+<text x="289.0" y="279.75" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">coverage</text>
+<circle cx="422" cy="78" r="7" fill="#B4894A"/>
+<text x="422.0" y="57.25" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Multi-institution</text>
+<text x="422.0" y="70.75" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">catalogue</text>
+<circle cx="327" cy="154" r="7" fill="#B4894A"/>
+<text x="327.0" y="133.25" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">In-app exchange</text>
+<text x="327.0" y="146.75" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">payment</text>
+<circle cx="251" cy="230" r="7" fill="#3B4E8F"/>
+<text x="251.0" y="216.0" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Admin analytics v2</text>
+<text x="250.0" y="502" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 5.7. Recommended future work (Figure 5.4) plotted by expected impact against implementation effort.</text>
+
+</svg>

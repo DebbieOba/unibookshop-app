@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="374" viewBox="0 0 900 374" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="900" height="374" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="899" height="339" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="20" y="15" width="860" height="90" rx="10" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="450" y="35" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#3B4E8F">PRESENTATION LAYER</text>
+<rect x="40" y="50" width="260" height="45" rx="8" fill="#FFFFFF" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="170.0" y="72.5" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Student screens</text>
+<rect x="320" y="50" width="260" height="45" rx="8" fill="#FFFFFF" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="450.0" y="72.5" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Admin screens</text>
+<rect x="600" y="50" width="260" height="45" rx="8" fill="#FFFFFF" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="730.0" y="72.5" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Shared UI kit / theme (light+dark)</text>
+<rect x="20" y="120" width="860" height="90" rx="10" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="450" y="140" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B4894A">APPLICATION / API LAYER (NestJS, modular monolith)</text>
+<rect x="30" y="155" width="200" height="45" rx="8" fill="#FFFFFF" stroke="#B4894A" stroke-width="1.5"/>
+<text x="130.0" y="177.5" font-size="10" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Auth module</text>
+<rect x="245" y="155" width="200" height="45" rx="8" fill="#FFFFFF" stroke="#B4894A" stroke-width="1.5"/>
+<text x="345.0" y="177.5" font-size="10" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Catalogue module</text>
+<rect x="460" y="155" width="200" height="45" rx="8" fill="#FFFFFF" stroke="#B4894A" stroke-width="1.5"/>
+<text x="560.0" y="177.5" font-size="10" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Order module</text>
+<rect x="675" y="155" width="200" height="45" rx="8" fill="#FFFFFF" stroke="#B4894A" stroke-width="1.5"/>
+<text x="775.0" y="177.5" font-size="10" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Notification module</text>
+<rect x="20" y="225" width="860" height="90" rx="10" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="450" y="245" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">DATA &amp; INTEGRATION LAYER</text>
+<rect x="30" y="260" width="155" height="45" rx="8" fill="#FFFFFF" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="107.5" y="282.5" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">PostgreSQL (Supabase)</text>
+<rect x="202" y="260" width="155" height="45" rx="8" fill="#FFFFFF" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="279.5" y="275.75" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Redis</text>
+<text x="279.5" y="289.25" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">(session/cache/cart)</text>
+<rect x="374" y="260" width="155" height="45" rx="8" fill="#FFFFFF" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="451.5" y="282.5" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Cloudinary (images)</text>
+<rect x="546" y="260" width="155" height="45" rx="8" fill="#FFFFFF" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="623.5" y="275.75" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">FCM + Resend</text>
+<text x="623.5" y="289.25" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">(push/email)</text>
+<rect x="718" y="260" width="155" height="45" rx="8" fill="#FFFFFF" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="795.5" y="282.5" font-size="9.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Paystack / Flutterwave</text>
+<line x1="170" y1="105" x2="170" y2="120" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="450" y1="105" x2="450" y2="120" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="730" y1="105" x2="730" y2="120" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="130" y1="210" x2="130" y2="225" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="450" y1="210" x2="450" y2="225" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="770" y1="210" x2="770" y2="225" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="450.0" y="362" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 3.3. Detailed three-layer architecture: presentation, application/API, and data/integration (expands Figure 1.5).</text>
+
+</svg>

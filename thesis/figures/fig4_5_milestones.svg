@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="214" viewBox="0 0 940 214" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="940" height="214" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="939" height="179" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="40" y1="100" x2="900" y2="100" stroke="#94A3B8" stroke-width="2"/>
+<circle cx="40" cy="100" r="7" fill="#2F7D5C"/>
+<text x="40.0" y="60.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Topic approved</text>
+<line x1="40" y1="93" x2="40" y2="72" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="362" cy="100" r="7" fill="#2F7D5C"/>
+<text x="362.5" y="130.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Design frozen</text>
+<line x1="362" y1="107" x2="362" y2="118" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="578" cy="100" r="7" fill="#2F7D5C"/>
+<text x="577.5" y="123.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Core build</text>
+<text x="577.5" y="137.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">complete</text>
+<line x1="578" y1="107" x2="578" y2="118" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="685" cy="100" r="7" fill="#2F7D5C"/>
+<text x="685.0" y="53.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">System testing</text>
+<text x="685.0" y="67.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">complete</text>
+<line x1="685" y1="93" x2="685" y2="72" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="792" cy="100" r="7" fill="#2F7D5C"/>
+<text x="792.5" y="123.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Draft report</text>
+<text x="792.5" y="137.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">complete</text>
+<line x1="792" y1="107" x2="792" y2="118" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="900" cy="100" r="7" fill="#2F7D5C"/>
+<text x="900.0" y="60.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">External defence</text>
+<line x1="900" y1="93" x2="900" y2="72" stroke="#CBD5E1" stroke-width="1"/>
+<text x="470.0" y="202" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 4.5. Key project milestones mapped to the Gantt chart's month numbering.</text>
+
+</svg>

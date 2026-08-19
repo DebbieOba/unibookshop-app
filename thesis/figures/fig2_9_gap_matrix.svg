@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="858" height="250" viewBox="0 0 858 250" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="858" height="250" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="857" height="215" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<text x="180" y="68" font-size="11.5" text-anchor="end" font-weight="normal" font-style="normal" fill="#1F2937">Osman et al. (2024)</text>
+<text x="180" y="108" font-size="11.5" text-anchor="end" font-weight="normal" font-style="normal" fill="#1F2937">Oyekan et al. (2024)</text>
+<text x="180" y="148" font-size="11.5" text-anchor="end" font-weight="normal" font-style="normal" fill="#1F2937">Generic online bookstore</text>
+<text x="180" y="188" font-size="11.5" text-anchor="end" font-weight="bold" font-style="normal" fill="#2F7D5C">CURRICULA (this study)</text>
+<text x="244.0" y="17.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Live price</text>
+<text x="244.0" y="31.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">sync</text>
+<text x="352.0" y="10.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Stock</text>
+<text x="352.0" y="24.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">visibility to</text>
+<text x="352.0" y="38.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">student</text>
+<text x="460.0" y="17.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">In-app</text>
+<text x="460.0" y="31.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">payment</text>
+<text x="568.0" y="17.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Push + email</text>
+<text x="568.0" y="31.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">alerts</text>
+<text x="676.0" y="10.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Org-structure</text>
+<text x="676.0" y="24.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">aware</text>
+<text x="676.0" y="38.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">catalogue</text>
+<text x="784.0" y="10.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">Single</text>
+<text x="784.0" y="24.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">codebase</text>
+<text x="784.0" y="38.0" font-size="10" text-anchor="middle" font-weight="normal" font-style="normal" fill="#1F2937">(student+admin)</text>
+<rect x="229.0" y="46" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="244.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="337.0" y="46" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="352.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="445.0" y="46" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="460.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="553.0" y="46" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="568.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="661.0" y="46" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="676.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="769.0" y="46" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="784.0" y="64.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="229.0" y="86" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="244.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="337.0" y="86" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="352.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="445.0" y="86" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="460.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="553.0" y="86" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="568.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="661.0" y="86" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="676.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="769.0" y="86" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="784.0" y="104.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="229.0" y="126" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="244.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="337.0" y="126" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="352.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="445.0" y="126" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="460.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="553.0" y="126" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="568.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="661.0" y="126" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="676.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="769.0" y="126" width="30" height="26" rx="5" fill="#FBEBD0" stroke="#B45309" stroke-width="1.5"/>
+<text x="784.0" y="144.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#B45309">N</text>
+<rect x="229.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="244.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="337.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="352.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="445.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="460.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="553.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="568.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="661.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="676.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<rect x="769.0" y="166" width="30" height="26" rx="5" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="784.0" y="184.5" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#2F7D5C">Y</text>
+<text x="429.0" y="238" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 2.9. Feature coverage of reviewed systems against this study's requirements (the basis for Table 2).</text>
+
+</svg>

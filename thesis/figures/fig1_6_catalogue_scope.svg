@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="444" viewBox="0 0 840 444" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="840" height="444" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="839" height="409" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="300" y="15" width="220" height="45" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="410.0" y="37.5" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">FUTA — 9 Schools</text>
+<rect x="60" y="110" width="220" height="42" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="170.0" y="131.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">School of Computing</text>
+<path d="M410,60 Q410,85 170,110" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="60" y="190" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="170.0" y="211.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">57 Departments total</text>
+<line x1="170" y1="152" x2="170" y2="190" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="60" y="270" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="170.0" y="291.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">5 Levels (100–500)</text>
+<line x1="170" y1="232" x2="170" y2="270" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="60" y="350" width="220" height="42" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="170.0" y="371.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">20 books seeded/dept.</text>
+<line x1="170" y1="312" x2="170" y2="350" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="320" y="110" width="220" height="42" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="430.0" y="131.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">School of Engineering</text>
+<path d="M410,60 Q410,85 430,110" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="320" y="190" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="430.0" y="211.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">57 Departments total</text>
+<line x1="430" y1="152" x2="430" y2="190" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="320" y="270" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="430.0" y="291.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">5 Levels (100–500)</text>
+<line x1="430" y1="232" x2="430" y2="270" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="320" y="350" width="220" height="42" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="430.0" y="371.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">20 books seeded/dept.</text>
+<line x1="430" y1="312" x2="430" y2="350" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="580" y="110" width="220" height="42" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="690.0" y="131.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">...(7 more schools)</text>
+<path d="M410,60 Q410,85 690,110" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="580" y="190" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="690.0" y="211.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">57 Departments total</text>
+<line x1="690" y1="152" x2="690" y2="190" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="580" y="270" width="220" height="42" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="690.0" y="291.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">5 Levels (100–500)</text>
+<line x1="690" y1="232" x2="690" y2="270" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="580" y="350" width="220" height="42" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="690.0" y="371.0" font-size="11" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">20 books seeded/dept.</text>
+<line x1="690" y1="312" x2="690" y2="350" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="420.0" y="432" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 1.6. Scope of the seeded catalogue: 9 schools, 57 departments, 5 levels, 1,140 books.</text>
+
+</svg>

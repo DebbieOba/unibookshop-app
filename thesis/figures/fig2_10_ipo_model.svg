@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="244" viewBox="0 0 830 244" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="830" height="244" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="829" height="209" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="30" y="80" width="210" height="110" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="135.0" y="113.25" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">INPUT • Observed bookshop</text>
+<text x="135.0" y="127.75" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">workflow • Reviewed systems</text>
+<text x="135.0" y="142.25" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">(2.2–2.6) • FUTA academic</text>
+<text x="135.0" y="156.75" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">structure</text>
+<line x1="240" y1="135" x2="310" y2="135" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="310" y="80" width="210" height="110" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="415.0" y="113.25" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">PROCESS • Requirements</text>
+<text x="415.0" y="127.75" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">analysis • Agile iterative</text>
+<text x="415.0" y="142.25" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">build (Ch.3) • Testing against</text>
+<text x="415.0" y="156.75" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Ch.1 problems</text>
+<line x1="520" y1="135" x2="590" y2="135" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="590" y="80" width="210" height="110" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="695.0" y="120.5" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">OUTPUT • CURRICULA mobile app</text>
+<text x="695.0" y="135.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">• Evaluated against objectives</text>
+<text x="695.0" y="149.5" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">• Documented for reuse (Ch.5)</text>
+<text x="415.0" y="232" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 2.10. Input-Process-Output research model adopted for this study, synthesised from the reviewed literature.</text>
+
+</svg>

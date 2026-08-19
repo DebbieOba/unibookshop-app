@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="354" viewBox="0 0 560 354" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="560" height="354" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="559" height="319" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="190.0" y="15.0" width="140" height="50" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="260.0" y="40.0" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Sprint Planning</text>
+<path d="M260,40 A110,110 0 0 1 365,116" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="294.6162167924669" y="91.00813061875579" width="140" height="50" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="364.6162167924669" y="116.00813061875579" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Daily Stand-up</text>
+<path d="M365,116 A110,110 0 0 1 325,239" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="254.65637775217203" y="213.99186938124421" width="140" height="50" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="324.65637775217203" y="238.99186938124421" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Sprint Development</text>
+<path d="M325,239 A110,110 0 0 1 195,239" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="125.34362224782797" y="213.99186938124421" width="140" height="50" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="195.34362224782797" y="238.99186938124421" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Sprint Review</text>
+<path d="M195,239 A110,110 0 0 1 155,116" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="85.3837832075331" y="91.0081306187558" width="140" height="50" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="155.3837832075331" y="116.0081306187558" font-size="10.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Retrospective</text>
+<path d="M155,116 A110,110 0 0 1 260,40" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="260" y="150" font-size="12" text-anchor="middle" font-weight="bold" font-style="normal" fill="#475569">2-week sprint</text>
+<text x="280.0" y="342" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 3.1. Iterative Scrum sprint cycle (Schwaber &amp; Sutherland, 2020) adopted for the CURRICULA build.</text>
+
+</svg>

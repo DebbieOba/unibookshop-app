@@ -1,0 +1,42 @@
+name: Keepalive — Render Free Tier
+
+# Render free instances spin down after 50 seconds of inactivity.
+# This workflow pings /health every 5 minutes to keep the server warm.
+# Cost: zero — GitHub Actions free tier has 2,000 minutes/month.
+
+on:
+  schedule:
+    # Every 5 minutes, 24/7. Cron syntax: minute hour day month weekday (UTC).
+    - cron: '*/5 * * * *'
+
+  # Allow triggering manually from the GitHub Actions UI for debugging.
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping /health
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+
+    steps:
+      - name: Ping Render server
+        run: |
+          echo "Pinging ${{ vars.RENDER_URL }}/health at $(date -u)"
+
+          HTTP_STATUS=$(curl \
+            --silent \
+            --output /dev/null \
+            --write-out "%{http_code}" \
+            --max-time 30 \
+            --retry 2 \
+            --retry-delay 5 \
+            "${{ vars.RENDER_URL }}/health")
+
+          echo "HTTP status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Server is alive."
+          else
+            echo "❌ Unexpected status code: $HTTP_STATUS"
+            exit 1
+          fi

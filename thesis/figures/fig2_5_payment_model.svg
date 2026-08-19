@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="274" viewBox="0 0 830 274" font-family="Calibri, 'Segoe UI', Arial, sans-serif">
+<rect x="0" y="0" width="830" height="274" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker><marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4894A"/></marker></defs>
+<rect x="0.5" y="0.5" width="829" height="239" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+<circle cx="50" cy="66.82" r="6.82" fill="#E8C4A0" stroke="#64748B" stroke-width="0.868"/>
+<path d="M37.6,98.44 C37.6,78.6 41.32,72.4 50,72.4 C58.68,72.4 62.4,78.6 62.4,98.44 Z" fill="#64748B" stroke="#64748B" stroke-width="1"/>
+<text x="50" y="109.6" font-size="7.13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Customer</text>
+<rect x="160" y="40" width="170" height="55" rx="8" fill="#DCE3F5" stroke="#3B4E8F" stroke-width="1.5"/>
+<text x="245.0" y="59.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Merchant App</text>
+<text x="245.0" y="76.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">(cart/checkout)</text>
+<line x1="110" y1="75" x2="160" y2="65" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="380" y="40" width="170" height="55" rx="8" fill="#F1E6D3" stroke="#B4894A" stroke-width="1.5"/>
+<text x="465.0" y="67.5" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Payment Aggregator API</text>
+<line x1="330" y1="65" x2="380" y2="65" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="600" y="40" width="170" height="55" rx="8" fill="#E7EBF0" stroke="#64748B" stroke-width="1.5"/>
+<text x="685.0" y="59.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Issuing Bank / Mobile</text>
+<text x="685.0" y="76.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Money</text>
+<line x1="550" y1="65" x2="600" y2="65" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="380" y="150" width="170" height="55" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="465.0" y="169.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Webhook: verified</text>
+<text x="465.0" y="186.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">payment event</text>
+<path d="M685,95 Q600,130 465,150" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="160" y="150" width="170" height="55" rx="8" fill="#DCEEE5" stroke="#2F7D5C" stroke-width="1.5"/>
+<text x="245.0" y="169.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">Order confirmed,</text>
+<text x="245.0" y="186.0" font-size="13" text-anchor="middle" font-weight="bold" font-style="normal" fill="#1F2937">notification sent</text>
+<line x1="380" y1="177" x2="330" y2="177" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="415.0" y="262" font-size="11.5" text-anchor="middle" font-style="italic" fill="#475569">Figure 2.5. Generalised aggregator-mediated payment model reported across the reviewed fintech literature.</text>
+
+</svg>
