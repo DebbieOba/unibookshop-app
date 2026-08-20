@@ -67,7 +67,7 @@ if (__DEV__) {
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = [500, 1500];
 
-export const api = axios.create({ baseURL, timeout: 15000 });
+export const api = axios.create({ baseURL, timeout: 60000 });
 
 // Dev-only call logging — every request/response/error shows up in the
 // Metro/device logs, so "is the app actually calling the API, and what came
@@ -185,7 +185,7 @@ async function refreshAccessToken(): Promise<string | null | 'network-error'> {
   }
 
   try {
-    const { data } = await axios.post(`${baseURL}/auth/refresh`, { refreshToken }, { timeout: 15000 });
+    const { data } = await axios.post(`${baseURL}/auth/refresh`, { refreshToken }, { timeout: 60000 });
     if (__DEV__) {
       // eslint-disable-next-line no-console
       console.log(`[api] ✓ POST /auth/refresh 200 (${Date.now() - startedAt}ms)`);
