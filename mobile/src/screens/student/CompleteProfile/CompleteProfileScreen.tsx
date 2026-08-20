@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -137,21 +137,14 @@ export function CompleteProfileScreen() {
 
   return (
     <AuthBackdrop heightFraction={0.25}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={insets.top}
+      <View
+        style={{
+          flex: 1,
+          paddingTop: theme.spacing.xl,
+          paddingHorizontal: theme.spacing.xl,
+          gap: theme.spacing.md,
+        }}
       >
-        <ScrollView
-          style={{ flex: 1 }}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            paddingTop: theme.spacing.xl,
-            paddingHorizontal: theme.spacing.xl,
-            paddingBottom: insets.bottom + theme.spacing.xl,
-            gap: theme.spacing.md,
-          }}
-        >
           <AppText variant="title">Complete your profile</AppText>
           <AppText
             variant="body"
@@ -262,8 +255,7 @@ export function CompleteProfileScreen() {
             loadingLabel="Saving…"
             onPress={onSubmit}
           />
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </AuthBackdrop>
   );
 }

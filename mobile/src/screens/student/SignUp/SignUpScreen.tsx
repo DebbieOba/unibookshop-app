@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Pressable, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -152,23 +152,15 @@ export function SignUpScreen({ navigation }: Props) {
   });
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={0}
-    >
-      <AuthBackdrop heightFraction={0.22}>
-        <ScrollView
-          style={{ flex: 1 }}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            paddingHorizontal: theme.spacing.xl,
-            paddingVertical: theme.spacing.xl,
-            gap: theme.spacing.md,
-          }}
-        >
+    <AuthBackdrop heightFraction={0.22}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: theme.spacing.xl,
+          paddingTop: theme.spacing.xl,
+          gap: theme.spacing.md,
+        }}
+      >
           <AppText variant="title">Welcome.</AppText>
           <AppText
             variant="body"
@@ -413,9 +405,8 @@ export function SignUpScreen({ navigation }: Props) {
             onSelect={(b) => setValue('bookshopId', b.id, { shouldValidate: true })}
             onClose={() => setBookshopSheetOpen(false)}
           />
-        </ScrollView>
+        </View>
       </AuthBackdrop>
-    </KeyboardAvoidingView>
   );
 }
 
