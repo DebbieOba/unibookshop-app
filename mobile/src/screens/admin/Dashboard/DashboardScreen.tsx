@@ -221,18 +221,19 @@ export function DashboardScreen({ navigation }: Props) {
         {/* Quick Actions */}
         <View style={{ gap: theme.spacing.sm }}>
           <AppText variant="sectionHeader">Quick actions</AppText>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>
             {QUICK_ACTIONS.map((action) => (
               <Pressable
                 key={action.label}
                 onPress={() => action.go(navigation)}
                 style={({ pressed }) => ({
-                  width: 80,
-                  transform: [{ scale: pressed ? 0.96 : 1 }],
+                  width: '47%',
+                  flexGrow: 1,
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
                   opacity: pressed ? 0.9 : 1,
                 })}
               >
-                <Card style={{ width: '100%', height: 105, alignItems: 'center', justifyContent: 'flex-start', gap: theme.spacing.xs, paddingVertical: theme.spacing.sm, paddingHorizontal: 4 }}>
+                <Card style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, padding: theme.spacing.md, height: 76 }}>
                   <View
                     style={{
                       width: 36,
@@ -245,9 +246,11 @@ export function DashboardScreen({ navigation }: Props) {
                   >
                     <Ionicons name={action.icon} size={18} color={theme.colors.primary} />
                   </View>
-                  <AppText variant="caption" style={{ textAlign: 'center', color: theme.colors.textPrimary, fontWeight: 'bold', fontSize: 10 }} numberOfLines={2}>
-                    {action.label}
-                  </AppText>
+                  <View style={{ flex: 1 }}>
+                    <AppText variant="bodyMedium" style={{ fontWeight: '600', color: theme.colors.textPrimary }} numberOfLines={2}>
+                      {action.label}
+                    </AppText>
+                  </View>
                 </Card>
               </Pressable>
             ))}
