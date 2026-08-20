@@ -36,21 +36,18 @@ export function SchoolManagementScreen({ navigation }: Props) {
   const deleteLevelMutation = useDeleteLevel();
 
   const [activeTab, setActiveTab] = useState<'SCHOOLS' | 'LEVELS'>('SCHOOLS');
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
+  const [expandedSchoolId, setExpandedSchoolId] = useState<string | null>(null);
 
   // Modal controls
   const [isAddSchoolOpen, setIsAddSchoolOpen] = useState(false);
   const [newSchoolName, setNewSchoolName] = useState('');
 
   const [isAddDeptOpen, setIsAddDeptOpen] = useState(false);
+  const [selectedSchoolIdForDept, setSelectedSchoolIdForDept] = useState<string | null>(null);
   const [newDeptName, setNewDeptName] = useState('');
 
   const [isAddLevelOpen, setIsAddLevelOpen] = useState(false);
   const [newLevelName, setNewLevelName] = useState('');
-
-  const activeSchool = useMemo(() => {
-    return schools.data?.find((s) => s.id === selectedSchoolId) || null;
-  }, [schools.data, selectedSchoolId]);
 
   const handleAddSchool = async () => {
     if (!newSchoolName.trim()) return;
@@ -65,7 +62,7 @@ export function SchoolManagementScreen({ navigation }: Props) {
   };
 
   const handleDeleteSchool = (id: string, name: string) => {
-    Alert.alert('Confirm Delete', `Are you sure you want to delete ${name}? All associated departments will be affected.`, [
+    Alert.alert('Confirm Delete', `Are you sure you want to delete ${name}? All associated departments will be deleted.`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
@@ -73,7 +70,7 @@ export function SchoolManagementScreen({ navigation }: Props) {
         onPress: async () => {
           try {
             await deleteSchoolMutation.mutateAsync(id);
-            if (selectedSchoolId === id) setSelectedSchoolId(null);
+            if (expandedSchoolId === id) setExpandedSchoolId(null);
             Alert.alert('Success', 'School deleted successfully');
           } catch (err: any) {
             Alert.alert('Error', err.response?.data?.message || 'Failed to delete school');
@@ -84,9 +81,9 @@ export function SchoolManagementScreen({ navigation }: Props) {
   };
 
   const handleAddDept = async () => {
-    if (!newDeptName.trim() || !selectedSchoolId) return;
+    if (!newDeptName.trim() || !selectedSchoolIdForDept) return;
     try {
-      await createDeptMutation.mutateAsync({ schoolId: selectedSchoolId, name: newDeptName.trim() });
+      await createDeptMutation.mutateAsync({ schoolId: selectedSchoolIdForDept, name: newDeptName.trim() });
       setNewDeptName('');
       setIsAddDeptOpen(false);
       Alert.alert('Success', 'Department added successfully');
@@ -141,6 +138,15 @@ export function SchoolManagementScreen({ navigation }: Props) {
         },
       },
     ]);
+  };
+
+  const toggleExpandSchool = (schoolId: string) => {
+    setExpandedSchoolId(expandedSchoolId === schoolId ? null : schoolId);
+  };
+
+  const openAddDept = (schoolId: string) => {
+    setSelectedSchoolIdForDept(schoolId);
+    setIsAddDeptOpen(true);
   };
 
   const loading = schools.isLoading || levels.isLoading;
@@ -204,7 +210,7 @@ export function SchoolManagementScreen({ navigation }: Props) {
           }}
         >
           <AppText variant="bodyMedium" weight="bold" style={{ color: activeTab === 'LEVELS' ? theme.colors.primary : theme.colors.textSecondary }}>
-            Levels
+            Academic Levels
           </AppText>
         </Pressable>
       </View>
@@ -214,136 +220,140 @@ export function SchoolManagementScreen({ navigation }: Props) {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : activeTab === 'SCHOOLS' ? (
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          {/* Schools List Panel */}
-          <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: theme.colors.border, padding: theme.spacing.md }}>
-            <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary, marginBottom: theme.spacing.sm, textTransform: 'uppercase' }}>
-              Schools
-            </AppText>
-            <FlatList
-              data={schools.data}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ gap: theme.spacing.sm }}
-              renderItem={({ item }) => {
-                const isSelected = item.id === selectedSchoolId;
-                return (
-                  <Pressable onPress={() => setSelectedSchoolId(item.id)}>
-                    <Card
-                      style={{
-                        padding: theme.spacing.md,
-                        borderColor: isSelected ? theme.colors.primary : theme.colors.border,
-                        borderWidth: isSelected ? 1.5 : 1,
-                        backgroundColor: isSelected ? theme.colors.primary + '08' : theme.colors.surface,
-                      }}
-                    >
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <AppText variant="bodyMedium" weight="bold" style={{ flex: 1, color: isSelected ? theme.colors.primary : theme.colors.textPrimary }}>
-                          {item.name}
-                        </AppText>
-                        <Pressable onPress={() => handleDeleteSchool(item.id, item.name)} hitSlop={6}>
-                          <Ionicons name="trash-outline" size={16} color={theme.colors.error} />
-                        </Pressable>
-                      </View>
-                      <AppText variant="caption" style={{ color: theme.colors.textSecondary, marginTop: 4 }}>
-                        {item.departments.length} {item.departments.length === 1 ? 'Dept' : 'Depts'}
-                      </AppText>
-                    </Card>
-                  </Pressable>
-                );
-              }}
-            />
-          </View>
-
-          {/* Departments List Panel */}
-          <View style={{ flex: 1.2, padding: theme.spacing.md }}>
-            {activeSchool ? (
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.spacing.md }}>
-                  <View style={{ flex: 1 }}>
+        /* Schools Stacked Accordion List */
+        <FlatList
+          data={schools.data}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.sm }}>
+              <Ionicons name="school-outline" size={36} color={theme.colors.textTertiary} />
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No schools added yet.</AppText>
+            </View>
+          }
+          renderItem={({ item }) => {
+            const isExpanded = expandedSchoolId === item.id;
+            return (
+              <Card
+                style={{
+                  padding: 0,
+                  overflow: 'hidden',
+                  borderWidth: 1,
+                  borderColor: isExpanded ? theme.colors.primary : theme.colors.border,
+                }}
+              >
+                {/* School Row Trigger */}
+                <Pressable
+                  onPress={() => toggleExpandSchool(item.id)}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: theme.spacing.lg,
+                    backgroundColor: isExpanded ? theme.colors.primary + '03' : theme.colors.surface,
+                  }}
+                >
+                  <View style={{ flex: 1, gap: 2, marginRight: theme.spacing.md }}>
                     <AppText variant="bodyMedium" weight="bold">
-                      {activeSchool.name}
+                      {item.name}
                     </AppText>
                     <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
-                      Manage departments
+                      {item.departments.length} {item.departments.length === 1 ? 'Department' : 'Departments'}
                     </AppText>
                   </View>
-                  <Button
-                    label="Add Dept"
-                    size="small"
-                    icon="add"
-                    onPress={() => setIsAddDeptOpen(true)}
-                  />
-                </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
+                    <Pressable onPress={() => handleDeleteSchool(item.id, item.name)} hitSlop={8}>
+                      <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
+                    </Pressable>
+                    <Ionicons
+                      name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={20}
+                      color={theme.colors.textSecondary}
+                    />
+                  </View>
+                </Pressable>
 
-                <FlatList
-                  data={activeSchool.departments}
-                  keyExtractor={(item) => item.id}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ gap: theme.spacing.sm }}
-                  ListEmptyComponent={
-                    <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.xs }}>
-                      <Ionicons name="git-branch-outline" size={24} color={theme.colors.textTertiary} />
-                      <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
-                        No departments added yet
+                {/* Inline Departments List */}
+                {isExpanded ? (
+                  <View style={{ borderTopWidth: 1, borderTopColor: theme.colors.border, padding: theme.spacing.lg, backgroundColor: theme.colors.surfaceAlt }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.spacing.md }}>
+                      <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary, textTransform: 'uppercase' }}>
+                        Departments
                       </AppText>
+                      <Button
+                        label="Add Dept"
+                        size="small"
+                        icon="add"
+                        onPress={() => openAddDept(item.id)}
+                      />
                     </View>
-                  }
-                  renderItem={({ item }) => (
-                    <Card
-                      style={{
-                        padding: theme.spacing.md,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        backgroundColor: theme.colors.surfaceAlt,
-                      }}
-                    >
-                      <AppText variant="bodyMedium" style={{ flex: 1 }}>
-                        {item.name}
-                      </AppText>
-                      <Pressable onPress={() => handleDeleteDept(item.id, item.name)} hitSlop={6}>
-                        <Ionicons name="close-circle-outline" size={18} color={theme.colors.error} />
-                      </Pressable>
-                    </Card>
-                  )}
-                />
-              </View>
-            ) : (
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm }}>
-                <Ionicons name="school" size={32} color={theme.colors.textTertiary} />
-                <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
-                  Select a school on the left to configure departments.
-                </AppText>
-              </View>
-            )}
-          </View>
-        </View>
+
+                    {item.departments.length > 0 ? (
+                      <View style={{ gap: theme.spacing.sm }}>
+                        {item.departments.map((dept) => (
+                          <View
+                            key={dept.id}
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: theme.spacing.md,
+                              borderRadius: theme.radii.input,
+                              backgroundColor: theme.colors.surface,
+                              borderWidth: 1,
+                              borderColor: theme.colors.border,
+                            }}
+                          >
+                            <AppText variant="bodyMedium" style={{ flex: 1, color: theme.colors.textPrimary }}>
+                              {dept.name}
+                            </AppText>
+                            <Pressable onPress={() => handleDeleteDept(dept.id, dept.name)} hitSlop={8}>
+                              <Ionicons name="close-circle-outline" size={18} color={theme.colors.error} />
+                            </Pressable>
+                          </View>
+                        ))}
+                      </View>
+                    ) : (
+                      <View style={{ alignItems: 'center', paddingVertical: theme.spacing.md, gap: 4 }}>
+                        <Ionicons name="git-branch-outline" size={20} color={theme.colors.textTertiary} />
+                        <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No departments created yet.</AppText>
+                      </View>
+                    )}
+                  </View>
+                ) : null}
+              </Card>
+            );
+          }}
+        />
       ) : (
-        /* Levels List */
+        /* Levels List Grid */
         <FlatList
           data={levels.data}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.sm }}
+          contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl }}>
-              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No levels added yet</AppText>
+            <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.sm }}>
+              <Ionicons name="layers-outline" size={36} color={theme.colors.textTertiary} />
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No academic levels added yet.</AppText>
             </View>
           }
           renderItem={({ item }) => (
             <Card
               style={{
-                padding: theme.spacing.md,
+                padding: theme.spacing.lg,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                borderWidth: 1,
+                borderColor: theme.colors.border,
               }}
             >
               <AppText variant="bodyMedium" weight="bold">
                 {item.name}
               </AppText>
-              <Pressable onPress={() => handleDeleteLevel(item.id, item.name)} hitSlop={6}>
+              <Pressable onPress={() => handleDeleteLevel(item.id, item.name)} hitSlop={8}>
                 <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
               </Pressable>
             </Card>

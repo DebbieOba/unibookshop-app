@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ActivityIndicator, Alert, FlatList, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import {
 import { AppText } from '../../components/AppText';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { Avatar } from '../../components/Avatar';
 
 type Props = NativeStackScreenProps<SuperAdminStackParamList, 'StaffManagement'>;
 
@@ -24,6 +25,7 @@ export function StaffManagementScreen({ navigation }: Props) {
   const roles = useSuperAdminRoles();
   const createStaffMutation = useCreateStaff();
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -54,6 +56,17 @@ export function StaffManagementScreen({ navigation }: Props) {
       Alert.alert('Error', err.response?.data?.message || 'Failed to add staff member');
     }
   };
+
+  const filteredStaff = useMemo(() => {
+    if (!staff.data) return [];
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return staff.data;
+    return staff.data.filter(
+      (s) =>
+        (s.profile?.fullName || '').toLowerCase().includes(query) ||
+        s.email.toLowerCase().includes(query)
+    );
+  }, [staff.data, searchQuery]);
 
   const loading = staff.isLoading || roles.isLoading;
 
@@ -89,171 +102,241 @@ export function StaffManagementScreen({ navigation }: Props) {
         />
       </View>
 
+      {/* Search Bar */}
+      <View style={{ padding: theme.spacing.lg, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 44,
+            borderRadius: theme.radii.input,
+            backgroundColor: theme.colors.surfaceAlt,
+            paddingHorizontal: theme.spacing.md,
+            gap: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+          }}
+        >
+          <Ionicons name="search" size={18} color={theme.colors.textTertiary} />
+          <TextInput
+            placeholder="Search staff by name or email..."
+            placeholderTextColor={theme.colors.textTertiary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={{
+              flex: 1,
+              color: theme.colors.textPrimary,
+              fontSize: 14,
+            }}
+          />
+          {searchQuery ? (
+            <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
+              <Ionicons name="close-circle" size={18} color={theme.colors.textSecondary} />
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
+
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
         <FlatList
-          data={staff.data}
+          data={filteredStaff}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.xs }}>
-              <Ionicons name="people-outline" size={48} color={theme.colors.textTertiary} />
-              <AppText variant="body" style={{ color: theme.colors.textSecondary }}>
-                No staff members registered yet.
+            <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.sm }}>
+              <Ionicons name="people-outline" size={36} color={theme.colors.textTertiary} />
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                {searchQuery ? 'No matching staff members found.' : 'No staff members added yet.'}
               </AppText>
             </View>
           }
-          renderItem={({ item }) => (
-            <Card style={{ padding: theme.spacing.md, gap: theme.spacing.xs }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <AppText variant="bodyMedium" weight="bold">
-                  {item.profile?.fullName ?? 'Anonymous Worker'}
-                </AppText>
-                <View
-                  style={{
-                    backgroundColor: theme.colors.primary + '12',
-                    paddingHorizontal: 8,
-                    paddingVertical: 2,
-                    borderRadius: 999,
-                  }}
-                >
-                  <AppText variant="caption" weight="bold" style={{ color: theme.colors.primary, fontSize: 10 }}>
-                    {item.roleRecord?.name ?? 'System Staff'}
+          renderItem={({ item }) => {
+            const roleName = item.roleRecord?.name || 'Staff';
+            return (
+              <Card style={{ padding: theme.spacing.lg, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border }}>
+                <Avatar fullName={item.profile?.fullName ?? 'Staff Member'} size={44} />
+                <View style={{ flex: 1, gap: 2 }}>
+                  <AppText variant="bodyMedium" weight="bold" style={{ color: theme.colors.textPrimary }}>
+                    {item.profile?.fullName ?? 'Unnamed Staff'}
+                  </AppText>
+                  <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                    {item.email}
                   </AppText>
                 </View>
-              </View>
-              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
-                {item.email}
-              </AppText>
-            </Card>
-          )}
+                <View
+                  style={{
+                    backgroundColor: theme.colors.primary + '15',
+                    paddingHorizontal: theme.spacing.sm,
+                    paddingVertical: 4,
+                    borderRadius: theme.radii.pill,
+                  }}
+                >
+                  <AppText variant="caption" weight="bold" style={{ color: theme.colors.primary, fontSize: 10, textTransform: 'uppercase' }}>
+                    {roleName}
+                  </AppText>
+                </View>
+              </Card>
+            );
+          }}
         />
       )}
 
-      {/* Add Staff Modal */}
-      <Modal visible={isAddModalOpen} transparent animationType="slide" onRequestClose={() => setIsAddModalOpen(false)}>
-        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setIsAddModalOpen(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: theme.colors.surface, borderTopLeftRadius: theme.radii.card, borderTopRightRadius: theme.radii.card, padding: theme.spacing.xl, gap: theme.spacing.md, maxHeight: '80%' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <AppText variant="bodyMedium" weight="bold">Add Global Staff</AppText>
-              <Pressable onPress={() => setIsAddModalOpen(false)} hitSlop={8}>
-                <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
-              </Pressable>
+      {/* Add Staff Modal - Full Page Presentation */}
+      <Modal visible={isAddModalOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setIsAddModalOpen(false)}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+          {/* Modal Header */}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: theme.spacing.lg,
+              paddingVertical: theme.spacing.lg,
+              borderBottomWidth: 1,
+              borderBottomColor: theme.colors.border,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <AppText variant="sectionHeader" weight="bold">Register New Staff</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                Create a global staff account and associate a role
+              </AppText>
+            </View>
+            <Pressable onPress={() => setIsAddModalOpen(false)} hitSlop={12}>
+              <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
+            </Pressable>
+          </View>
+
+          {/* Form Scroll Area */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.lg, paddingBottom: insets.bottom + theme.spacing.xl }}
+          >
+            {/* Full Name */}
+            <View style={{ gap: theme.spacing.xs }}>
+              <AppText variant="label" weight="semiBold" style={{ color: theme.colors.textSecondary }}>Full Name</AppText>
+              <TextInput
+                placeholder="e.g. John Doe"
+                placeholderTextColor={theme.colors.textTertiary}
+                value={fullName}
+                onChangeText={setFullName}
+                style={{
+                  height: 48,
+                  borderRadius: theme.radii.input,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  paddingHorizontal: theme.spacing.md,
+                  color: theme.colors.textPrimary,
+                  backgroundColor: theme.colors.surface,
+                }}
+              />
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: theme.spacing.md }}>
-              <View style={{ gap: theme.spacing.xs }}>
-                <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary }}>Full Name</AppText>
-                <TextInput
-                  placeholder="e.g. John Doe"
-                  placeholderTextColor={theme.colors.textTertiary}
-                  value={fullName}
-                  onChangeText={setFullName}
-                  style={{
-                    height: 44,
-                    borderRadius: theme.radii.input,
-                    borderWidth: 1,
-                    borderColor: theme.colors.border,
-                    paddingHorizontal: theme.spacing.md,
-                    color: theme.colors.textPrimary,
-                    backgroundColor: theme.colors.surfaceAlt,
-                  }}
-                />
-              </View>
+            {/* Email */}
+            <View style={{ gap: theme.spacing.xs }}>
+              <AppText variant="label" weight="semiBold" style={{ color: theme.colors.textSecondary }}>Email Address</AppText>
+              <TextInput
+                placeholder="e.g. john.doe@curricula.app"
+                placeholderTextColor={theme.colors.textTertiary}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                style={{
+                  height: 48,
+                  borderRadius: theme.radii.input,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  paddingHorizontal: theme.spacing.md,
+                  color: theme.colors.textPrimary,
+                  backgroundColor: theme.colors.surface,
+                }}
+              />
+            </View>
 
-              <View style={{ gap: theme.spacing.xs }}>
-                <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary }}>Email Address</AppText>
-                <TextInput
-                  placeholder="e.g. worker@curricula.test"
-                  placeholderTextColor={theme.colors.textTertiary}
-                  value={email}
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  style={{
-                    height: 44,
-                    borderRadius: theme.radii.input,
-                    borderWidth: 1,
-                    borderColor: theme.colors.border,
-                    paddingHorizontal: theme.spacing.md,
-                    color: theme.colors.textPrimary,
-                    backgroundColor: theme.colors.surfaceAlt,
-                  }}
-                />
-              </View>
+            {/* Password */}
+            <View style={{ gap: theme.spacing.xs }}>
+              <AppText variant="label" weight="semiBold" style={{ color: theme.colors.textSecondary }}>Password</AppText>
+              <TextInput
+                placeholder="Temporary login password"
+                placeholderTextColor={theme.colors.textTertiary}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                style={{
+                  height: 48,
+                  borderRadius: theme.radii.input,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  paddingHorizontal: theme.spacing.md,
+                  color: theme.colors.textPrimary,
+                  backgroundColor: theme.colors.surface,
+                }}
+              />
+            </View>
 
-              <View style={{ gap: theme.spacing.xs }}>
-                <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary }}>Default Password</AppText>
-                <TextInput
-                  placeholder="At least 6 characters"
-                  placeholderTextColor={theme.colors.textTertiary}
-                  secureTextEntry
-                  value={password}
-                  onChangeText={setPassword}
-                  autoCapitalize="none"
-                  style={{
-                    height: 44,
-                    borderRadius: theme.radii.input,
-                    borderWidth: 1,
-                    borderColor: theme.colors.border,
-                    paddingHorizontal: theme.spacing.md,
-                    color: theme.colors.textPrimary,
-                    backgroundColor: theme.colors.surfaceAlt,
-                  }}
-                />
-              </View>
-
-              <View style={{ gap: theme.spacing.xs }}>
-                <AppText variant="caption" weight="bold" style={{ color: theme.colors.textSecondary }}>Assign System Role</AppText>
+            {/* Role Picker (Modern Selector Grid instead of Picker dropdown) */}
+            <View style={{ gap: theme.spacing.sm }}>
+              <AppText variant="label" weight="semiBold" style={{ color: theme.colors.textSecondary }}>Assign Staff Role</AppText>
+              {roles.data && roles.data.length > 0 ? (
                 <View style={{ gap: theme.spacing.xs }}>
-                  {roles.data?.map((role) => {
-                    const isSelected = selectedRoleId === role.id;
+                  {roles.data.map((r) => {
+                    const isSelected = selectedRoleId === r.id;
                     return (
-                      <Pressable key={role.id} onPress={() => setSelectedRoleId(role.id)}>
-                        <Card
-                          style={{
-                            padding: theme.spacing.sm,
-                            borderColor: isSelected ? theme.colors.primary : theme.colors.border,
-                            borderWidth: isSelected ? 1.5 : 1,
-                            backgroundColor: isSelected ? theme.colors.primary + '08' : theme.colors.surface,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                          }}
-                        >
-                          <View style={{ flex: 1 }}>
-                            <AppText variant="bodyMedium" weight="bold" style={{ fontSize: 13 }}>{role.name}</AppText>
-                            {role.description ? (
-                              <AppText variant="caption" style={{ color: theme.colors.textSecondary, fontSize: 11, marginTop: 1 }}>
-                                {role.description}
-                              </AppText>
-                            ) : null}
-                          </View>
-                          <Ionicons
-                            name={isSelected ? 'radio-button-on' : 'radio-button-off'}
-                            size={18}
-                            color={isSelected ? theme.colors.primary : theme.colors.textTertiary}
-                          />
-                        </Card>
+                      <Pressable
+                        key={r.id}
+                        onPress={() => setSelectedRoleId(r.id)}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          padding: theme.spacing.md,
+                          borderRadius: theme.radii.input,
+                          borderWidth: 1.5,
+                          borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                          backgroundColor: isSelected ? theme.colors.primary + '08' : theme.colors.surface,
+                          gap: theme.spacing.md,
+                        }}
+                      >
+                        <Ionicons
+                          name={isSelected ? 'radio-button-on' : 'radio-button-off'}
+                          size={20}
+                          color={isSelected ? theme.colors.primary : theme.colors.textTertiary}
+                        />
+                        <View style={{ flex: 1, gap: 2 }}>
+                          <AppText variant="bodyMedium" weight="bold" style={{ color: isSelected ? theme.colors.primary : theme.colors.textPrimary }}>
+                            {r.name}
+                          </AppText>
+                          {r.description ? (
+                            <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                              {r.description}
+                            </AppText>
+                          ) : null}
+                        </View>
                       </Pressable>
                     );
                   })}
                 </View>
-              </View>
+              ) : (
+                <View style={{ padding: theme.spacing.md, backgroundColor: theme.colors.surfaceAlt, borderRadius: theme.radii.input, alignItems: 'center' }}>
+                  <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No dynamic roles available. Please create a role first.</AppText>
+                </View>
+              )}
+            </View>
 
-              <Button
-                label="Register Staff Account"
-                onPress={handleAddStaff}
-                isLoading={createStaffMutation.isPending}
-                style={{ marginTop: theme.spacing.sm }}
-              />
-            </ScrollView>
-          </Pressable>
-        </Pressable>
+            {/* Action button */}
+            <Button
+              label="Register Staff Account"
+              onPress={handleAddStaff}
+              isLoading={createStaffMutation.isPending}
+              style={{ marginTop: theme.spacing.md }}
+            />
+          </ScrollView>
+        </View>
       </Modal>
     </View>
   );
