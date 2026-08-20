@@ -81,6 +81,14 @@ export class AuthService {
         .trim()
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-');
+
+      const existingBookshop = await this.prisma.bookshop.findUnique({
+        where: { slug },
+      });
+      if (existingBookshop) {
+        throw new ConflictException('A bookshop with this name already exists');
+      }
+
       const bookshop = await this.prisma.bookshop.create({
         data: {
           name: dto.bookshopName.trim(),
