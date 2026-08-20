@@ -75,6 +75,8 @@ export function HomeScreen({ navigation }: Props) {
 
   const [categorySheetOpen, setCategorySheetOpen] = useState(false);
   const [syllabusSheetOpen, setSyllabusSheetOpen] = useState(false);
+  const [syllabusSearchQuery, setSyllabusSearchQuery] = useState('');
+  const [syllabusFilter, setSyllabusFilter] = useState<'ALL' | 'IN_PROGRESS' | 'COMPLETED'>('ALL');
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const bannerRef = useRef<ScrollView>(null);
   const BANNER_ITEM_WIDTH = Dimensions.get('window').width - 32 - 16; // screen width - horizontal padding - gap
@@ -115,6 +117,32 @@ export function HomeScreen({ navigation }: Props) {
   const completionPercentage = useMemo(() => {
     return totalRequired > 0 ? Math.round((totalOwned / totalRequired) * 100) : 0;
   }, [totalRequired, totalOwned]);
+
+  const filteredSyllabus = useMemo(() => {
+    const data = syllabus.data ?? [];
+    return data.filter((item) => {
+      const matchesSearch =
+        item.courseCode.toLowerCase().includes(syllabusSearchQuery.toLowerCase()) ||
+        (item.courseTitle?.toLowerCase().includes(syllabusSearchQuery.toLowerCase()) ?? false);
+
+      if (!matchesSearch) return false;
+
+      if (syllabusFilter === 'COMPLETED') {
+        return item.ownedBookCount >= item.requiredBookCount;
+      }
+      if (syllabusFilter === 'IN_PROGRESS') {
+        return item.ownedBookCount < item.requiredBookCount;
+      }
+
+      return true;
+    });
+  }, [syllabus.data, syllabusSearchQuery, syllabusFilter]);
+
+  const handleCloseSyllabusSheet = () => {
+    setSyllabusSearchQuery('');
+    setSyllabusFilter('ALL');
+    setSyllabusSheetOpen(false);
+  };
 
   const maxSaleDiscountPercent = useMemo(() => {
     const onSale = onSaleBooks.data?.data ?? [];
@@ -805,11 +833,11 @@ export function HomeScreen({ navigation }: Props) {
           visible={syllabusSheetOpen}
           transparent
           animationType="slide"
-          onRequestClose={() => setSyllabusSheetOpen(false)}
+          onRequestClose={handleCloseSyllabusSheet}
         >
           <Pressable
             style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}
-            onPress={() => setSyllabusSheetOpen(false)}
+            onPress={handleCloseSyllabusSheet}
           >
             <Pressable
               onPress={(e) => e.stopPropagation()}
@@ -841,17 +869,85 @@ export function HomeScreen({ navigation }: Props) {
                     Acquisition tracking for your department courses
                   </AppText>
                 </View>
-                <Pressable onPress={() => setSyllabusSheetOpen(false)} hitSlop={8}>
+                <Pressable onPress={handleCloseSyllabusSheet} hitSlop={8}>
                   <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
                 </Pressable>
               </View>
 
+              {/* Search Input Field */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 44,
+                  borderRadius: theme.radii.input,
+                  backgroundColor: theme.colors.surfaceAlt,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  paddingHorizontal: theme.spacing.md,
+                  gap: theme.spacing.sm,
+                  marginBottom: theme.spacing.md,
+                }}
+              >
+                <Ionicons name="search-outline" size={18} color={theme.colors.textTertiary} />
+                <TextInput
+                  placeholder="Search by course code or title…"
+                  placeholderTextColor={theme.colors.textTertiary}
+                  value={syllabusSearchQuery}
+                  onChangeText={(text) => setSyllabusSearchQuery(text)}
+                  style={{ flex: 1, color: theme.colors.textPrimary, height: '100%', fontSize: 13 }}
+                />
+                {syllabusSearchQuery ? (
+                  <Pressable onPress={() => setSyllabusSearchQuery('')} hitSlop={8}>
+                    <Ionicons name="close-circle" size={16} color={theme.colors.textTertiary} />
+                  </Pressable>
+                ) : null}
+              </View>
+
+              {/* Filter Chips */}
+              <View style={{ flexDirection: 'row', gap: theme.spacing.xs, marginBottom: theme.spacing.md }}>
+                {(['ALL', 'IN_PROGRESS', 'COMPLETED'] as const).map((filter) => {
+                  const active = syllabusFilter === filter;
+                  const label = filter === 'ALL' ? 'All' : filter === 'IN_PROGRESS' ? 'In Progress' : 'Completed';
+                  return (
+                    <Pressable
+                      key={filter}
+                      onPress={() => setSyllabusFilter(filter)}
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        borderRadius: 999,
+                        backgroundColor: active ? theme.colors.primary : theme.colors.surfaceAlt,
+                        borderWidth: 1,
+                        borderColor: active ? theme.colors.primary : theme.colors.border,
+                      }}
+                    >
+                      <AppText
+                        variant="caption"
+                        weight={active ? 'bold' : 'medium'}
+                        style={{ color: active ? '#FFFFFF' : theme.colors.textSecondary }}
+                      >
+                        {label}
+                      </AppText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
               {/* Course list */}
               <FlatList
-                data={syllabus.data}
+                data={filteredSyllabus}
                 keyExtractor={(item) => item.courseCode}
                 contentContainerStyle={{ gap: theme.spacing.md, paddingBottom: theme.spacing.xl }}
                 showsVerticalScrollIndicator={false}
+                ListEmptyComponent={
+                  <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.xs }}>
+                    <Ionicons name="search-outline" size={32} color={theme.colors.textTertiary} />
+                    <AppText variant="body" style={{ color: theme.colors.textSecondary }}>
+                      No courses found matching criteria
+                    </AppText>
+                  </View>
+                }
                 renderItem={({ item }) => {
                   const isComplete = item.ownedBookCount >= item.requiredBookCount;
                   const itemColor = isComplete ? theme.colors.primary : theme.colors.gold;
