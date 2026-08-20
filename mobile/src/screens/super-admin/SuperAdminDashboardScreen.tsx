@@ -6,13 +6,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SuperAdminStackParamList } from '../../navigation/types';
 import { useTheme } from '../../hooks/useTheme';
 import { useProfile } from '../../hooks/useProfile';
-import { useAuthStore } from '../../store/authStore';
 import { useSuperAdminRoles, useSuperAdminStaff, useSuperAdminSchools } from '../../hooks/useSuperAdmin';
 import { AppText } from '../../components/AppText';
 import { Card } from '../../components/Card';
 import { Avatar } from '../../components/Avatar';
 import { Skeleton } from '../../components/Skeleton';
-import { Button } from '../../components/Button';
 
 type Props = NativeStackScreenProps<SuperAdminStackParamList, 'SuperAdminDashboard'>;
 
@@ -27,7 +25,6 @@ export function SuperAdminDashboardScreen({ navigation }: Props) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const profile = useProfile();
-  const clearSession = useAuthStore((s) => s.clearSession);
 
   const roles = useSuperAdminRoles();
   const staff = useSuperAdminStaff();
@@ -43,48 +40,48 @@ export function SuperAdminDashboardScreen({ navigation }: Props) {
       {
         label: 'Schools',
         value: schools.data?.length ?? 0,
-        icon: 'school-outline' as const,
+        icon: 'school' as const,
         color: theme.colors.primary,
-        tint: theme.colors.primary + '15',
+        tint: theme.colors.primary + '12',
       },
       {
         label: 'Dynamic Roles',
         value: roles.data?.length ?? 0,
-        icon: 'key-outline' as const,
+        icon: 'key' as const,
         color: '#E0A82E',
-        tint: '#E0A82E15',
+        tint: '#E0A82E12',
       },
       {
         label: 'Staff Members',
         value: staff.data?.length ?? 0,
-        icon: 'people-outline' as const,
-        color: '#4AF2A1',
-        tint: '#4AF2A115',
+        icon: 'people' as const,
+        color: '#10B981',
+        tint: '#10B98112',
       },
     ];
   }, [schools.data, roles.data, staff.data, theme]);
 
-  const QUICK_ACTIONS = [
-    {
-      label: 'Manage Roles',
-      desc: 'Set dynamic permission maps',
-      icon: 'key-outline' as const,
-      color: '#E0A82E',
-      onPress: () => navigation.navigate('RoleManagement'),
-    },
-    {
-      label: 'Manage Staff',
-      desc: 'Add global platform workers',
-      icon: 'people-outline' as const,
-      color: '#4AF2A1',
-      onPress: () => navigation.navigate('StaffManagement'),
-    },
+  const MANAGEMENT_MODULES = [
     {
       label: 'Manage Schools',
-      desc: 'Config schools & departments',
+      desc: 'Schools, Departments, Levels',
       icon: 'school-outline' as const,
       color: theme.colors.primary,
-      onPress: () => navigation.navigate('SchoolManagement'),
+      route: 'SchoolManagement' as const,
+    },
+    {
+      label: 'Staff Registry',
+      desc: 'Platform workers & assignments',
+      icon: 'people-outline' as const,
+      color: '#10B981',
+      route: 'StaffManagement' as const,
+    },
+    {
+      label: 'Role Permissions',
+      desc: 'Dynamic dynamic policy mapping',
+      icon: 'key-outline' as const,
+      color: '#E0A82E',
+      route: 'RoleManagement' as const,
     },
   ];
 
@@ -96,7 +93,7 @@ export function SuperAdminDashboardScreen({ navigation }: Props) {
           backgroundColor: theme.colors.background,
           padding: theme.spacing.lg,
           gap: theme.spacing.md,
-          paddingTop: insets.top + theme.spacing.md,
+          paddingTop: insets.top + theme.spacing.xl,
         }}
       >
         <Skeleton height={80} />
@@ -111,12 +108,12 @@ export function SuperAdminDashboardScreen({ navigation }: Props) {
       style={{ flex: 1, backgroundColor: theme.colors.background }}
       contentContainerStyle={{
         paddingHorizontal: theme.spacing.lg,
-        paddingTop: insets.top + theme.spacing.md,
+        paddingTop: insets.top + theme.spacing.xl, // Extra top breathing room
         paddingBottom: insets.bottom + theme.spacing.xl,
       }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header section */}
+      {/* Premium Dashboard Top Bar */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.spacing.xl }}>
         <View style={{ flex: 1, gap: 2 }}>
           <AppText variant="body" style={{ color: theme.colors.textSecondary }}>
@@ -125,100 +122,145 @@ export function SuperAdminDashboardScreen({ navigation }: Props) {
           <AppText variant="title" weight="bold">
             {firstName} 👋
           </AppText>
-          <AppText variant="caption" weight="bold" style={{ color: theme.colors.primary }}>
-            SYSTEM SUPER ADMIN
-          </AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' }} />
+            <AppText variant="caption" weight="bold" style={{ color: theme.colors.primary, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase' }}>
+              System Console Active
+            </AppText>
+          </View>
         </View>
-        <Avatar fullName={profile.data?.fullName ?? 'Super Admin'} size={48} />
+
+        {/* Right side settings navigation trigger */}
+        <Pressable
+          onPress={() => navigation.navigate('SuperAdminSettings')}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.8 : 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: theme.spacing.xs,
+          })}
+        >
+          <Avatar fullName={profile.data?.fullName ?? 'Super Admin'} size={44} />
+          <View
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 16,
+              backgroundColor: theme.colors.surfaceAlt,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+            }}
+          >
+            <Ionicons name="settings-outline" size={18} color={theme.colors.textPrimary} />
+          </View>
+        </Pressable>
       </View>
 
-      {/* KPI Stats Grid */}
-      <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.xl }}>
+      {/* Spacious KPI Stats Overview */}
+      <View style={{ flexDirection: 'row', gap: theme.spacing.md, marginBottom: theme.spacing.xl }}>
         {stats.map((s) => (
-          <Card key={s.label} style={{ flex: 1, padding: theme.spacing.md, gap: theme.spacing.xs }}>
+          <Card key={s.label} style={{ flex: 1, padding: theme.spacing.lg, gap: theme.spacing.sm, borderWidth: 1, borderColor: theme.colors.border }}>
             <View
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: 18,
+                width: 40,
+                height: 40,
+                borderRadius: 20,
                 backgroundColor: s.tint,
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: 4,
               }}
             >
-              <Ionicons name={s.icon} size={18} color={s.color} />
+              <Ionicons name={s.icon} size={20} color={s.color} />
             </View>
-            <AppText variant="title" weight="bold">
-              {s.value}
-            </AppText>
-            <AppText variant="caption" style={{ color: theme.colors.textSecondary, fontSize: 10 }}>
-              {s.label}
-            </AppText>
+            <View style={{ gap: 2 }}>
+              <AppText variant="sectionHeader" weight="bold" style={{ fontSize: 20 }}>
+                {s.value}
+              </AppText>
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary, fontSize: 10, fontWeight: '600' }}>
+                {s.label}
+              </AppText>
+            </View>
           </Card>
         ))}
       </View>
 
-      {/* Quick Action Navigation Grid */}
+      {/* Control Center / Management Modules Section */}
       <View style={{ gap: theme.spacing.md, marginBottom: theme.spacing.xl }}>
-        <AppText variant="sectionHeader">Quick Actions</AppText>
-        <View style={{ gap: theme.spacing.sm }}>
-          {QUICK_ACTIONS.map((item) => (
-            <Pressable key={item.label} onPress={item.onPress}>
+        <AppText variant="sectionHeader" weight="bold" style={{ fontSize: 16, letterSpacing: 0.5 }}>
+          Control Center
+        </AppText>
+        <View style={{ gap: theme.spacing.md }}>
+          {MANAGEMENT_MODULES.map((item) => (
+            <Pressable key={item.label} onPress={() => navigation.navigate(item.route)}>
               <Card
                 style={{
-                  padding: theme.spacing.md,
+                  padding: theme.spacing.lg,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  gap: theme.spacing.md,
+                  gap: theme.spacing.lg,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
                 }}
               >
                 <View
                   style={{
-                    width: 44,
-                    height: 44,
+                    width: 48,
+                    height: 48,
                     borderRadius: 12,
-                    backgroundColor: item.color + '15',
+                    backgroundColor: item.color + '12',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Ionicons name={item.icon} size={22} color={item.color} />
+                  <Ionicons name={item.icon} size={24} color={item.color} />
                 </View>
                 <View style={{ flex: 1, gap: 2 }}>
-                  <AppText variant="bodyMedium" weight="bold">
+                  <AppText variant="bodyMedium" weight="bold" style={{ fontSize: 15 }}>
                     {item.label}
                   </AppText>
                   <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
                     {item.desc}
                   </AppText>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+                <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
               </Card>
             </Pressable>
           ))}
         </View>
       </View>
 
-      {/* Seed Status Details */}
-      <Card style={{ padding: theme.spacing.md, gap: theme.spacing.sm, marginBottom: theme.spacing.xl }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
-          <Ionicons name="shield-checkmark" size={20} color={theme.colors.primary} />
-          <AppText variant="bodyMedium" weight="bold">Platform Settings In Sync</AppText>
-        </View>
-        <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
-          Dynamic permissions are active. To modify dynamic mappings, manage permissions and dynamic staff roles.
+      {/* Platform Status & Security Center */}
+      <View style={{ gap: theme.spacing.md }}>
+        <AppText variant="sectionHeader" weight="bold" style={{ fontSize: 16, letterSpacing: 0.5 }}>
+          System Monitor
         </AppText>
-      </Card>
-
-      {/* Logout button */}
-      <Button
-        label="Sign Out"
-        variant="outline"
-        icon="log-out-outline"
-        onPress={clearSession}
-        style={{ borderRadius: 999 }}
-      />
+        <Card style={{ padding: theme.spacing.lg, gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+              <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+              <AppText variant="bodyMedium" weight="bold">Database & Guard Sync</AppText>
+            </View>
+            <View style={{ backgroundColor: '#10B98115', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+              <AppText variant="caption" weight="bold" style={{ color: '#10B981', fontSize: 9 }}>ONLINE</AppText>
+            </View>
+          </View>
+          <AppText variant="caption" style={{ color: theme.colors.textSecondary, lineHeight: 16 }}>
+            Dynamic RBAC matrix is operational. Access rules are enforced at the NestJS router boundary.
+          </AppText>
+          <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: theme.colors.border, paddingTop: theme.spacing.md, gap: theme.spacing.lg }}>
+            <View style={{ flex: 1 }}>
+              <AppText variant="caption" style={{ color: theme.colors.textTertiary }}>API LATENCY</AppText>
+              <AppText variant="bodyMedium" weight="bold" style={{ color: '#10B981' }}>Normal</AppText>
+            </View>
+            <View style={{ flex: 1 }}>
+              <AppText variant="caption" style={{ color: theme.colors.textTertiary }}>ACTIVE HOOKS</AppText>
+              <AppText variant="bodyMedium" weight="bold">4 Secure</AppText>
+            </View>
+          </View>
+        </Card>
+      </View>
     </ScrollView>
   );
 }

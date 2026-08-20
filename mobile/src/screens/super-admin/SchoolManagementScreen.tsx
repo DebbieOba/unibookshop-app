@@ -38,6 +38,11 @@ export function SchoolManagementScreen({ navigation }: Props) {
   const [activeTab, setActiveTab] = useState<'SCHOOLS' | 'LEVELS'>('SCHOOLS');
   const [expandedSchoolId, setExpandedSchoolId] = useState<string | null>(null);
 
+  // Search and Sort controls
+  const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+  const [levelSearchQuery, setLevelSearchQuery] = useState('');
+  const [schoolSortOrder, setSchoolSortOrder] = useState<'ALPHA' | 'DEPTS'>('ALPHA');
+
   // Modal controls
   const [isAddSchoolOpen, setIsAddSchoolOpen] = useState(false);
   const [newSchoolName, setNewSchoolName] = useState('');
@@ -149,17 +154,52 @@ export function SchoolManagementScreen({ navigation }: Props) {
     setIsAddDeptOpen(true);
   };
 
+  const filteredSchools = useMemo(() => {
+    if (!schools.data) return [];
+    let list = [...schools.data];
+
+    // Search Query
+    const query = schoolSearchQuery.trim().toLowerCase();
+    if (query) {
+      list = list.filter((s) => s.name.toLowerCase().includes(query));
+    }
+
+    // Sort order
+    if (schoolSortOrder === 'ALPHA') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (schoolSortOrder === 'DEPTS') {
+      list.sort((a, b) => b.departments.length - a.departments.length);
+    }
+
+    return list;
+  }, [schools.data, schoolSearchQuery, schoolSortOrder]);
+
+  const filteredLevels = useMemo(() => {
+    if (!levels.data) return [];
+    let list = [...levels.data];
+
+    // Search Query
+    const query = levelSearchQuery.trim().toLowerCase();
+    if (query) {
+      list = list.filter((l) => l.name.toLowerCase().includes(query));
+    }
+
+    // Default alphabetical sort for levels
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }, [levels.data, levelSearchQuery]);
+
   const loading = schools.isLoading || levels.isLoading;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Header */}
+      {/* Header with extra safe area top breathing room */}
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: theme.spacing.lg,
-          paddingTop: insets.top + theme.spacing.md,
+          paddingTop: insets.top + theme.spacing.xl, // Extended top padding
           paddingBottom: theme.spacing.md,
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.border,
@@ -215,6 +255,78 @@ export function SchoolManagementScreen({ navigation }: Props) {
         </Pressable>
       </View>
 
+      {/* Search and Sort Subheaders */}
+      <View style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm, borderBottomWidth: 1, borderBottomColor: theme.colors.border, gap: theme.spacing.sm }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 40,
+            borderRadius: theme.radii.input,
+            backgroundColor: theme.colors.surfaceAlt,
+            paddingHorizontal: theme.spacing.md,
+            gap: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+          }}
+        >
+          <Ionicons name="search" size={16} color={theme.colors.textTertiary} />
+          <TextInput
+            placeholder={activeTab === 'SCHOOLS' ? 'Search schools...' : 'Search levels...'}
+            placeholderTextColor={theme.colors.textTertiary}
+            value={activeTab === 'SCHOOLS' ? schoolSearchQuery : levelSearchQuery}
+            onChangeText={activeTab === 'SCHOOLS' ? setSchoolSearchQuery : setLevelSearchQuery}
+            style={{
+              flex: 1,
+              color: theme.colors.textPrimary,
+              fontSize: 13,
+            }}
+          />
+          {(activeTab === 'SCHOOLS' ? schoolSearchQuery : levelSearchQuery) ? (
+            <Pressable onPress={() => activeTab === 'SCHOOLS' ? setSchoolSearchQuery('') : setLevelSearchQuery('')} hitSlop={8}>
+              <Ionicons name="close-circle" size={16} color={theme.colors.textSecondary} />
+            </Pressable>
+          ) : null}
+        </View>
+
+        {activeTab === 'SCHOOLS' ? (
+          /* Modern Filter Chips */
+          <View style={{ flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'center' }}>
+            <AppText variant="caption" style={{ color: theme.colors.textTertiary, marginRight: 2 }}>SORT BY:</AppText>
+            <Pressable
+              onPress={() => setSchoolSortOrder('ALPHA')}
+              style={{
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: 4,
+                borderRadius: theme.radii.pill,
+                backgroundColor: schoolSortOrder === 'ALPHA' ? theme.colors.primary : theme.colors.surfaceAlt,
+                borderWidth: 1,
+                borderColor: schoolSortOrder === 'ALPHA' ? theme.colors.primary : theme.colors.border,
+              }}
+            >
+              <AppText variant="caption" weight="bold" style={{ color: schoolSortOrder === 'ALPHA' ? '#FFFFFF' : theme.colors.textSecondary, fontSize: 10 }}>
+                Alphabetical (A-Z)
+              </AppText>
+            </Pressable>
+            <Pressable
+              onPress={() => setSchoolSortOrder('DEPTS')}
+              style={{
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: 4,
+                borderRadius: theme.radii.pill,
+                backgroundColor: schoolSortOrder === 'DEPTS' ? theme.colors.primary : theme.colors.surfaceAlt,
+                borderWidth: 1,
+                borderColor: schoolSortOrder === 'DEPTS' ? theme.colors.primary : theme.colors.border,
+              }}
+            >
+              <AppText variant="caption" weight="bold" style={{ color: schoolSortOrder === 'DEPTS' ? '#FFFFFF' : theme.colors.textSecondary, fontSize: 10 }}>
+                Most Departments
+              </AppText>
+            </Pressable>
+          </View>
+        ) : null}
+      </View>
+
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -222,14 +334,16 @@ export function SchoolManagementScreen({ navigation }: Props) {
       ) : activeTab === 'SCHOOLS' ? (
         /* Schools Stacked Accordion List */
         <FlatList
-          data={schools.data}
+          data={filteredSchools}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.sm }}>
               <Ionicons name="school-outline" size={36} color={theme.colors.textTertiary} />
-              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No schools added yet.</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                {schoolSearchQuery ? 'No matching schools found.' : 'No schools added yet.'}
+              </AppText>
             </View>
           }
           renderItem={({ item }) => {
@@ -329,14 +443,16 @@ export function SchoolManagementScreen({ navigation }: Props) {
       ) : (
         /* Levels List Grid */
         <FlatList
-          data={levels.data}
+          data={filteredLevels}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xl, gap: theme.spacing.sm }}>
               <Ionicons name="layers-outline" size={36} color={theme.colors.textTertiary} />
-              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>No academic levels added yet.</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                {levelSearchQuery ? 'No matching levels found.' : 'No academic levels added yet.'}
+              </AppText>
             </View>
           }
           renderItem={({ item }) => (

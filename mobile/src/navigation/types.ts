@@ -75,4 +75,5 @@ export type SuperAdminStackParamList = {
   RoleManagement: undefined;
   StaffManagement: undefined;
   SchoolManagement: undefined;
+  SuperAdminSettings: undefined;
 };

@@ -113,7 +113,7 @@ export function RoleManagementScreen({ navigation }: Props) {
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: theme.spacing.lg,
-          paddingTop: insets.top + theme.spacing.md,
+          paddingTop: insets.top + theme.spacing.xl,
           paddingBottom: theme.spacing.md,
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.border,

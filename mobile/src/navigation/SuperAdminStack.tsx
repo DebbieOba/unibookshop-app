@@ -4,6 +4,7 @@ import { SuperAdminDashboardScreen } from '../screens/super-admin/SuperAdminDash
 import { RoleManagementScreen } from '../screens/super-admin/RoleManagementScreen';
 import { StaffManagementScreen } from '../screens/super-admin/StaffManagementScreen';
 import { SchoolManagementScreen } from '../screens/super-admin/SchoolManagementScreen';
+import { SuperAdminSettingsScreen } from '../screens/super-admin/SuperAdminSettingsScreen';
 
 const Stack = createNativeStackNavigator<SuperAdminStackParamList>();
 
@@ -14,6 +15,7 @@ export function SuperAdminStack() {
       <Stack.Screen name="RoleManagement" component={RoleManagementScreen} />
       <Stack.Screen name="StaffManagement" component={StaffManagementScreen} />
       <Stack.Screen name="SchoolManagement" component={SchoolManagementScreen} />
+      <Stack.Screen name="SuperAdminSettings" component={SuperAdminSettingsScreen} />
     </Stack.Navigator>
   );
 }
