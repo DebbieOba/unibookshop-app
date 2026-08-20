@@ -4,8 +4,28 @@ import { useAuthStore } from '../store/authStore';
 import { secureStorage } from '../lib/secureStorage';
 import { getErrorMessage, isRetryableError } from '../lib/apiError';
 
-const baseURL =
-  (Constants.expoConfig?.extra?.apiBaseUrl as string | undefined) ?? 'http://localhost:3000/api/v1';
+const getBaseURL = () => {
+  // In production mode, always connect to the production Render server
+  if (!__DEV__) {
+    return 'https://curricula-backend-hepr.onrender.com/api/v1';
+  }
+
+  // In local development, dynamically extract the host IP address from Expo's Metro server URL
+  // (this automatically handles changes in your local Wi-Fi IP address)
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    return `http://${ip}:3000/api/v1`;
+  }
+
+  // Fallback to configured extra apiBaseUrl or localhost
+  return (
+    (Constants.expoConfig?.extra?.apiBaseUrl as string | undefined) ??
+    'http://localhost:3000/api/v1'
+  );
+};
+
+const baseURL = getBaseURL();
 
 if (__DEV__) {
   // eslint-disable-next-line no-console
