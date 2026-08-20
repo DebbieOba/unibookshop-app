@@ -74,6 +74,7 @@ export function HomeScreen({ navigation }: Props) {
   const syllabus = useSyllabusProgress();
 
   const [categorySheetOpen, setCategorySheetOpen] = useState(false);
+  const [syllabusSheetOpen, setSyllabusSheetOpen] = useState(false);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const bannerRef = useRef<ScrollView>(null);
   const BANNER_ITEM_WIDTH = Dimensions.get('window').width - 32 - 16; // screen width - horizontal padding - gap
@@ -102,6 +103,18 @@ export function HomeScreen({ navigation }: Props) {
     setFilterMinPrice('');
     setFilterMaxPrice('');
   };
+
+  const totalRequired = useMemo(() => {
+    return syllabus.data ? syllabus.data.reduce((acc, curr) => acc + curr.requiredBookCount, 0) : 0;
+  }, [syllabus.data]);
+
+  const totalOwned = useMemo(() => {
+    return syllabus.data ? syllabus.data.reduce((acc, curr) => acc + curr.ownedBookCount, 0) : 0;
+  }, [syllabus.data]);
+
+  const completionPercentage = useMemo(() => {
+    return totalRequired > 0 ? Math.round((totalOwned / totalRequired) * 100) : 0;
+  }, [totalRequired, totalOwned]);
 
   const maxSaleDiscountPercent = useMemo(() => {
     const onSale = onSaleBooks.data?.data ?? [];
@@ -448,28 +461,44 @@ export function HomeScreen({ navigation }: Props) {
                   </View>
                 ) : null}
 
-                {/* Syllabus Tracker — real, from course-tagged books for the student's department/level */}
+                {/* Redesigned Syllabus Tracker Card */}
                 {syllabus.data && syllabus.data.length > 0 ? (
                   <View style={{ gap: theme.spacing.sm }}>
                     <AppText variant="sectionHeader">My Required Syllabus</AppText>
-                    <Card style={{ padding: theme.spacing.md, gap: theme.spacing.sm }}>
-                      {syllabus.data.map((course) => {
-                        const complete = course.ownedBookCount >= course.requiredBookCount;
-                        const badgeColor = complete ? theme.colors.primary : theme.colors.gold;
-                        return (
-                          <View key={course.courseCode} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <AppText variant="bodyMedium" weight="semiBold" style={{ flex: 1 }} numberOfLines={1}>
-                              {course.courseCode}{course.courseTitle ? ` — ${course.courseTitle}` : ''}
+                    <Pressable onPress={() => setSyllabusSheetOpen(true)}>
+                      <Card style={{ padding: theme.spacing.md, gap: theme.spacing.sm }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <View style={{ flex: 1, gap: 4 }}>
+                            <AppText variant="bodyMedium" weight="bold">Syllabus Progress</AppText>
+                            <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                              {totalOwned} of {totalRequired} required textbooks acquired
                             </AppText>
-                            <View style={{ backgroundColor: badgeColor + '15', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999 }}>
-                              <AppText variant="caption" weight="bold" style={{ color: badgeColor, fontSize: 10 }}>
-                                {course.ownedBookCount}/{course.requiredBookCount} {course.requiredBookCount === 1 ? 'Book' : 'Books'}
-                              </AppText>
-                            </View>
                           </View>
-                        );
-                      })}
-                    </Card>
+                          <AppText variant="title" style={{ color: completionPercentage === 100 ? theme.colors.primary : theme.colors.gold }}>
+                            {completionPercentage}%
+                          </AppText>
+                        </View>
+
+                        {/* Progress Bar */}
+                        <View style={{ width: '100%', height: 8, backgroundColor: theme.colors.surfaceAlt, borderRadius: 4, overflow: 'hidden' }}>
+                          <View
+                            style={{
+                              width: `${completionPercentage}%`,
+                              height: '100%',
+                              backgroundColor: completionPercentage === 100 ? theme.colors.primary : theme.colors.gold,
+                              borderRadius: 4,
+                            }}
+                          />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: theme.spacing.xs }}>
+                          <AppText variant="caption" weight="semiBold" style={{ color: theme.colors.primary }}>
+                            View details per course
+                          </AppText>
+                          <Ionicons name="chevron-forward" size={16} color={theme.colors.primary} />
+                        </View>
+                      </Card>
+                    </Pressable>
                   </View>
                 ) : null}
 
@@ -769,6 +798,117 @@ export function HomeScreen({ navigation }: Props) {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {/* Syllabus Details Floating Bottomsheet */}
+      {syllabus.data ? (
+        <Modal
+          visible={syllabusSheetOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setSyllabusSheetOpen(false)}
+        >
+          <Pressable
+            style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}
+            onPress={() => setSyllabusSheetOpen(false)}
+          >
+            <Pressable
+              onPress={(e) => e.stopPropagation()}
+              style={{
+                maxHeight: '85%',
+                backgroundColor: theme.colors.surface,
+                borderTopLeftRadius: theme.radii.card,
+                borderTopRightRadius: theme.radii.card,
+                paddingTop: theme.spacing.md,
+                paddingHorizontal: theme.spacing.xl,
+                paddingBottom: insets.bottom + theme.spacing.xl,
+              }}
+            >
+              <View
+                style={{
+                  alignSelf: 'center',
+                  width: 40,
+                  height: 4,
+                  borderRadius: theme.radii.pill,
+                  backgroundColor: theme.colors.border,
+                  marginBottom: theme.spacing.md,
+                }}
+              />
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: theme.spacing.md }}>
+                <View>
+                  <AppText variant="sectionHeader">Syllabus Requirements</AppText>
+                  <AppText variant="caption" style={{ color: theme.colors.textSecondary }}>
+                    Acquisition tracking for your department courses
+                  </AppText>
+                </View>
+                <Pressable onPress={() => setSyllabusSheetOpen(false)} hitSlop={8}>
+                  <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
+                </Pressable>
+              </View>
+
+              {/* Course list */}
+              <FlatList
+                data={syllabus.data}
+                keyExtractor={(item) => item.courseCode}
+                contentContainerStyle={{ gap: theme.spacing.md, paddingBottom: theme.spacing.xl }}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => {
+                  const isComplete = item.ownedBookCount >= item.requiredBookCount;
+                  const itemColor = isComplete ? theme.colors.primary : theme.colors.gold;
+                  return (
+                    <Card style={{ padding: theme.spacing.md, gap: theme.spacing.sm, borderColor: theme.colors.border, borderWidth: 1 }}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: theme.spacing.sm }}>
+                        <View style={{ flex: 1 }}>
+                          <AppText variant="bodyMedium" weight="bold">
+                            {item.courseCode}
+                          </AppText>
+                          {item.courseTitle ? (
+                            <AppText variant="caption" style={{ color: theme.colors.textSecondary, marginTop: 2 }}>
+                              {item.courseTitle}
+                            </AppText>
+                          ) : null}
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 4,
+                            backgroundColor: itemColor + '10',
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={isComplete ? 'checkmark-circle' : 'time-outline'}
+                            size={14}
+                            color={itemColor}
+                          />
+                          <AppText variant="caption" weight="bold" style={{ color: itemColor, fontSize: 11 }}>
+                            {item.ownedBookCount}/{item.requiredBookCount}
+                          </AppText>
+                        </View>
+                      </View>
+
+                      {/* Small Course Progress Bar */}
+                      <View style={{ width: '100%', height: 4, backgroundColor: theme.colors.surfaceAlt, borderRadius: 2, overflow: 'hidden' }}>
+                        <View
+                          style={{
+                            width: `${(item.ownedBookCount / item.requiredBookCount) * 100}%`,
+                            height: '100%',
+                            backgroundColor: itemColor,
+                            borderRadius: 2,
+                          }}
+                        />
+                      </View>
+                    </Card>
+                  );
+                }}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
+      ) : null}
     </View>
   );
 }
