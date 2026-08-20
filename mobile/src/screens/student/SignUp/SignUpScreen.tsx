@@ -152,12 +152,12 @@ export function SignUpScreen({ navigation }: Props) {
   });
 
   return (
-    <AuthBackdrop heightFraction={0.22}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={insets.top}
-      >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={0}
+    >
+      <AuthBackdrop heightFraction={0.22}>
         <ScrollView
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
@@ -281,31 +281,36 @@ export function SignUpScreen({ navigation }: Props) {
               </TouchableOpacity>
             </View>
           </Field>
-
-          {/* Mode inputs */}
           {mode === 'join' ? (
-            <Field label="Select Bookshop" error={errors.bookshopId?.message}>
-              <Pressable onPress={() => setBookshopSheetOpen(true)} style={inputStyle(theme)}>
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <AppText
-                    variant="body"
-                    style={{ color: selectedBookshop ? theme.colors.textPrimary : theme.colors.textTertiary }}
-                  >
-                    {selectedBookshop?.name ?? 'Select your bookshop'}
-                  </AppText>
-                  <Ionicons name="chevron-down" size={18} color={theme.colors.textTertiary} />
-                </View>
-              </Pressable>
-
-              <SearchableBottomSheet
-                visible={bookshopSheetOpen}
-                title="Select Bookshop"
-                items={bookshopsQuery.data ?? []}
-                selectedId={bookshopId}
-                onSelect={(b) => setValue('bookshopId', b.id, { shouldValidate: true })}
-                onClose={() => setBookshopSheetOpen(false)}
+            <>
+              <Controller
+                control={control}
+                name="matricNumber"
+                render={({ field }) => (
+                  <Input
+                    leadingIcon="id-card-outline"
+                    placeholder="Matric number (optional, for verification)"
+                    autoCapitalize="characters"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    error={errors.matricNumber?.message}
+                  />
+                )}
               />
-            </Field>
+              <Field label="Choose Bookshop" error={errors.bookshopId?.message}>
+                <Pressable onPress={() => setBookshopSheetOpen(true)} style={inputStyle(theme)}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <AppText
+                      variant="body"
+                      style={{ color: selectedBookshop ? theme.colors.textPrimary : theme.colors.textTertiary }}
+                    >
+                      {selectedBookshop ? selectedBookshop.name : 'Select a bookshop...'}
+                    </AppText>
+                    <Ionicons name="chevron-down" size={18} color={theme.colors.textSecondary} />
+                  </View>
+                </Pressable>
+              </Field>
+            </>
           ) : (
             <Controller
               control={control}
@@ -313,8 +318,7 @@ export function SignUpScreen({ navigation }: Props) {
               render={({ field }) => (
                 <Input
                   leadingIcon="business-outline"
-                  label="New Bookshop Name"
-                  placeholder="e.g. FUTA Campus Bookstore"
+                  placeholder="Your Bookshop Name (e.g. FUTA Bookshop)"
                   value={field.value}
                   onChangeText={field.onChange}
                   error={errors.bookshopName?.message}
@@ -323,30 +327,66 @@ export function SignUpScreen({ navigation }: Props) {
             />
           )}
 
-          <Pressable
-            onPress={() => setValue('agreeToTerms', !agreeToTerms, { shouldValidate: true })}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginTop: theme.spacing.xs }}
-          >
-            <Ionicons
-              name={agreeToTerms ? 'checkbox' : 'square-outline'}
-              size={20}
-              color={agreeToTerms ? theme.colors.primary : theme.colors.textTertiary}
-            />
-            <AppText variant="body" style={{ color: theme.colors.textSecondary, flex: 1 }}>
-              I agree to the Terms of Service and Privacy Policy
-            </AppText>
-          </Pressable>
-          {errors.agreeToTerms ? (
-            <AppText variant="label" style={{ color: theme.colors.error }}>
-              {errors.agreeToTerms.message}
-            </AppText>
-          ) : null}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field }) => (
+              <Input
+                leadingIcon="lock-closed-outline"
+                trailingAction={
+                  <InputTrailingIcon
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    onPress={() => setShowPassword((v) => !v)}
+                  />
+                }
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+                value={field.value}
+                onChangeText={field.onChange}
+                error={errors.password?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <Input
+                leadingIcon="lock-closed-outline"
+                trailingAction={
+                  <InputTrailingIcon
+                    name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                    onPress={() => setShowConfirmPassword((v) => !v)}
+                  />
+                }
+                placeholder="Confirm Password"
+                secureTextEntry={!showConfirmPassword}
+                value={field.value}
+                onChangeText={field.onChange}
+                error={errors.confirmPassword?.message}
+              />
+            )}
+          />
 
-          {submitError ? (
-            <AppText variant="label" style={{ color: theme.colors.error }}>
-              {submitError}
-            </AppText>
-          ) : null}
+          <Controller
+            control={control}
+            name="agreeToTerms"
+            render={({ field }) => (
+              <Pressable
+                onPress={() => field.onChange(!agreeToTerms)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginTop: theme.spacing.xs }}
+              >
+                <Ionicons
+                  name={agreeToTerms ? 'checkbox' : 'square-outline'}
+                  size={20}
+                  color={agreeToTerms ? theme.colors.primary : theme.colors.textTertiary}
+                />
+                <AppText variant="body" style={{ color: theme.colors.textSecondary, flex: 1 }}>
+                  I agree to the Terms of Service & Privacy Policy
+                </AppText>
+              </Pressable>
+            )}
+          />
 
           <Button
             label="Create Account"
@@ -365,9 +405,17 @@ export function SignUpScreen({ navigation }: Props) {
               </AppText>
             </Pressable>
           </View>
+          <SearchableBottomSheet
+            visible={bookshopSheetOpen}
+            title="Select Bookshop"
+            items={bookshopsQuery.data ?? []}
+            selectedId={bookshopId}
+            onSelect={(b) => setValue('bookshopId', b.id, { shouldValidate: true })}
+            onClose={() => setBookshopSheetOpen(false)}
+          />
         </ScrollView>
-      </KeyboardAvoidingView>
-    </AuthBackdrop>
+      </AuthBackdrop>
+    </KeyboardAvoidingView>
   );
 }
 
