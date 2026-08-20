@@ -15,7 +15,7 @@ services:
     # --- Build ---
     # Installs all dependencies (including devDependencies required for Nest CLI compile)
     # and then builds the NestJS application.
-    buildCommand: npm install --include=dev && npm run build
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
 
     # --- Start ---
     # `prisma migrate deploy` applies any pending migrations before the server
