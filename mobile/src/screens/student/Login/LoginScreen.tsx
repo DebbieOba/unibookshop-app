@@ -59,7 +59,7 @@ export function LoginScreen({ navigation }: Props) {
     <AuthBackdrop heightFraction={0.4}>
       <View
         style={{
-          flex: 1,
+          flexGrow: 1,
           justifyContent: 'center',
           paddingHorizontal: theme.spacing.xl,
           paddingTop: theme.spacing.xl,

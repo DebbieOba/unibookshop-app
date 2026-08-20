@@ -139,7 +139,7 @@ export function CompleteProfileScreen() {
     <AuthBackdrop heightFraction={0.25}>
       <View
         style={{
-          flex: 1,
+          flexGrow: 1,
           paddingTop: theme.spacing.xl,
           paddingHorizontal: theme.spacing.xl,
           gap: theme.spacing.md,

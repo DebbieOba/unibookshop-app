@@ -155,7 +155,7 @@ export function SignUpScreen({ navigation }: Props) {
     <AuthBackdrop heightFraction={0.22}>
       <View
         style={{
-          flex: 1,
+          flexGrow: 1,
           paddingHorizontal: theme.spacing.xl,
           paddingTop: theme.spacing.xl,
           gap: theme.spacing.md,
