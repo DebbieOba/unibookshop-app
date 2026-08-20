@@ -7,7 +7,7 @@ import { getErrorMessage, isRetryableError } from '../lib/apiError';
 // SET TO true: Connects your local Expo Go app directly to the live production Render server.
 // SET TO false: Connects to your local machine's backend server (requires running local backend on port 3000).
 // (Useful if your Wi-Fi router/mobile hotspot has client isolation or firewall blocking local communication).
-const USE_PRODUCTION_BACKEND_IN_DEV = true;
+const USE_PRODUCTION_BACKEND_IN_DEV = false;
 
 const getBaseURL = () => {
   // Use the production Render server if not in development or if explicitly toggled on
