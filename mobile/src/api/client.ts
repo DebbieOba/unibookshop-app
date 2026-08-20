@@ -10,27 +10,54 @@ const getBaseURL = () => {
     return 'https://curricula-backend-hepr.onrender.com/api/v1';
   }
 
-  // In local development, dynamically extract the host IP address from Expo's Metro server URL
-  // (this automatically handles changes in your local Wi-Fi IP address)
-  const hostUri = Constants.expoConfig?.hostUri;
-  if (hostUri) {
-    const ip = hostUri.split(':')[0];
+  // Try multiple ways to resolve the local Metro packager IP address in development
+  let host = Constants.expoConfig?.hostUri;
+
+  if (!host) {
+    const projectUrl = Constants.manifest2?.extra?.expoGo?.developer?.projectUrl;
+    if (projectUrl) {
+      host = projectUrl.replace('exp://', '');
+    }
+  }
+
+  if (!host && Constants.linkingUri) {
+    const match = Constants.linkingUri.match(/exp:\/\/([^:/]+)/);
+    if (match) {
+      host = match[1];
+    }
+  }
+
+  if (!host) {
+    host = (Constants as any).manifest?.debuggerHost;
+  }
+
+  if (host) {
+    const ip = host.split(':')[0];
     return `http://${ip}:3000/api/v1`;
   }
 
-  // Fallback to configured extra apiBaseUrl or localhost
-  return (
-    (Constants.expoConfig?.extra?.apiBaseUrl as string | undefined) ??
-    'http://localhost:3000/api/v1'
-  );
+  // Fallback to localhost
+  return 'http://localhost:3000/api/v1';
 };
 
 const baseURL = getBaseURL();
 
 if (__DEV__) {
   // eslint-disable-next-line no-console
+  console.log('[api] --- Dev API Diagnostic ---');
+  // eslint-disable-next-line no-console
   console.log(`[api] baseURL = ${baseURL}`);
+  // eslint-disable-next-line no-console
+  console.log(`[api] Constants.expoConfig = ${JSON.stringify(Constants.expoConfig)}`);
+  // eslint-disable-next-line no-console
+  console.log(`[api] Constants.manifest2 = ${JSON.stringify(Constants.manifest2)}`);
+  // eslint-disable-next-line no-console
+  console.log(`[api] Constants.linkingUri = ${Constants.linkingUri}`);
+  // eslint-disable-next-line no-console
+  console.log('[api] ---------------------------');
 }
+
+
 
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = [500, 1500];
