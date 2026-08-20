@@ -294,6 +294,47 @@ async function backfillBookExtras(bookshopId: string) {
   console.log(`Backfilled compareAtPrice/courseCode/isPreOrder on ${updated} existing books.`);
 }
 
+const SUPERADMIN_CREDENTIALS = {
+  email: 'superadmin@curricula.test',
+  password: 'Super@123',
+};
+
+const SYSTEM_PERMISSIONS = [
+  { action: 'schools:manage', description: 'Configure schools, departments, and levels' },
+  { action: 'roles:manage', description: 'Create dynamic roles and permissions mapping' },
+  { action: 'staff:manage', description: 'Create and manage global staff members' },
+  { action: 'listings:audit', description: 'Audit used textbook exchange listings' },
+];
+
+async function seedSuperAdminAndPermissions() {
+  // 1. Seed Permissions
+  for (const perm of SYSTEM_PERMISSIONS) {
+    await prisma.permission.upsert({
+      where: { action: perm.action },
+      create: { action: perm.action, description: perm.description },
+      update: { description: perm.description },
+    });
+  }
+  console.log(`Seeded ${SYSTEM_PERMISSIONS.length} system permissions.`);
+
+  // 2. Seed Super Admin
+  const superPasswordHash = await argon2.hash(SUPERADMIN_CREDENTIALS.password);
+  await prisma.user.upsert({
+    where: { email: SUPERADMIN_CREDENTIALS.email },
+    create: {
+      email: SUPERADMIN_CREDENTIALS.email,
+      passwordHash: superPasswordHash,
+      role: 'superadmin',
+      accountState: 'APPROVED',
+      profile: { create: { fullName: 'Test Super Admin' } },
+    },
+    update: { passwordHash: superPasswordHash },
+  });
+
+  console.log('Seeded superadmin account:');
+  console.log(`  SuperAdmin — email: ${SUPERADMIN_CREDENTIALS.email}  password: ${SUPERADMIN_CREDENTIALS.password}`);
+}
+
 async function seedPromoCodes(bookshopId: string) {
   // Matches the exact placeholder copy already in CartScreen.tsx ("e.g. FUTA10").
   await prisma.promoCode.upsert({
@@ -311,6 +352,7 @@ async function main() {
   await seedSchools(bookshopId);
   await seedLevels(bookshopId);
   await seedTestAccounts(bookshopId);
+  await seedSuperAdminAndPermissions();
   await seedBooks(bookshopId);
   await backfillBookExtras(bookshopId);
   await seedPromoCodes(bookshopId);
