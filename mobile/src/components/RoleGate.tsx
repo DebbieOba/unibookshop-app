@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useAuthStore } from '../store/authStore';
 
 interface RoleGateProps {
-  allow: Array<'student' | 'admin'>;
+  allow: Array<'student' | 'admin' | 'staff' | 'superadmin'>;
   children: ReactNode;
 }
 

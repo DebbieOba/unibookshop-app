@@ -18,6 +18,7 @@ import { CompleteProfileScreen } from '../screens/student/CompleteProfile/Comple
 import { AuthStack } from './AuthStack';
 import { StudentStack } from './StudentStack';
 import { AdminStack } from './AdminStack';
+import { SuperAdminStack } from './SuperAdminStack';
 
 /**
  * Deep-link path -> screen mapping. AuthStack/StudentStack are never
@@ -117,6 +118,8 @@ export function RootNavigator() {
         <PendingApprovalScreen />
       ) : user.role === 'student' && needsOnboarding ? (
         <CompleteProfileScreen />
+      ) : user.role === 'superadmin' ? (
+        <SuperAdminStack />
       ) : user.role === 'admin' ? (
         <AdminStack />
       ) : (

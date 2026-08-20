@@ -3,8 +3,8 @@ import { create } from 'zustand';
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'student' | 'admin';
-  accountState: 'PENDING' | 'APPROVED' | 'REJECTED';
+  role: 'student' | 'admin' | 'staff' | 'superadmin';
+  accountState: 'PENDING' | 'APPROVED' | 'REJECTED' | 'RESTRICTED';
   bookshopId?: string | null;
 }
 

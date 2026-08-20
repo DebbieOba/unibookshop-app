@@ -69,3 +69,10 @@ export type AdminStackParamList = {
   AdminNotifications: undefined;
   OrderDetails: { orderId: string };
 };
+
+export type SuperAdminStackParamList = {
+  SuperAdminDashboard: undefined;
+  RoleManagement: undefined;
+  StaffManagement: undefined;
+  SchoolManagement: undefined;
+};
