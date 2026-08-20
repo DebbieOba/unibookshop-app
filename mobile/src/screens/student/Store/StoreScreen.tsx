@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, FlatList, Modal, Pressable, RefreshControl, ScrollView, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +33,30 @@ interface SortOption<T> {
   value: T;
   label: string;
 }
+
+const BookCardListItem = memo(({
+  item,
+  width,
+  isFav,
+  onFavouritePress,
+  onPress,
+}: {
+  item: Book;
+  width: any;
+  isFav: boolean;
+  onFavouritePress: (id: string, isFav: boolean) => void;
+  onPress: (id: string) => void;
+}) => {
+  return (
+    <BookCard
+      book={item}
+      width={width}
+      isFavourited={isFav}
+      onFavouritePress={() => onFavouritePress(item.id, isFav)}
+      onPress={() => onPress(item.id)}
+    />
+  );
+});
 
 function FilterPill({ label, onClear, theme }: { label: string; onClear: () => void; theme: Theme }) {
   return (
@@ -102,6 +126,27 @@ export function StoreScreen({ route, navigation }: Props) {
   // them (down from the old 3-column layout's 8px).
   const CATALOG_GRID_GAP = 4;
   const CATALOG_CARD_WIDTH = (Dimensions.get('window').width - theme.spacing.lg * 2 - CATALOG_GRID_GAP) / 2;
+
+  const handleFavouritePress = useCallback((bookId: string, isFavourited: boolean) => {
+    toggleFavourite.mutate({ bookId, isFavourited });
+  }, [toggleFavourite]);
+
+  const handleBookPress = useCallback((bookId: string) => {
+    navigation.navigate('BookDetails', { bookId });
+  }, [navigation]);
+
+  const renderBookItem = useCallback(({ item }: { item: Book }) => {
+    const isFav = (favourites.data ?? []).some((f) => f.book.id === item.id);
+    return (
+      <BookCardListItem
+        item={item}
+        width={CATALOG_CARD_WIDTH}
+        isFav={isFav}
+        onFavouritePress={handleFavouritePress}
+        onPress={handleBookPress}
+      />
+    );
+  }, [favourites.data, handleFavouritePress, handleBookPress, CATALOG_CARD_WIDTH]);
 
   const STORE_BANNERS = [
     {
@@ -639,18 +684,7 @@ export function StoreScreen({ route, navigation }: Props) {
               </View>
             </View>
           }
-          renderItem={({ item }) => {
-            const isFav = (favourites.data ?? []).some((f) => f.book.id === item.id);
-            return (
-              <BookCard
-                book={item}
-                width={CATALOG_CARD_WIDTH}
-                isFavourited={isFav}
-                onFavouritePress={() => toggleFavourite.mutate({ bookId: item.id, isFavourited: isFav })}
-                onPress={() => navigation.navigate('BookDetails', { bookId: item.id })}
-              />
-            );
-          }}
+          renderItem={renderBookItem}
         />
       )}
 
