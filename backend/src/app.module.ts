@@ -9,6 +9,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { AccountStateGuard } from './common/guards/account-state.guard';
+import { PermissionsGuard } from './common/guards/permissions.guard';
 import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -16,6 +17,7 @@ import { CatalogueModule } from './modules/catalogue/catalogue.module';
 import { OrderModule } from './modules/order/order.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 import { PromotionsModule } from './modules/promotions/promotions.module';
 import { ExchangeModule } from './modules/exchange/exchange.module';
 import { ObjectStorageModule } from './integrations/object-storage/object-storage.module';
@@ -38,6 +40,7 @@ import { SisModule } from './integrations/sis/sis.module';
     OrderModule,
     NotificationModule,
     AdminModule,
+    SuperAdminModule,
     PromotionsModule,
     ExchangeModule,
   ],
@@ -45,6 +48,7 @@ import { SisModule } from './integrations/sis/sis.module';
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: AccountStateGuard },
+    { provide: APP_GUARD, useClass: PermissionsGuard },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
