@@ -265,7 +265,7 @@ export function SignUpScreen({ navigation }: Props) {
                 onPress={() => setValue('mode', 'join', { shouldValidate: true })}
               >
                 <AppText variant="bodyMedium" style={{ color: mode === 'join' ? theme.colors.textInverse : theme.colors.textSecondary }}>
-                  Join Bookshop
+                  Student
                 </AppText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -276,7 +276,7 @@ export function SignUpScreen({ navigation }: Props) {
                 onPress={() => setValue('mode', 'create', { shouldValidate: true })}
               >
                 <AppText variant="bodyMedium" style={{ color: mode === 'create' ? theme.colors.textInverse : theme.colors.textSecondary }}>
-                  New Bookshop
+                  Bookshop Admin
                 </AppText>
               </TouchableOpacity>
             </View>
