@@ -1,0 +1,137 @@
+.detailed-section {
+  overflow: hidden;
+}
+
+.detailed-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.detailed-content h2 {
+  margin-bottom: 16px;
+}
+
+.detailed-subtitle {
+  font-size: 18px;
+  margin-bottom: 32px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+}
+
+.feature-list li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.feature-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  color: var(--success);
+  font-weight: bold;
+  background-color: rgba(24, 134, 91, 0.1);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.detailed-visual {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.mockup-frame {
+  width: 300px;
+  height: 600px;
+  background: var(--surface);
+  border-radius: 40px;
+  border: 12px solid #1a1a1a;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mockup-frame.admin-frame {
+  border-color: #333;
+}
+
+.mockup-screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dashboard-preview-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.dashboard-preview-frame {
+  height: 500px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.dashboard-preview-img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 1024px) {
+  .detailed-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  
+  .detailed-grid.reverse-mobile {
+    direction: rtl;
+  }
+  
+  .detailed-grid.reverse-mobile > * {
+    direction: ltr;
+  }
+  
+  .detailed-visual {
+    order: 2;
+  }
+  
+  .detailed-content {
+    order: 1;
+    text-align: center;
+  }
+  
+  .feature-list {
+    text-align: left;
+    display: inline-block;
+  }
+}
