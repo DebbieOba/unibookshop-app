@@ -1,67 +1,79 @@
 import React from 'react';
-import { Search, Info, ShoppingCart, LayoutGrid, TrendingUp, Bell, BookOpen, Package } from 'lucide-react';
+import { ShoppingCart, Package, TrendingUp, Bell, LayoutGrid } from 'lucide-react';
 import './Features.css';
 
-export const Features: React.FC = () => {
-  const features = [
-    {
-      icon: <LayoutGrid />,
-      title: 'Discover Books',
-      description: 'Browse a wide range of books organized into categories and subcategories.',
-    },
-    {
-      icon: <Search />,
-      title: 'Search & Filter',
-      description: 'Find books quickly without going shelf-to-shelf.',
-    },
-    {
-      icon: <Info />,
-      title: 'Detailed Information',
-      description: 'View author, ISBN, publisher, edition, publication year, pages, and description.',
-    },
-    {
-      icon: <ShoppingCart />,
-      title: 'Easy Shopping',
-      description: 'Add books to cart and complete purchases conveniently.',
-    },
-    {
-      icon: <Package />,
-      title: 'Inventory Management',
-      description: 'Bookstore sellers can monitor books, quantities and available copies.',
-    },
-    {
-      icon: <BookOpen />,
-      title: 'Sales Management',
-      description: 'Track orders, sales and successful transactions.',
-    },
-    {
-      icon: <TrendingUp />,
-      title: 'Financial Dashboard',
-      description: 'Monitor revenue, cost of goods, expenses, gross profit, net profit and loss.',
-    },
-    {
-      icon: <Bell />,
-      title: 'Low Stock Alerts',
-      description: 'Receive notifications when book stock falls below the low-stock threshold.',
-    },
-  ];
+interface FeatureTile {
+  icon: React.ReactNode;
+  title: string;
+  blurb: string;
+  image: string;
+  area: string;
+}
 
+const features: FeatureTile[] = [
+  {
+    icon: <LayoutGrid size={20} />,
+    title: 'Browse & Shop',
+    blurb: 'Thousands of titles, one tap away.',
+    image: 'Screenshot_20260824_162410_CURRICULA.jpg',
+    area: 'browse',
+  },
+  {
+    icon: <ShoppingCart size={20} />,
+    title: 'Fast Checkout',
+    blurb: 'Cart to order in seconds.',
+    image: 'Screenshot_20260824_162343_CURRICULA.jpg',
+    area: 'cart',
+  },
+  {
+    icon: <Package size={20} />,
+    title: 'Live Inventory',
+    blurb: 'Always know what’s in stock.',
+    image: 'Screenshot_20260824_161640_CURRICULA.jpg',
+    area: 'inventory',
+  },
+  {
+    icon: <TrendingUp size={20} />,
+    title: 'Financial Insights',
+    blurb: 'Revenue, profit and loss at a glance.',
+    image: 'Screenshot_20260824_161729_CURRICULA.jpg',
+    area: 'financial',
+  },
+  {
+    icon: <Bell size={20} />,
+    title: 'Instant Alerts',
+    blurb: 'Never miss a low-stock warning.',
+    image: 'Screenshot_20260824_162650_CURRICULA.jpg',
+    area: 'alerts',
+  },
+  {
+    icon: <LayoutGrid size={20} />,
+    title: 'Admin Control',
+    blurb: 'Run your whole store from one screen.',
+    image: 'Screenshot_20260824_161336_CURRICULA.jpg',
+    area: 'admin',
+  },
+];
+
+export const Features: React.FC = () => {
   return (
     <section id="features" className="features-section bg-alt">
       <div className="container">
         <div className="section-header text-center mb-8">
-          <h2>Everything You Need in One Bookstore App</h2>
-          <p>Powerful features designed for both book lovers and bookstore owners.</p>
+          <h2>Built for Readers & Sellers</h2>
+          <p>One app, every bookstore essential.</p>
         </div>
-        
-        <div className="features-grid">
-          {features.map((feature, index) => (
-            <div key={index} className="feature-card">
-              <div className="feature-icon">
-                {feature.icon}
+
+        <div className="bento-grid">
+          {features.map((f) => (
+            <div key={f.area} className={`bento-tile bento-${f.area}`}>
+              <img src={`/images/${f.image}`} alt={f.title} loading="lazy" />
+              <div className="bento-overlay" />
+              <div className="bento-content">
+                <span className="bento-icon">{f.icon}</span>
+                <h3>{f.title}</h3>
+                <p>{f.blurb}</p>
               </div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
             </div>
           ))}
         </div>

@@ -87,7 +87,7 @@ export const DetailedSections: React.FC = () => {
           <div className="dashboard-preview-wrapper">
             <div className="dashboard-preview-frame">
               <img
-                src="/images/Screenshot_20260824_161640_CURRICULA.jpg"
+                src="/images/Screenshot_20260824_161729_CURRICULA.jpg"
                 alt="BOOKDECK financial dashboard showing revenue, expenses, profit and best sellers"
                 className="dashboard-preview-img"
                 loading="lazy"

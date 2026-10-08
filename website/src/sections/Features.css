@@ -12,45 +12,127 @@
   margin: 0 auto;
 }
 
-.features-grid {
+.bento-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    'browse browse cart inventory'
+    'browse browse financial financial'
+    'alerts admin admin admin';
+  gap: 16px;
   margin-top: 48px;
 }
 
-.feature-card {
-  background: var(--surface);
-  padding: 32px;
+.bento-browse { grid-area: browse; }
+.bento-cart { grid-area: cart; }
+.bento-inventory { grid-area: inventory; }
+.bento-financial { grid-area: financial; }
+.bento-alerts { grid-area: alerts; }
+.bento-admin { grid-area: admin; }
+
+.bento-tile {
+  position: relative;
   border-radius: var(--radius-md);
+  overflow: hidden;
+  min-height: 180px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.feature-card:hover {
+.bento-tile:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
 }
 
-.feature-icon {
-  width: 56px;
-  height: 56px;
-  background-color: var(--primary-tint);
-  color: var(--primary);
-  border-radius: var(--radius-sm);
+.bento-browse,
+.bento-financial {
+  min-height: 380px;
+}
+
+.bento-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.bento-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 20, 0.68) 0%,
+    rgba(10, 12, 20, 0.62) 45%,
+    rgba(10, 12, 20, 0.96) 100%
+  );
+}
+
+.bento-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  color: #fff;
+}
+
+.bento-icon {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  margin-bottom: 10px;
 }
 
-.feature-card h3 {
-  font-size: 20px;
-  margin-bottom: 12px;
+.bento-content h3 {
+  font-size: 17px;
+  color: #fff;
+  margin-bottom: 4px;
 }
 
-.feature-card p {
-  font-size: 15px;
-  line-height: 1.6;
+.bento-content p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      'browse browse'
+      'cart inventory'
+      'financial financial'
+      'alerts admin';
+  }
+}
+
+@media (max-width: 560px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'browse'
+      'cart'
+      'inventory'
+      'financial'
+      'alerts'
+      'admin';
+  }
+
+  .bento-browse,
+  .bento-financial {
+    min-height: 300px;
+  }
+
+  .bento-tile {
+    min-height: 220px;
+  }
 }
