@@ -1,8 +1,8 @@
-import { Modal, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { Modal, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
 export interface SortOption<T extends string> {
   value: T;
@@ -19,14 +19,33 @@ interface SortSheetProps<T extends string> {
 }
 
 /** Radio-selection sort sheet — closes automatically on selection
- * (CurriculaMobileDesignSystem.md §12.4). */
-export function SortSheet<T extends string>({ visible, title = 'Sort by', options, selected, onSelect, onClose }: SortSheetProps<T>) {
+ * (BookdeckMobileDesignSystem.md §12.4). */
+export function SortSheet<T extends string>({
+  visible,
+  title = "Sort by",
+  options,
+  selected,
+  onSelect,
+  onClose,
+}: SortSheetProps<T>) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={{ flex: 1, backgroundColor: theme.colors.overlay, justifyContent: 'flex-end' }} onPress={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <Pressable
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.overlay,
+          justifyContent: "flex-end",
+        }}
+        onPress={onClose}
+      >
         <Pressable
           onPress={(e) => e.stopPropagation()}
           style={{
@@ -40,7 +59,7 @@ export function SortSheet<T extends string>({ visible, title = 'Sort by', option
         >
           <View
             style={{
-              alignSelf: 'center',
+              alignSelf: "center",
               width: 40,
               height: 4,
               borderRadius: theme.radii.pill,
@@ -48,7 +67,10 @@ export function SortSheet<T extends string>({ visible, title = 'Sort by', option
               marginBottom: theme.spacing.md,
             }}
           />
-          <AppText variant="sectionHeader" style={{ marginBottom: theme.spacing.sm }}>
+          <AppText
+            variant="sectionHeader"
+            style={{ marginBottom: theme.spacing.sm }}
+          >
             {title}
           </AppText>
           {options.map((option) => {
@@ -61,21 +83,30 @@ export function SortSheet<T extends string>({ visible, title = 'Sort by', option
                   onClose();
                 }}
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   paddingVertical: theme.spacing.md,
                   borderBottomWidth: 1,
                   borderBottomColor: theme.colors.divider,
                 }}
               >
-                <AppText variant="body" style={{ color: active ? theme.colors.primary : theme.colors.textPrimary }}>
+                <AppText
+                  variant="body"
+                  style={{
+                    color: active
+                      ? theme.colors.primary
+                      : theme.colors.textPrimary,
+                  }}
+                >
                   {option.label}
                 </AppText>
                 <Ionicons
-                  name={active ? 'radio-button-on' : 'radio-button-off'}
+                  name={active ? "radio-button-on" : "radio-button-off"}
                   size={20}
-                  color={active ? theme.colors.primary : theme.colors.textTertiary}
+                  color={
+                    active ? theme.colors.primary : theme.colors.textTertiary
+                  }
                 />
               </Pressable>
             );

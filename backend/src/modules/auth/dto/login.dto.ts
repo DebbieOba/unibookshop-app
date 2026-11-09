@@ -7,7 +7,7 @@ import { ApiProperty } from '@nestjs/swagger';
  * the controller), so this class is never imported for validation.
  */
 export class LoginDto {
-  @ApiProperty({ description: 'Email address or matric number' })
+  @ApiProperty({ description: 'Email address' })
   @IsString()
   identifier!: string;
 

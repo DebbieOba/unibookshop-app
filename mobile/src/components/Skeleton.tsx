@@ -1,5 +1,5 @@
-import { View, ViewProps } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
+import { View, ViewProps } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 
 interface SkeletonProps extends ViewProps {
   width?: number | `${number}%`;
@@ -7,7 +7,12 @@ interface SkeletonProps extends ViewProps {
 }
 
 /** A single reusable shape, composed per screen (list row / grid tile / detail block). */
-export function Skeleton({ width = '100%', height = 16, style, ...rest }: SkeletonProps) {
+export function Skeleton({
+  width = "100%",
+  height = 16,
+  style,
+  ...rest
+}: SkeletonProps) {
   const theme = useTheme();
   return (
     <View

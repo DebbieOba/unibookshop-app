@@ -29,7 +29,7 @@ function shapeSeller(seller: {
 }) {
   return {
     id: seller.id,
-    fullName: seller.profile?.fullName ?? 'CURRICULA student',
+    fullName: seller.profile?.fullName ?? 'BOOKDECK student',
     avatarUrl: seller.profile?.avatarUrl ?? null,
     phone: seller.profile?.phone ?? null,
   };
@@ -115,7 +115,11 @@ export class ListingsService {
   private async assertOwnsListing(id: string, user: CurrentUserPayload) {
     const listing = await this.prisma.listing.findUnique({ where: { id } });
     if (!listing) throw new NotFoundException('Listing not found');
-    if (listing.sellerId !== user.id && user.role !== 'admin') {
+    if (
+      listing.sellerId !== user.id &&
+      user.role !== 'seller' &&
+      user.role !== 'superadmin'
+    ) {
       throw new ForbiddenException('You can only manage your own listings');
     }
     return listing;

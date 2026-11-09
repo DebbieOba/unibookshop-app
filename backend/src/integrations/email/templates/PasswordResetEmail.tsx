@@ -5,14 +5,14 @@ interface PasswordResetEmailProps {
   token: string;
 }
 
-// Deep-links straight into the app (app.json scheme "curricula") —
+// Deep-links straight into the app (app.json scheme "bookdeck") —
 // frontend-architecture.md §10 wires the corresponding route.
 export function PasswordResetEmail({ token }: PasswordResetEmailProps) {
-  const resetUrl = `curricula://reset-password?token=${encodeURIComponent(token)}`;
+  const resetUrl = `bookdeck://reset-password?token=${encodeURIComponent(token)}`;
 
   return (
     <EmailLayout
-      previewText="Reset your CURRICULA password"
+      previewText="Reset your BOOKDECK password"
       heading="Reset your password"
     >
       <Text>

@@ -1,16 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '../api/admin.api';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "../api/seller.api";
 
 export function useDashboard() {
   return useQuery({
-    queryKey: ['admin', 'dashboard'],
+    queryKey: ["seller", "dashboard"],
     queryFn: () => adminApi.getDashboard().then((res) => res.data),
   });
 }
 
 export function useInventory() {
   return useQuery({
-    queryKey: ['admin', 'inventory'],
+    queryKey: ["seller", "inventory"],
     queryFn: () => adminApi.getInventory().then((res) => res.data),
   });
 }

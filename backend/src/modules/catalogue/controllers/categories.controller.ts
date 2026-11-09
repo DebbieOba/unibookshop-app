@@ -32,7 +32,7 @@ export class CategoriesController {
 
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @Post()
   create(
     @Body() dto: CreateCategoryDto,
@@ -43,7 +43,7 @@ export class CategoriesController {
 
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @Delete(':id')
   remove(@Param('id') id: string, @CurrentUser() user: CurrentUserPayload) {
     return this.categoriesService.remove(id, user.bookshopId);

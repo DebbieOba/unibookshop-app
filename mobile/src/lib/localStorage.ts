@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const RECENTLY_VIEWED_KEY = 'recentlyViewedBookIds';
+const RECENTLY_VIEWED_KEY = "recentlyViewedBookIds";
 const MAX_RECENTLY_VIEWED = 12;
 
 /** Non-sensitive local-device caches (view history, later search history) —
@@ -20,7 +20,10 @@ export const localStorage = {
 
   recordBookViewed: async (bookId: string): Promise<void> => {
     const current = await localStorage.getRecentlyViewedBookIds();
-    const next = [bookId, ...current.filter((id) => id !== bookId)].slice(0, MAX_RECENTLY_VIEWED);
+    const next = [bookId, ...current.filter((id) => id !== bookId)].slice(
+      0,
+      MAX_RECENTLY_VIEWED,
+    );
     await AsyncStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
   },
 

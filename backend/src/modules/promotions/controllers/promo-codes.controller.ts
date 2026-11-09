@@ -30,9 +30,9 @@ import {
 @ApiTags('promotions')
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
-@Roles('admin')
+@Roles('seller')
 @UseInterceptors(AuditLogInterceptor)
-@Controller('admin/promo-codes')
+@Controller('seller/promo-codes')
 export class PromoCodesController {
   constructor(private readonly promoCodesService: PromoCodesService) {}
 

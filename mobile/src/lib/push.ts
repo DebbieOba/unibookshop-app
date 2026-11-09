@@ -1,6 +1,6 @@
-import { Linking } from 'react-native';
-import Constants, { AppOwnership } from 'expo-constants';
-import { usersApi } from '../api/users.api';
+import { Linking } from "react-native";
+import Constants, { AppOwnership } from "expo-constants";
+import { usersApi } from "../api/users.api";
 
 // Remote push (expo-notifications) was removed from Expo Go in SDK 53 — it
 // only works in an EAS dev client or a real build (frontend-architecture.md
@@ -23,16 +23,16 @@ const isExpoGo = Constants.appOwnership === AppOwnership.Expo;
 /**
  * Registers this device's FCM token with the backend — called on login.
  * See frontend-architecture.md §10: direct FCM registration (EAS dev client
- * required), not Expo's push relay, to match the backend's firebase-admin
+ * required), not Expo's push relay, to match the backend's firebase-seller
  * integration.
  */
 export async function registerPushToken(): Promise<void> {
   if (isExpoGo) return;
 
   try {
-    const Notifications = await import('expo-notifications');
+    const Notifications = await import("expo-notifications");
     const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== 'granted') return;
+    if (status !== "granted") return;
 
     const { data: token } = await Notifications.getDevicePushTokenAsync();
     await usersApi.setPushToken(token);
@@ -54,16 +54,20 @@ export function subscribeToNotificationTaps(): () => void {
 
   let unsubscribe = () => {};
 
-  import('expo-notifications')
+  import("expo-notifications")
     .then((Notifications) => {
-      const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-        const data = response.notification.request.content.data as { orderId?: string } | undefined;
-        const url = data?.orderId ? `curricula://order/${data.orderId}` : 'curricula://notifications';
-        Linking.openURL(url).catch(() => {
-          // Not on a screen that can handle it right now (e.g. still on the
-          // auth stack) — dropping the tap is preferable to crashing.
+      const subscription =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          const data = response.notification.request.content.data as
+            { orderId?: string } | undefined;
+          const url = data?.orderId
+            ? `bookdeck://order/${data.orderId}`
+            : "bookdeck://notifications";
+          Linking.openURL(url).catch(() => {
+            // Not on a screen that can handle it right now (e.g. still on the
+            // auth stack) — dropping the tap is preferable to crashing.
+          });
         });
-      });
       unsubscribe = () => subscription.remove();
     })
     .catch(() => {

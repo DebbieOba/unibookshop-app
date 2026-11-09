@@ -50,7 +50,7 @@ export class BooksController {
 
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @AuditAction('book.create')
   @Post()
   create(@Body() dto: CreateBookDto, @CurrentUser() user: CurrentUserPayload) {
@@ -59,7 +59,7 @@ export class BooksController {
 
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @AuditAction('book.update')
   @Patch(':id')
   update(
@@ -73,7 +73,7 @@ export class BooksController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @AuditAction('book.cover-upload')
   @Post(':id/cover')
   @UseInterceptors(FileInterceptor('file'))
@@ -84,10 +84,23 @@ export class BooksController {
   ) {
     return this.booksService.uploadCover(id, file.buffer, user.bookshopId);
   }
-
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseGuards(RolesGuard)
+  @Roles('seller')
+  @AuditAction('book.sample-upload')
+  @Post(':id/sample')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadSample(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.booksService.uploadSample(id, file.buffer, user.bookshopId);
+  }
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @AuditAction('book.delete')
   @Delete(':id')
   remove(@Param('id') id: string, @CurrentUser() user: CurrentUserPayload) {

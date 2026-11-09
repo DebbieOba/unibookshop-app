@@ -23,13 +23,21 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.enableCors();
+  // Restrict CORS origins in production; allow dev/local origins
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
+    : ['http://localhost:3000', 'http://localhost:8081', 'http://127.0.0.1:3000'];
+
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'production' ? allowedOrigins : true,
+    credentials: true,
+  });
 
   // Swagger is useful in dev/staging but should not be exposed in production
   // to avoid advertising the full API surface to unknown callers.
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('CURRICULA API')
+      .setTitle('BOOKDECK API')
       .setVersion('1.0')
       .addBearerAuth()
       .build();

@@ -1,22 +1,22 @@
-import { View } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { View } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
-export type OrderStatus = 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+export type OrderStatus = "PROCESSING" | "COMPLETED" | "CANCELLED";
 
 const COLOR_BY_STATUS = {
-  PROCESSING: 'warning',
-  COMPLETED: 'primary',
-  CANCELLED: 'error',
+  PROCESSING: "warning",
+  COMPLETED: "primary",
+  CANCELLED: "error",
 } as const;
 
 // Never render a raw backend enum (CLAUDE_DESIGN_SYSTEM.md §10.5) — this is
 // the one place that maps OrderStatus to user-facing copy, so every screen
 // that shows an order status gets the friendly label for free.
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  PROCESSING: 'Preparing order',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
+  PROCESSING: "Preparing order",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
 };
 
 interface StatusPillProps {
@@ -35,11 +35,11 @@ export function StatusPill({ status, label }: StatusPillProps) {
   return (
     <View
       style={{
-        alignSelf: 'flex-start',
+        alignSelf: "flex-start",
         borderRadius: theme.radii.pill,
         paddingHorizontal: theme.spacing.md,
         paddingVertical: theme.spacing.xs,
-        backgroundColor: color + '22',
+        backgroundColor: color + "22",
       }}
     >
       <AppText variant="label" weight="semiBold" style={{ color }}>

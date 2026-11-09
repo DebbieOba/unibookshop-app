@@ -7,35 +7,72 @@ export class DashboardService {
 
   async getKpis(bookshopId?: string | null) {
     const where = bookshopId ? { bookshopId } : {};
-    const wherePendingApprovals = bookshopId
-      ? { bookshopId, accountState: 'PENDING' }
-      : { accountState: 'PENDING' };
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const LOW_STOCK_THRESHOLD = 10;
 
     const [
-      totalUsers,
-      pendingApprovals,
       totalBooks,
       totalOrders,
       recentOrders,
+      completedOrdersToday,
+      stockLevels,
+      outOfStock,
     ] = await Promise.all([
-      this.prisma.user.count({
-        where: bookshopId ? { bookshopId } : undefined,
-      }),
-      this.prisma.user.count({ where: wherePendingApprovals as any }),
       this.prisma.book.count({ where }),
       this.prisma.order.count({ where }),
       this.prisma.order.findMany({
         where,
         take: 5,
         orderBy: { createdAt: 'desc' },
+        include: { items: { select: { unitPrice: true, quantity: true } } },
       }),
+      this.prisma.order.findMany({
+        where: {
+          ...where,
+          status: 'COMPLETED',
+          createdAt: { gte: todayStart },
+        },
+        select: { totalAmount: true },
+      }),
+      this.prisma.book.findMany({
+        where,
+        select: {
+          stockQuantity: true,
+          costPrice: true,
+          reorderThreshold: true,
+        },
+      }),
+      this.prisma.book.count({ where: { ...where, stockQuantity: 0 } }),
     ]);
 
+    const totalCopiesAvailable = stockLevels.reduce(
+      (sum, b) => sum + b.stockQuantity,
+      0,
+    );
+    const currentStockValue = stockLevels.reduce(
+      (sum, b) => sum + b.stockQuantity * Number(b.costPrice),
+      0,
+    );
+    const lowStock = stockLevels.filter(
+      (b) =>
+        b.stockQuantity > 0 &&
+        b.stockQuantity <= (b.reorderThreshold ?? LOW_STOCK_THRESHOLD),
+    ).length;
+    const todayRevenue = completedOrdersToday.reduce(
+      (sum, o) => sum + Number(o.totalAmount),
+      0,
+    );
+
     return {
-      totalUsers,
-      pendingApprovals,
       totalBooks,
       totalOrders,
+      totalCopiesAvailable,
+      currentStockValue: Math.round(currentStockValue),
+      todayRevenue: Math.round(todayRevenue),
+      lowStock,
+      outOfStock,
       recentOrders,
     };
   }
@@ -51,6 +88,10 @@ export class DashboardService {
     } else if (range === '30d') {
       startDate = new Date();
       startDate.setDate(today.getDate() - 30);
+      startDate.setHours(0, 0, 0, 0);
+    } else if (range === '90d') {
+      startDate = new Date();
+      startDate.setDate(today.getDate() - 90);
       startDate.setHours(0, 0, 0, 0);
     }
 
@@ -80,7 +121,8 @@ export class DashboardService {
     >();
 
     // Pre-populate dailyMap with all days in range to avoid gaps
-    const length = range === '7d' ? 7 : range === '30d' ? 30 : 0;
+    const length =
+      range === '7d' ? 7 : range === '30d' ? 30 : range === '90d' ? 90 : 0;
     if (length > 0) {
       for (let i = 0; i < length; i++) {
         const d = new Date();

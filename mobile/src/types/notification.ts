@@ -4,7 +4,7 @@ export interface NotificationRecipient {
   createdAt: string;
   notification: {
     id: string;
-    type: 'ORDER_UPDATE' | 'APPROVAL' | 'BROADCAST' | 'NEW_ARRIVAL';
+    type: "ORDER_UPDATE" | "APPROVAL" | "BROADCAST" | "NEW_ARRIVAL";
     title: string;
     body: string;
   };

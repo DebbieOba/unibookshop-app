@@ -26,6 +26,12 @@ export class BooksService {
       limit = 20,
       search,
       categoryId,
+      subcategoryId,
+      targetAudience,
+      language,
+      bookCondition,
+      publisher,
+      isbn,
       minPrice,
       maxPrice,
       inStockOnly,
@@ -51,9 +57,19 @@ export class BooksService {
         OR: [
           { title: { contains: search, mode: 'insensitive' } },
           { author: { contains: search, mode: 'insensitive' } },
+          { isbn: { contains: search, mode: 'insensitive' } },
+          { publisher: { contains: search, mode: 'insensitive' } },
         ],
       }),
       ...(categoryId && { categoryId }),
+      ...(subcategoryId && { subcategoryId }),
+      ...(targetAudience && { targetAudience }),
+      ...(language && { language }),
+      ...(bookCondition && { bookCondition: bookCondition as any }),
+      ...(publisher && {
+        publisher: { contains: publisher, mode: 'insensitive' },
+      }),
+      ...(isbn && { isbn }),
       ...(inStockOnly && { stockQuantity: { gt: 0 } }),
       // compareAtPrice is only ever persisted when it's already > price (see
       // assertValidCompareAtPrice below), so "not null" is a safe, index-free
@@ -190,5 +206,28 @@ export class BooksService {
       'book-covers',
     );
     return this.prisma.book.update({ where: { id }, data: { coverUrl } });
+  }
+  async uploadSample(
+    id: string,
+    fileBuffer: Buffer,
+    bookshopId?: string | null,
+  ) {
+    const existing = await this.findOne(id);
+    if (
+      bookshopId &&
+      existing.bookshopId &&
+      existing.bookshopId !== bookshopId
+    ) {
+      throw new BadRequestException('You do not have access to this book');
+    }
+    const sampleUrl = await this.uploadService.uploadImage(
+      fileBuffer,
+      'book-samples',
+    );
+    const previewPages = existing.previewPages || [];
+    return this.prisma.book.update({ 
+      where: { id }, 
+      data: { previewPages: [...previewPages, sampleUrl] } 
+    });
   }
 }

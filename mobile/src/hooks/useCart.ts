@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { orderApi } from '../api/order.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { orderApi } from "../api/order.api";
 
-const CART_KEY = ['order', 'cart'];
+const CART_KEY = ["order", "cart"];
 
 export function useCart() {
   return useQuery({
@@ -22,7 +22,8 @@ export function useSetCartLine() {
 export function useApplyPromoCode() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (code: string) => orderApi.applyPromoCode(code).then((res) => res.data),
+    mutationFn: (code: string) =>
+      orderApi.applyPromoCode(code).then((res) => res.data),
     onSuccess: (cart) => queryClient.setQueryData(CART_KEY, cart),
   });
 }

@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { usersApi } from '../api/users.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { usersApi } from "../api/users.api";
 
-const PROFILE_KEY = ['users', 'profile'];
+const PROFILE_KEY = ["users", "profile"];
 
 export function useProfile() {
   return useQuery({

@@ -23,7 +23,7 @@ export class InsightsService {
     private readonly courseLookup: CourseLookupService,
   ) {}
 
-  /** Powers the Home "My Bookstore Savings" tracker — real numbers only, per CurriculaMobileDesignSystem.md. */
+  /** Powers the Home "My Bookstore Savings" tracker — real numbers only, per BookdeckMobileDesignSystem.md. */
   async getSavingsSummary(userId: string): Promise<SavingsSummary> {
     const items = await this.prisma.orderItem.findMany({
       where: { order: { userId, status: 'COMPLETED' } },
@@ -66,43 +66,8 @@ export class InsightsService {
   async getSyllabusProgress(userId: string): Promise<SyllabusCourseProgress[]> {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      include: { department: true, level: true },
     });
-    if (!user.departmentId && !user.levelId) return [];
+    return [];
 
-    const courseBooks = await this.courseLookup.listCourseBooksFor(
-      user.departmentId ?? undefined,
-      user.level?.name,
-    );
-    if (courseBooks.length === 0) return [];
-
-    const ownedBookIds = new Set(
-      (
-        await this.prisma.orderItem.findMany({
-          where: {
-            order: { userId, status: { in: ['PROCESSING', 'COMPLETED'] } },
-            bookId: { in: courseBooks.map((b) => b.id) },
-          },
-          select: { bookId: true },
-        })
-      ).map((i) => i.bookId),
-    );
-
-    const byCourse = new Map<string, SyllabusCourseProgress>();
-    for (const book of courseBooks) {
-      const existing = byCourse.get(book.courseCode) ?? {
-        courseCode: book.courseCode,
-        courseTitle: book.courseTitle,
-        requiredBookCount: 0,
-        ownedBookCount: 0,
-      };
-      existing.requiredBookCount += 1;
-      if (ownedBookIds.has(book.id)) existing.ownedBookCount += 1;
-      byCourse.set(book.courseCode, existing);
-    }
-
-    return Array.from(byCourse.values()).sort((a, b) =>
-      a.courseCode.localeCompare(b.courseCode),
-    );
   }
 }

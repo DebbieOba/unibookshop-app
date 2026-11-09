@@ -89,7 +89,7 @@ describe('ApprovalsService', () => {
       await service.findPending();
       expect(prisma.user.findMany).toHaveBeenCalledWith({
         where: { accountState: 'PENDING' },
-        include: { profile: true, department: true },
+        include: { profile: true },
       });
     });
   });
@@ -100,7 +100,7 @@ describe('ApprovalsService', () => {
       await service.findActive();
       expect(prisma.user.findMany).toHaveBeenCalledWith({
         where: { accountState: { in: ['APPROVED', 'RESTRICTED'] } },
-        include: { profile: true, department: true },
+        include: { profile: true },
       });
     });
   });

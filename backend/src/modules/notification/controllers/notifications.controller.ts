@@ -49,13 +49,13 @@ export class NotificationsController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller', 'superadmin')
   @AuditAction('notification.broadcast')
   @Post('broadcast')
   broadcast(@Body() dto: BroadcastDto) {
     return this.notifyService.broadcast(
       { title: dto.title, body: dto.body, type: 'BROADCAST' },
-      dto.audience ?? 'student',
+      dto.audience ?? 'customer',
     );
   }
 }

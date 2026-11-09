@@ -1,5 +1,5 @@
-import { View, ViewProps } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
+import { View, ViewProps } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 
 export function Card({ style, ...rest }: ViewProps) {
   const theme = useTheme();

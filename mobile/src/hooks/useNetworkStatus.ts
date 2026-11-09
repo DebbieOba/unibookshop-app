@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import NetInfo from '@react-native-community/netinfo';
+import { useEffect, useState } from "react";
+import NetInfo from "@react-native-community/netinfo";
 
 /** True once we've positively detected the device is offline — starts
  * `false` (assume online) so a slow first NetInfo callback never flashes an

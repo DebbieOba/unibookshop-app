@@ -1,5 +1,5 @@
-import { api } from './client';
-import { Book } from '../types/catalogue';
+import { api } from "./client";
+import { Book } from "../types/catalogue";
 
 interface Favourite {
   id: string;
@@ -8,9 +8,9 @@ interface Favourite {
 }
 
 export const favouritesApi = {
-  getMine: () => api.get<Favourite[]>('/favourites'),
+  getMine: () => api.get<Favourite[]>("/favourites"),
 
-  add: (bookId: string) => api.post('/favourites', { bookId }),
+  add: (bookId: string) => api.post("/favourites", { bookId }),
 
   remove: (bookId: string) => api.delete(`/favourites/${bookId}`),
 };

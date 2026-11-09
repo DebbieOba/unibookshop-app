@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { usersApi } from '../api/users.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { usersApi } from "../api/users.api";
 
-const ADDRESSES_KEY = ['users', 'addresses'];
+const ADDRESSES_KEY = ["users", "addresses"];
 
 export function useAddresses() {
   return useQuery({
@@ -17,24 +17,38 @@ function useInvalidateAddresses() {
 
 export function useAddAddress() {
   const invalidate = useInvalidateAddresses();
-  return useMutation({ mutationFn: usersApi.addAddress, onSuccess: invalidate });
+  return useMutation({
+    mutationFn: usersApi.addAddress,
+    onSuccess: invalidate,
+  });
 }
 
 export function useUpdateAddress() {
   const invalidate = useInvalidateAddresses();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof usersApi.updateAddress>[1] }) =>
-      usersApi.updateAddress(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Parameters<typeof usersApi.updateAddress>[1];
+    }) => usersApi.updateAddress(id, payload),
     onSuccess: invalidate,
   });
 }
 
 export function useDeleteAddress() {
   const invalidate = useInvalidateAddresses();
-  return useMutation({ mutationFn: usersApi.deleteAddress, onSuccess: invalidate });
+  return useMutation({
+    mutationFn: usersApi.deleteAddress,
+    onSuccess: invalidate,
+  });
 }
 
 export function useSetDefaultAddress() {
   const invalidate = useInvalidateAddresses();
-  return useMutation({ mutationFn: usersApi.setDefaultAddress, onSuccess: invalidate });
+  return useMutation({
+    mutationFn: usersApi.setDefaultAddress,
+    onSuccess: invalidate,
+  });
 }

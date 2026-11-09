@@ -11,8 +11,8 @@ import {
 @ApiTags('admin')
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
-@Roles('admin')
-@Controller('admin/dashboard')
+@Roles('seller')
+@Controller('seller/dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 

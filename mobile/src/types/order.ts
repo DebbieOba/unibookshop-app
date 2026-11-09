@@ -1,7 +1,12 @@
 export interface CartItem {
   bookId: string;
   quantity: number;
-  book: { id: string; title: string; price: number; compareAtPrice: number | null };
+  book: {
+    id: string;
+    title: string;
+    price: number;
+    compareAtPrice: number | null;
+  };
 }
 
 export interface Cart {
@@ -12,9 +17,9 @@ export interface Cart {
   promoCode: string | null;
 }
 
-export type OrderStatus = 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
-export type DeliveryMethod = 'PICKUP' | 'DELIVERY';
-export type PaymentProvider = 'PAYSTACK' | 'FLUTTERWAVE';
+export type OrderStatus = "PROCESSING" | "COMPLETED" | "CANCELLED";
+export type DeliveryMethod = "PICKUP" | "DELIVERY";
+export type PaymentProvider = "PAYSTACK" | "FLUTTERWAVE";
 
 export interface Order {
   id: string;
@@ -23,8 +28,13 @@ export interface Order {
   discountAmount?: number;
   totalAmount: number;
   createdAt: string;
-  items: Array<{ bookId: string; titleSnapshot: string; unitPrice: number; quantity: number }>;
-  /** Only populated on admin-facing endpoints. */
+  items: Array<{
+    bookId: string;
+    titleSnapshot: string;
+    unitPrice: number;
+    quantity: number;
+  }>;
+  /** Only populated on seller-facing endpoints. */
   user?: { email: string };
 }
 

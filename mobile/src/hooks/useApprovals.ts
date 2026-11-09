@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '../api/admin.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { adminApi } from "../api/seller.api";
 
-const APPROVALS_KEY = ['admin', 'approvals'];
-const ACTIVE_USERS_KEY = ['admin', 'users', 'active'];
+const APPROVALS_KEY = ["seller", "approvals"];
+const ACTIVE_USERS_KEY = ["seller", "users", "active"];
 
 export function useApprovals() {
   return useQuery({
@@ -14,8 +14,13 @@ export function useApprovals() {
 export function useDecideApproval() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, decision }: { userId: string; decision: 'APPROVED' | 'REJECTED' }) =>
-      adminApi.decideApproval(userId, decision),
+    mutationFn: ({
+      userId,
+      decision,
+    }: {
+      userId: string;
+      decision: "APPROVED" | "REJECTED";
+    }) => adminApi.decideApproval(userId, decision),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: APPROVALS_KEY }),
   });
 }
@@ -33,7 +38,8 @@ export function useRestrictUser() {
   return useMutation({
     mutationFn: ({ userId, reason }: { userId: string; reason: string }) =>
       adminApi.restrictUser(userId, reason),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ACTIVE_USERS_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ACTIVE_USERS_KEY }),
   });
 }
 
@@ -41,6 +47,7 @@ export function useRestoreUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (userId: string) => adminApi.restoreUser(userId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ACTIVE_USERS_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ACTIVE_USERS_KEY }),
   });
 }

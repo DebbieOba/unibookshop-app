@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { View } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
-import { useToastStore } from '../store/toastStore';
-import { AppText } from './AppText';
+import { useEffect } from "react";
+import { View } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { useToastStore } from "../store/toastStore";
+import { AppText } from "./AppText";
 
 const AUTO_DISMISS_MS = 2500;
 
@@ -23,11 +23,11 @@ export function Toast() {
     <View
       pointerEvents="none"
       style={{
-        position: 'absolute',
+        position: "absolute",
         bottom: 32,
         left: theme.spacing.lg,
         right: theme.spacing.lg,
-        alignItems: 'center',
+        alignItems: "center",
       }}
     >
       <View
@@ -35,9 +35,11 @@ export function Toast() {
           borderRadius: theme.radii.pill,
           paddingHorizontal: theme.spacing.lg,
           paddingVertical: theme.spacing.sm,
-          backgroundColor: variant === 'error' ? theme.colors.error : theme.colors.surface,
+          backgroundColor:
+            variant === "error" ? theme.colors.error : theme.colors.surface,
           borderWidth: 1,
-          borderColor: variant === 'error' ? theme.colors.error : theme.colors.border,
+          borderColor:
+            variant === "error" ? theme.colors.error : theme.colors.border,
         }}
       >
         <AppText variant="body" style={{ color: theme.colors.textPrimary }}>

@@ -10,9 +10,12 @@ import {
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { BookConditionDto } from './create-book.dto';
 
 export class BrowseBooksDto extends PaginationDto {
-  @ApiPropertyOptional({ description: 'Matches title or author' })
+  @ApiPropertyOptional({
+    description: 'Matches title, author, isbn, or publisher',
+  })
   @IsOptional()
   @IsString()
   search?: string;
@@ -21,6 +24,36 @@ export class BrowseBooksDto extends PaginationDto {
   @IsOptional()
   @IsUUID()
   categoryId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID()
+  subcategoryId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  targetAudience?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  language?: string;
+
+  @ApiPropertyOptional({ enum: BookConditionDto })
+  @IsOptional()
+  @IsString()
+  bookCondition?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  publisher?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  isbn?: string;
 
   @ApiPropertyOptional({ minimum: 0 })
   @IsOptional()

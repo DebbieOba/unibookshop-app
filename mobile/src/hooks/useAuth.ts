@@ -1,12 +1,12 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { authApi } from '../api/auth.api';
-import { useAuthStore } from '../store/authStore';
-import { secureStorage } from '../lib/secureStorage';
-import { registerPushToken } from '../lib/push';
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { authApi } from "../api/auth.api";
+import { useAuthStore } from "../store/authStore";
+import { secureStorage } from "../lib/secureStorage";
+import { registerPushToken } from "../lib/push";
 
 export function useBookshops() {
   return useQuery({
-    queryKey: ['auth', 'bookshops'],
+    queryKey: ["auth", "bookshops"],
     queryFn: () => authApi.getBookshops().then((res) => res.data),
   });
 }
@@ -16,7 +16,13 @@ export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);
 
   return useMutation({
-    mutationFn: async ({ identifier, password }: { identifier: string; password: string }) => {
+    mutationFn: async ({
+      identifier,
+      password,
+    }: {
+      identifier: string;
+      password: string;
+    }) => {
       const { data: tokens } = await authApi.login(identifier, password);
       await secureStorage.setRefreshToken(tokens.refreshToken);
 
@@ -49,18 +55,30 @@ export function useRegister() {
 
 export function useChangePassword() {
   return useMutation({
-    mutationFn: ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) =>
-      authApi.changePassword(currentPassword, newPassword),
+    mutationFn: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => authApi.changePassword(currentPassword, newPassword),
   });
 }
 
 export function useForgotPassword() {
-  return useMutation({ mutationFn: (email: string) => authApi.forgotPassword(email) });
+  return useMutation({
+    mutationFn: (email: string) => authApi.forgotPassword(email),
+  });
 }
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: ({ token, newPassword }: { token: string; newPassword: string }) =>
-      authApi.resetPassword(token, newPassword),
+    mutationFn: ({
+      token,
+      newPassword,
+    }: {
+      token: string;
+      newPassword: string;
+    }) => authApi.resetPassword(token, newPassword),
   });
 }

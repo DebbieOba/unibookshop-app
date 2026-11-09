@@ -3,11 +3,13 @@ import { ObjectStorageModule } from '../../integrations/object-storage/object-st
 import { NotificationModule } from '../notification/notification.module';
 import { BooksController } from './controllers/books.controller';
 import { CategoriesController } from './controllers/categories.controller';
+import { SubcategoriesController } from './controllers/subcategories.controller';
 import { FavouritesController } from './controllers/favourites.controller';
 import { RatingsController } from './controllers/ratings.controller';
 import { PreOrdersController } from './controllers/pre-orders.controller';
 import { BooksService } from './services/books.service';
 import { CategoriesService } from './services/categories.service';
+import { SubcategoriesService } from './services/subcategories.service';
 import { RatingsService } from './services/ratings.service';
 import { FavouritesService } from './services/favourites.service';
 import { StockService } from './services/stock.service';
@@ -26,6 +28,7 @@ import { PreOrdersService } from './services/pre-orders.service';
   controllers: [
     BooksController,
     CategoriesController,
+    SubcategoriesController,
     FavouritesController,
     RatingsController,
     PreOrdersController,
@@ -33,6 +36,7 @@ import { PreOrdersService } from './services/pre-orders.service';
   providers: [
     BooksService,
     CategoriesService,
+    SubcategoriesService,
     RatingsService,
     FavouritesService,
     StockService,

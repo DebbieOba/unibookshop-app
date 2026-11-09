@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { ThemeMode } from '../theme';
+import { create } from "zustand";
+import { ThemeMode } from "../theme";
 
 interface ThemeState {
   mode: ThemeMode;
@@ -11,6 +11,6 @@ interface ThemeState {
 // behind the same floor as the splash animation so returning dark-mode
 // users never see a light flash first.
 export const useThemeStore = create<ThemeState>((set) => ({
-  mode: 'light',
+  mode: "light",
   setMode: (mode) => set({ mode }),
 }));

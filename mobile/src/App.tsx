@@ -1,20 +1,20 @@
-import { useEffect } from 'react';
-import { Appearance, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StatusBar } from 'expo-status-bar';
+import { useEffect } from "react";
+import { Appearance, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
 import {
   useFonts,
   DMSans_400Regular,
   DMSans_500Medium,
   DMSans_600SemiBold,
   DMSans_700Bold,
-} from '@expo-google-fonts/dm-sans';
-import { RootNavigator } from './navigation/RootNavigator';
-import { Toast } from './components/Toast';
-import { OfflineBanner } from './components/OfflineBanner';
-import { subscribeToNotificationTaps } from './lib/push';
-import { useThemeStore } from './store/themeStore';
+} from "@expo-google-fonts/dm-sans";
+import { RootNavigator } from "./navigation/RootNavigator";
+import { Toast } from "./components/Toast";
+import { OfflineBanner } from "./components/OfflineBanner";
+import { subscribeToNotificationTaps } from "./lib/push";
+import { useThemeStore } from "./store/themeStore";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +42,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+        <StatusBar style={mode === "dark" ? "light" : "dark"} />
         <View style={{ flex: 1 }}>
           <OfflineBanner />
           <View style={{ flex: 1 }}>

@@ -1,7 +1,7 @@
-import { View } from 'react-native';
-import { Image } from 'expo-image';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { View } from "react-native";
+import { Image } from "expo-image";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
 interface AvatarProps {
   url?: string | null;
@@ -11,7 +11,7 @@ interface AvatarProps {
 
 function initialsOf(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);
-  return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase();
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
 export function Avatar({ url, fullName, size = 48 }: AvatarProps) {
@@ -33,8 +33,8 @@ export function Avatar({ url, fullName, size = 48 }: AvatarProps) {
         height: size,
         borderRadius: size / 2,
         backgroundColor: theme.colors.primaryTint,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <AppText variant="sectionHeader" style={{ color: theme.colors.primary }}>

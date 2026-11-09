@@ -8,7 +8,7 @@ export function AccountApprovedEmail() {
       heading="You're in!"
     >
       <Text>
-        Your CURRICULA account has been approved. Open the app and log in to
+        Your BOOKDECK account has been approved. Open the app and log in to
         start browsing textbooks for your department.
       </Text>
     </EmailLayout>

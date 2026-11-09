@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Deletion Request — BOOKDECK</title>
+  <style>
+    :root {
+      --primary: #5856D6;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --danger: #EF4444;
+      --border: #E2E8F0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 24px;
+      margin-top: 0;
+      color: var(--text);
+    }
+    .badge {
+      display: inline-block;
+      background: #FEE2E2;
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .callout {
+      background: #F1F5F9;
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 4px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+    button {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Google Play & NDPA Compliance</span>
+    <h1>Delete Your BOOKDECK Account</h1>
+    <p>
+      In accordance with the <strong>Nigeria Data Protection Act 2023 (NDPA §37)</strong> and <strong>Google Play User Data Policies</strong>, you may submit a request to permanently delete your BOOKDECK account and associated personal data.
+    </p>
+
+    <div class="callout">
+      <strong>What will be deleted immediately:</strong>
+      <ul>
+        <li>Your profile details (Full name, phone number, profile photo)</li>
+        <li>Saved delivery addresses and contact preferences</li>
+        <li>Push notification tokens, active sessions, and credentials</li>
+      </ul>
+      <strong>Retention notice:</strong> Pursuant to Central Bank of Nigeria (CBN) and financial audit regulations, financial purchase and payment receipts are retained in an unlinked, anonymized form for 7 years.
+    </div>
+
+    <form id="deleteForm" onsubmit="handleSubmit(event)">
+      <label for="email">Registered Email Address</label>
+      <input type="email" id="email" required placeholder="your.name@example.com">
+
+      <label for="password">Account Password</label>
+      <input type="password" id="password" required placeholder="Enter your password to authenticate">
+
+      <button type="submit" id="submitBtn">Permanently Delete Account</button>
+    </form>
+
+    <div id="statusMessage" style="display: none; margin-top: 20px; padding: 16px; border-radius: 8px;"></div>
+
+    <div class="footer-note">
+      You can also delete your account directly inside the BOOKDECK mobile app under <strong>Account &rarr; Security &rarr; Delete Account</strong>.<br>
+      For manual deletion assistance, contact our Privacy Office at <code>[INSERT OFFICIAL PRIVACY CONTACT EMAIL]</code>.
+    </div>
+  </div>
+
+  <script>
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const statusDiv = document.getElementById('statusMessage');
+      const submitBtn = document.getElementById('submitBtn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing Erasure...";
+
+      try {
+        // Authenticate login to obtain bearer token
+        const loginRes = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!loginRes.ok) {
+          throw new Error('Authentication failed. Please verify your email and password.');
+        }
+
+        const authData = await loginRes.json();
+        const token = authData.data ? authData.data.accessToken : authData.accessToken;
+
+        // Dispatch deletion request
+        const deleteRes = await fetch('/api/v1/users/me/delete-account', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ password })
+        });
+
+        if (!deleteRes.ok) {
+          throw new Error('Could not complete erasure. Please contact customer support.');
+        }
+
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#DCFCE7';
+        statusDiv.style.color = '#166534';
+        statusDiv.innerHTML = '<strong>Account Successfully Deleted:</strong> Your profile and personal data have been permanently erased from BOOKDECK.';
+        document.getElementById('deleteForm').style.display = 'none';
+
+      } catch (err) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#FEE2E2';
+        statusDiv.style.color = '#991B1B';
+        statusDiv.innerText = err.message || 'An error occurred during account deletion.';
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Permanently Delete Account";
+      }
+    }
+  </script>
+</body>
+</html>
+

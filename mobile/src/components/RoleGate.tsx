@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
-import { useAuthStore } from '../store/authStore';
+import { ReactNode } from "react";
+import { useAuthStore } from "../store/authStore";
 
 interface RoleGateProps {
-  allow: Array<'student' | 'admin' | 'staff' | 'superadmin'>;
+  allow: Array<"customer" | "seller" | "staff" | "superadmin">;
   children: ReactNode;
 }
 

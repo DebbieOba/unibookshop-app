@@ -1,40 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   DarkTheme,
   DefaultTheme,
   LinkingOptions,
   NavigationContainer,
   Theme as NavigationTheme,
-} from '@react-navigation/native';
-import { useAuthStore } from '../store/authStore';
-import { useThemeStore } from '../store/themeStore';
-import { useTheme } from '../hooks/useTheme';
-import { secureStorage } from '../lib/secureStorage';
-import { authApi } from '../api/auth.api';
-import { SplashScreen } from '../screens/student/Splash/SplashScreen';
-import { OnboardingScreen } from '../screens/student/Onboarding/OnboardingScreen';
-import { PendingApprovalScreen } from '../screens/student/PendingApproval/PendingApprovalScreen';
-import { CompleteProfileScreen } from '../screens/student/CompleteProfile/CompleteProfileScreen';
-import { AuthStack } from './AuthStack';
-import { StudentStack } from './StudentStack';
-import { AdminStack } from './AdminStack';
-import { SuperAdminStack } from './SuperAdminStack';
+} from "@react-navigation/native";
+import { useAuthStore } from "../store/authStore";
+import { useThemeStore } from "../store/themeStore";
+import { useTheme } from "../hooks/useTheme";
+import { secureStorage } from "../lib/secureStorage";
+import { authApi } from "../api/auth.api";
+import { SplashScreen } from "../screens/customer/Splash/SplashScreen";
+import { OnboardingScreen } from "../screens/customer/Onboarding/OnboardingScreen";
+import { PendingApprovalScreen } from "../screens/customer/PendingApproval/PendingApprovalScreen";
+import { CompleteProfileScreen } from "../screens/customer/CompleteProfile/CompleteProfileScreen";
+import { AuthStack } from "./AuthStack";
+import { CustomerStack } from "./CustomerStack";
+import { SellerStack } from "./SellerStack";
+import { SuperAdminStack } from "./SuperAdminStack";
 
 /**
- * Deep-link path -> screen mapping. AuthStack/StudentStack are never
+ * Deep-link path -> screen mapping. AuthStack/CustomerStack are never
  * mounted at the same time (RootNavigator picks exactly one), so a flat
  * `screens` map is safe here — a path that doesn't exist in whichever tree
  * is currently active just doesn't resolve, rather than crashing. Covers:
  * the password-reset email link (PasswordResetEmail.tsx, AuthStack) and
- * notification taps (frontend-architecture.md §10, StudentStack).
+ * notification taps (frontend-architecture.md §10, CustomerStack).
  */
 const linking: LinkingOptions<ReactNavigation.RootParamList> = {
-  prefixes: ['curricula://'],
+  prefixes: ["bookdeck://"],
   config: {
     screens: {
-      ResetPassword: 'reset-password',
-      Notifications: 'notifications',
-      OrderConfirmation: 'order/:orderId',
+      ResetPassword: "reset-password",
+      Notifications: "notifications",
+      OrderConfirmation: "order/:orderId",
     },
   },
 };
@@ -44,11 +44,20 @@ const linking: LinkingOptions<ReactNavigation.RootParamList> = {
  * three flows in project.md §3. See frontend-architecture.md §5.
  */
 export function RootNavigator() {
-  const { user, isHydrating, needsOnboarding, setAccessToken, setSession, setHydrating } = useAuthStore();
+  const {
+    user,
+    isHydrating,
+    needsOnboarding,
+    setAccessToken,
+    setSession,
+    setHydrating,
+  } = useAuthStore();
   const themeMode = useThemeStore((s) => s.mode);
   const setThemeMode = useThemeStore((s) => s.setMode);
   const theme = useTheme();
-  const [onboardingSeen, setOnboardingSeenState] = useState<boolean | null>(null);
+  const [onboardingSeen, setOnboardingSeenState] = useState<boolean | null>(
+    null,
+  );
   const [themeModeLoaded, setThemeModeLoaded] = useState(false);
 
   useEffect(() => {
@@ -90,10 +99,10 @@ export function RootNavigator() {
   }
 
   const navigationTheme: NavigationTheme = {
-    ...(themeMode === 'dark' ? DarkTheme : DefaultTheme),
-    dark: themeMode === 'dark',
+    ...(themeMode === "dark" ? DarkTheme : DefaultTheme),
+    dark: themeMode === "dark",
     colors: {
-      ...(themeMode === 'dark' ? DarkTheme.colors : DefaultTheme.colors),
+      ...(themeMode === "dark" ? DarkTheme.colors : DefaultTheme.colors),
       primary: theme.colors.primary,
       background: theme.colors.background,
       card: theme.colors.surface,
@@ -114,16 +123,16 @@ export function RootNavigator() {
         />
       ) : !user ? (
         <AuthStack />
-      ) : user.accountState !== 'APPROVED' ? (
+      ) : user.accountState !== "APPROVED" ? (
         <PendingApprovalScreen />
-      ) : user.role === 'student' && needsOnboarding ? (
+      ) : user.role === "customer" && needsOnboarding ? (
         <CompleteProfileScreen />
-      ) : user.role === 'superadmin' ? (
+      ) : user.role === "superadmin" ? (
         <SuperAdminStack />
-      ) : user.role === 'admin' ? (
-        <AdminStack />
+      ) : user.role === "seller" ? (
+        <SellerStack />
       ) : (
-        <StudentStack />
+        <CustomerStack />
       )}
     </NavigationContainer>
   );

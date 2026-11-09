@@ -8,11 +8,8 @@ export interface Profile {
   notificationPreferences: { push?: boolean; email?: boolean };
   user?: {
     email?: string;
-    matricNumber?: string | null;
-    departmentId?: string | null;
-    department?: { id: string; name: string } | null;
-    levelId?: string | null;
-    level?: { id: string; name: string } | null;
+
+    bookshop?: { id: string; name: string } | null;
   } | null;
 }
 

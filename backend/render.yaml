@@ -1,9 +1,9 @@
-# render.yaml — Render Blueprint for the CURRICULA backend.
+# render.yaml — Render Blueprint for the BOOKDECK backend.
 # https://render.com/docs/blueprint-spec
 
 services:
   - type: web
-    name: curricula-backend
+    name: bookdeck-backend
     runtime: node
 
     # --- Build ---

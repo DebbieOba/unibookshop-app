@@ -29,7 +29,7 @@ export class PaystackProvider implements PaymentProvider {
         // Without this, Paystack redirects to whatever default/no URL is set
         // on the dashboard, which never matches the app's deep-link scheme —
         // the WebView in CheckoutScreen.tsx would never detect completion.
-        callback_url: 'curricula://payment-callback',
+        callback_url: 'bookdeck://payment-callback',
       },
       { headers: { Authorization: `Bearer ${this.secretKey}` } },
     );
@@ -73,6 +73,7 @@ export class PaystackProvider implements PaymentProvider {
     return {
       reference: payload?.data?.reference,
       status: payload?.data?.status === 'success' ? 'SUCCESSFUL' : 'FAILED',
+      amount: payload?.data?.amount ? Number(payload.data.amount) / 100 : undefined,
     };
   }
 }

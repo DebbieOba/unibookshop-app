@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
-import { FlatList, Modal, Pressable, TextInput, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { useMemo, useState } from "react";
+import { FlatList, Modal, Pressable, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
 interface Item {
   id: string;
@@ -16,7 +16,7 @@ interface SearchableBottomSheetProps<T extends Item> {
   selectedId?: string;
   onSelect: (item: T) => void;
   onClose: () => void;
-  /** Hides the search field for short lists (e.g. 5 academic levels). */
+  /** Hides the search field for short lists. */
   searchable?: boolean;
 }
 
@@ -33,7 +33,7 @@ export function SearchableBottomSheet<T extends Item>({
   searchable = true,
 }: SearchableBottomSheetProps<T>) {
   const theme = useTheme();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     if (!searchable || !query.trim()) return items;
@@ -42,20 +42,29 @@ export function SearchableBottomSheet<T extends Item>({
   }, [items, query, searchable]);
 
   const handleClose = () => {
-    setQuery('');
+    setQuery("");
     onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleClose}
+    >
       <Pressable
-        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "flex-end",
+        }}
         onPress={handleClose}
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
           style={{
-            maxHeight: '75%',
+            maxHeight: "75%",
             backgroundColor: theme.colors.surface,
             borderTopLeftRadius: theme.radii.card,
             borderTopRightRadius: theme.radii.card,
@@ -65,7 +74,7 @@ export function SearchableBottomSheet<T extends Item>({
         >
           <View
             style={{
-              alignSelf: 'center',
+              alignSelf: "center",
               width: 40,
               height: 4,
               borderRadius: theme.radii.pill,
@@ -74,18 +83,28 @@ export function SearchableBottomSheet<T extends Item>({
             }}
           />
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <AppText variant="sectionHeader">{title}</AppText>
             <Pressable onPress={handleClose} hitSlop={8}>
-              <Ionicons name="close" size={22} color={theme.colors.textSecondary} />
+              <Ionicons
+                name="close"
+                size={22}
+                color={theme.colors.textSecondary}
+              />
             </Pressable>
           </View>
 
           {searchable ? (
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
+                flexDirection: "row",
+                alignItems: "center",
                 height: 44,
                 borderRadius: theme.radii.input,
                 backgroundColor: theme.colors.surfaceAlt,
@@ -96,13 +115,21 @@ export function SearchableBottomSheet<T extends Item>({
                 marginTop: theme.spacing.md,
               }}
             >
-              <Ionicons name="search-outline" size={18} color={theme.colors.textTertiary} />
+              <Ionicons
+                name="search-outline"
+                size={18}
+                color={theme.colors.textTertiary}
+              />
               <TextInput
                 placeholder="Search…"
                 placeholderTextColor={theme.colors.textTertiary}
                 value={query}
                 onChangeText={setQuery}
-                style={{ flex: 1, color: theme.colors.textPrimary, height: '100%' }}
+                style={{
+                  flex: 1,
+                  color: theme.colors.textPrimary,
+                  height: "100%",
+                }}
               />
             </View>
           ) : null}
@@ -116,7 +143,11 @@ export function SearchableBottomSheet<T extends Item>({
             ListEmptyComponent={
               <AppText
                 variant="body"
-                style={{ color: theme.colors.textTertiary, textAlign: 'center', paddingVertical: theme.spacing.xl }}
+                style={{
+                  color: theme.colors.textTertiary,
+                  textAlign: "center",
+                  paddingVertical: theme.spacing.xl,
+                }}
               >
                 No matches found.
               </AppText>
@@ -130,9 +161,9 @@ export function SearchableBottomSheet<T extends Item>({
                     handleClose();
                   }}
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     paddingVertical: theme.spacing.md,
                     borderBottomWidth: 1,
                     borderBottomColor: theme.colors.border,
@@ -140,11 +171,22 @@ export function SearchableBottomSheet<T extends Item>({
                 >
                   <AppText
                     variant="body"
-                    style={{ color: selected ? theme.colors.primary : theme.colors.textPrimary, flex: 1 }}
+                    style={{
+                      color: selected
+                        ? theme.colors.primary
+                        : theme.colors.textPrimary,
+                      flex: 1,
+                    }}
                   >
                     {item.name}
                   </AppText>
-                  {selected ? <Ionicons name="checkmark" size={20} color={theme.colors.primary} /> : null}
+                  {selected ? (
+                    <Ionicons
+                      name="checkmark"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
+                  ) : null}
                 </Pressable>
               );
             }}

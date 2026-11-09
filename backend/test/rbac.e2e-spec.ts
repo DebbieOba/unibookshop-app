@@ -60,7 +60,7 @@ describe('RBAC regression (e2e)', () => {
       data: {
         email: adminEmail,
         passwordHash,
-        role: 'admin',
+        role: 'seller',
         accountState: 'APPROVED',
       },
     });
@@ -68,7 +68,7 @@ describe('RBAC regression (e2e)', () => {
       data: {
         email: approvedStudentEmail,
         passwordHash,
-        role: 'student',
+        role: 'customer',
         accountState: 'APPROVED',
         profile: { create: { fullName: 'RBAC Test Student' } },
       },
@@ -77,7 +77,7 @@ describe('RBAC regression (e2e)', () => {
       data: {
         email: pendingStudentEmail,
         passwordHash,
-        role: 'student',
+        role: 'customer',
         accountState: 'PENDING',
         profile: { create: { fullName: 'RBAC Test Pending Student' } },
       },
@@ -86,7 +86,7 @@ describe('RBAC regression (e2e)', () => {
       data: {
         email: restrictedStudentEmail,
         passwordHash,
-        role: 'student',
+        role: 'customer',
         accountState: 'RESTRICTED',
         restrictionReason: 'RBAC test fixture',
         profile: { create: { fullName: 'RBAC Test Restricted Student' } },
@@ -96,7 +96,7 @@ describe('RBAC regression (e2e)', () => {
       data: {
         email: restrictableStudentEmail,
         passwordHash,
-        role: 'student',
+        role: 'customer',
         accountState: 'APPROVED',
         profile: { create: { fullName: 'RBAC Test Restrictable Student' } },
       },

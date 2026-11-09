@@ -1,5 +1,5 @@
-import { api } from './client';
-import { Rating } from '../types/rating';
+import { api } from "./client";
+import { Rating } from "../types/rating";
 
 export const ratingsApi = {
   getForBook: (bookId: string) => api.get<Rating[]>(`/books/${bookId}/ratings`),

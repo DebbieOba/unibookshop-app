@@ -35,7 +35,7 @@ export class FlutterwaveProvider implements PaymentProvider {
         // Without this, Flutterwave redirects to whatever default/no URL is
         // set on the dashboard, which never matches the app's deep-link
         // scheme — the WebView in CheckoutScreen.tsx would never detect completion.
-        redirect_url: 'curricula://payment-callback',
+        redirect_url: 'bookdeck://payment-callback',
       },
       { headers: { Authorization: `Bearer ${this.secretKey}` } },
     );
@@ -77,6 +77,7 @@ export class FlutterwaveProvider implements PaymentProvider {
     return {
       reference: payload?.data?.tx_ref,
       status: payload?.data?.status === 'successful' ? 'SUCCESSFUL' : 'FAILED',
+      amount: payload?.data?.amount ? Number(payload.data.amount) : undefined,
     };
   }
 }

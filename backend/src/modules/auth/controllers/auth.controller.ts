@@ -14,6 +14,7 @@ import { RefreshDto } from '../dto/refresh.dto';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { SendOtpDto, VerifyOtpDto } from '../dto/otp.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,7 +29,7 @@ export class AuthController {
   }
 
   @Public()
-  @ApiOperation({ summary: 'Register a new student account (starts PENDING)' })
+  @ApiOperation({ summary: 'Register a new account' })
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
@@ -37,8 +38,7 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('local'))
   @ApiOperation({
-    summary:
-      'Log in with email/matric + password (works for any account state)',
+    summary: 'Log in with email + password (works for any account state)',
   })
   @ApiBody({ type: LoginDto })
   @Post('login')
@@ -101,5 +101,22 @@ export class AuthController {
       dto.currentPassword,
       dto.newPassword,
     );
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Send a 6-digit OTP code to an email address' })
+  @Post('otp/send')
+  sendOtp(@Body() dto: SendOtpDto) {
+    return this.authService.sendOtp(dto.email, dto.purpose);
+  }
+
+  @Public()
+  @ApiOperation({
+    summary:
+      'Verify a 6-digit OTP — returns tokens when purpose is sign-in',
+  })
+  @Post('otp/verify')
+  verifyOtp(@Body() dto: VerifyOtpDto) {
+    return this.authService.verifyOtp(dto.email, dto.code, dto.purpose);
   }
 }

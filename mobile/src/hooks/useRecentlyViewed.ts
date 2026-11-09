@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useQueries } from '@tanstack/react-query';
-import { catalogueApi } from '../api/catalogue.api';
-import { localStorage } from '../lib/localStorage';
-import { Book } from '../types/catalogue';
+import { useEffect, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { catalogueApi } from "../api/catalogue.api";
+import { localStorage } from "../lib/localStorage";
+import { Book } from "../types/catalogue";
 
 /** Small client-only view-history list (no backend endpoint for this) — ids
  * are recorded by `useRecordBookViewed` and resolved here via the same
  * per-book query key `useBook` uses, so results share cache with the rest of
  * the app rather than double-fetching. */
-export function useRecentlyViewedBooks(excludeId?: string): { data: Book[]; isLoading: boolean } {
+export function useRecentlyViewedBooks(excludeId?: string): {
+  data: Book[];
+  isLoading: boolean;
+} {
   const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export function useRecentlyViewedBooks(excludeId?: string): { data: Book[]; isLo
 
   const results = useQueries({
     queries: relevantIds.map((id) => ({
-      queryKey: ['catalogue', 'book', id],
+      queryKey: ["catalogue", "book", id],
       queryFn: () => catalogueApi.getBookById(id).then((res) => res.data),
     })),
   });

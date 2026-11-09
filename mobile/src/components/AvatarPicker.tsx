@@ -1,7 +1,7 @@
-import { Pressable, View } from 'react-native';
-import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../hooks/useTheme';
+import { Pressable, View } from "react-native";
+import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
 
 interface AvatarPickerProps {
   uri?: string | null;
@@ -27,21 +27,29 @@ export function AvatarPicker({ uri, onPress, size = 112 }: AvatarPickerProps) {
           backgroundColor: theme.colors.surfaceAlt,
           borderWidth: 2,
           borderColor: theme.colors.border,
-          overflow: 'hidden',
-          alignItems: 'center',
-          justifyContent: 'center',
+          overflow: "hidden",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {uri ? (
-          <Image source={{ uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+          <Image
+            source={{ uri }}
+            style={{ width: "100%", height: "100%" }}
+            contentFit="cover"
+          />
         ) : (
-          <Ionicons name="person" size={size * 0.45} color={theme.colors.textTertiary} />
+          <Ionicons
+            name="person"
+            size={size * 0.45}
+            color={theme.colors.textTertiary}
+          />
         )}
       </View>
 
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           bottom: -2,
           right: -2,
           width: badgeSize,
@@ -50,11 +58,15 @@ export function AvatarPicker({ uri, onPress, size = 112 }: AvatarPickerProps) {
           backgroundColor: theme.colors.primary,
           borderWidth: 3,
           borderColor: theme.colors.background,
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Ionicons name="camera" size={badgeSize * 0.55} color={theme.colors.background} />
+        <Ionicons
+          name="camera"
+          size={badgeSize * 0.55}
+          color={theme.colors.background}
+        />
       </View>
     </Pressable>
   );

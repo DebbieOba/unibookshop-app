@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -8,15 +9,15 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import { randomUUID } from 'crypto';
+import { randomUUID, randomInt } from 'crypto';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { RedisService } from '../../../database/redis/redis.service';
 import { EmailService } from '../../../integrations/email/email.service';
-import { SisService } from '../../../integrations/sis/sis.service';
 import { RegisterDto } from '../dto/register.dto';
 
 const REFRESH_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days, matches JWT_REFRESH_TTL default
 const RESET_TTL_SECONDS = 60 * 30; // 30 minutes
+const OTP_TTL_SECONDS = 60 * 10; // 10 minutes
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,6 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly email: EmailService,
-    private readonly sis: SisService,
   ) {}
 
   async listBookshops() {
@@ -39,42 +39,17 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const normalizedEmail = dto.email.trim().toLowerCase();
-    const normalizedMatric = dto.matricNumber?.trim().toLowerCase();
 
-    const existing = await this.prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: normalizedEmail },
-          ...(normalizedMatric ? [{ matricNumber: normalizedMatric }] : []),
-        ],
-      },
+    const existing = await this.prisma.user.findUnique({
+      where: { email: normalizedEmail },
     });
     if (existing) {
-      throw new ConflictException('Email or matric number already registered');
-    }
-
-    if (dto.matricNumber && this.sis.isConfigured) {
-      try {
-        const record = await this.sis.lookupStudent(dto.matricNumber);
-        if (!record) {
-          throw new BadRequestException(
-            'Matric number not found in university records',
-          );
-        }
-      } catch (error) {
-        if (error instanceof BadRequestException) throw error;
-        // SIS reachable-but-erroring (network/5xx) fails open — we don't want
-        // a third-party outage to block every registration. A confirmed
-        // "not found" (handled above) is the only case that blocks.
-        this.logger.warn(
-          `SIS lookup errored for ${dto.matricNumber}, allowing registration to proceed`,
-        );
-      }
+      throw new ConflictException('Email already registered');
     }
 
     let bookshopId = dto.bookshopId;
-    let userRole =
-      dto.role === 'admin' || dto.role === 'student' ? dto.role : 'student';
+    let userRole: 'customer' | 'seller' =
+      dto.role === 'seller' ? 'seller' : 'customer';
 
     if (dto.bookshopName) {
       const slug = dto.bookshopName
@@ -86,50 +61,30 @@ export class AuthService {
         where: { slug },
       });
       if (existingBookshop) {
-        throw new ConflictException('A bookshop with this name already exists');
-      }
-
-      const bookshop = await this.prisma.bookshop.create({
-        data: {
-          name: dto.bookshopName.trim(),
-          slug,
-        },
-      });
-      bookshopId = bookshop.id;
-      userRole = 'admin';
-    } else if (!bookshopId) {
-      const defaultBookshop = await this.prisma.bookshop.findFirst({
-        where: { slug: 'futa' },
-      });
-      if (defaultBookshop) {
-        bookshopId = defaultBookshop.id;
+        throw new ConflictException(
+          'A bookstore with this name already exists',
+        );
       }
     }
 
     const passwordHash = await argon2.hash(dto.password);
-    const user = await this.prisma.user.create({
-      data: {
-        email: normalizedEmail,
-        matricNumber: normalizedMatric,
-        passwordHash,
-        departmentId: dto.departmentId,
-        bookshopId,
-        role: userRole as any,
-        // Students no longer wait on admin approval — straight to the
-        // dashboard after signup. Overrides the schema's PENDING default;
-        // AccountState/the approvals infrastructure stays intact (an admin
-        // can still flip a user to REJECTED later) but nothing new lands
-        // in that queue anymore.
-        accountState: 'APPROVED',
-        // Signup only collects email/matric + password now — fullName is
-        // filled in properly on CompleteProfileScreen right after. Profile
-        // .fullName is non-nullable, so this is just a placeholder until then.
-        profile: {
-          create: { fullName: dto.fullName ?? dto.email.split('@')[0] },
-        },
-      },
+    
+    // Save registration payload temporarily in Redis instead of database
+    const payload = JSON.stringify({
+      email: normalizedEmail,
+      passwordHash,
+      bookshopId: dto.bookshopId,
+      bookshopName: dto.bookshopName,
+      role: dto.role,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      fullName: dto.fullName,
     });
-    return { id: user.id, accountState: user.accountState };
+    
+    await this.redis.set(`pending-user:${normalizedEmail}`, payload, 'EX', 900); // 15 mins
+
+    // Return dummy values since the user is not yet created in the DB
+    return { id: 'pending', accountState: 'PENDING', isEmailVerified: false };
   }
 
   async validateUser(identifier: string, password: string) {
@@ -138,12 +93,7 @@ export class AuthService {
 
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: { equals: normalizedIdentifier, mode: 'insensitive' } },
-          {
-            matricNumber: { equals: normalizedIdentifier, mode: 'insensitive' },
-          },
-        ],
+        email: { equals: normalizedIdentifier, mode: 'insensitive' },
       },
     });
 
@@ -178,7 +128,13 @@ export class AuthService {
     email: string;
     role: string;
     accountState: string;
+    isEmailVerified: boolean;
   }) {
+    if (!user.isEmailVerified) {
+      throw new ForbiddenException(
+        'Please verify your email address before logging in. Check your inbox for the verification code.',
+      );
+    }
     return this.issueTokenPair(user.id, user.email, user.role);
   }
 
@@ -227,6 +183,102 @@ export class AuthService {
       templateId: 'password-reset',
       data: { token },
     });
+  }
+
+  /** Send a 6-digit OTP to the given email for sign-in or email verification. */
+  async sendOtp(email: string, purpose: 'verify-email' | 'sign-in') {
+    const normalizedEmail = email.trim().toLowerCase();
+    // For sign-in OTP: user must already exist (but we don't reveal that)
+    // Generate cryptographically secure 6-digit OTP
+    const code = randomInt(100000, 1000000).toString();
+    await this.redis.set(
+      `otp:${purpose}:${normalizedEmail}`,
+      code,
+      'EX',
+      OTP_TTL_SECONDS,
+    );
+    await this.email.send({
+      to: normalizedEmail,
+      templateId: 'otp',
+      data: { code, purpose },
+    });
+  }
+
+  /** Verify the OTP and — for sign-in — exchange it for tokens. */
+  async verifyOtp(
+    email: string,
+    code: string,
+    purpose: 'verify-email' | 'sign-in',
+  ) {
+    const normalizedEmail = email.trim().toLowerCase();
+    const key = `otp:${purpose}:${normalizedEmail}`;
+    const stored = await this.redis.get(key);
+
+    if (!stored || stored !== code) {
+      throw new UnauthorizedException('Invalid or expired verification code');
+    }
+
+    // Consume the OTP — single use
+    await this.redis.del(key);
+
+    if (purpose === 'sign-in') {
+      const user = await this.prisma.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+      if (!user) throw new UnauthorizedException('Account not found');
+      return this.issueTokenPair(user.id, user.email, user.role);
+    }
+
+    // For verify-email: check pending registration payload
+    const pendingData = await this.redis.get(`pending-user:${normalizedEmail}`);
+    if (pendingData) {
+      const dto = JSON.parse(pendingData);
+      
+      let bookshopId = dto.bookshopId;
+      let userRole: 'customer' | 'seller' = dto.role === 'seller' ? 'seller' : 'customer';
+
+      if (dto.bookshopName) {
+        const slug = dto.bookshopName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const bookshop = await this.prisma.bookshop.create({
+          data: { name: dto.bookshopName.trim(), slug },
+        });
+        bookshopId = bookshop.id;
+        userRole = 'seller';
+      }
+
+      await this.prisma.user.create({
+        data: {
+          email: normalizedEmail,
+          passwordHash: dto.passwordHash,
+          bookshopId,
+          role: userRole as any,
+          accountState: 'APPROVED',
+          isEmailVerified: true, // immediately verified
+          profile: {
+            create: {
+              fullName: dto.firstName && dto.lastName ? `${dto.firstName} ${dto.lastName}` : dto.fullName ?? dto.email.split('@')[0],
+            },
+          },
+        },
+      });
+      
+      await this.redis.del(`pending-user:${normalizedEmail}`);
+      return { verified: true };
+    }
+
+    // Fallback: If not found in pending, maybe they were already created previously?
+    const existingUser = await this.prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existingUser) {
+      await this.prisma.user.update({
+        where: { email: normalizedEmail },
+        data: { isEmailVerified: true },
+      });
+      return { verified: true };
+    }
+    
+    throw new BadRequestException('Registration expired or not found. Please sign up again.');
+
+    return { verified: true };
   }
 
   async resetPassword(token: string, newPassword: string) {

@@ -15,8 +15,10 @@ datasource db {
 // --- Shared enums ---
 
 enum Role {
-  student
-  admin
+  superadmin
+  seller
+  staff
+  customer
 }
 
 enum AccountState {
@@ -47,6 +49,16 @@ enum NotificationType {
   APPROVAL
   BROADCAST
   NEW_ARRIVAL
+  NEW_SALE
+  LOW_STOCK
+}
+
+enum BookCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
 }
 
 enum PromoType {
@@ -82,35 +94,41 @@ model Bookshop {
   id            String         @id @default(uuid())
   name          String         @unique
   slug          String         @unique
+  // Extended business information for seller's bookstore profile
+  description   String?
+  logoUrl       String?
+  phone         String?
+  email         String?
+  address       String?
+  city          String?
+  state         String?
+  country       String?
+  openingHours  String?        // Free-text, e.g. "Mon–Fri 8am–6pm"
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   users         User[]
   books         Book[]
   categories    Category[]
-  schools       School[]
-  levels        Level[]
   orders        Order[]
   promoCodes    PromoCode[]
   listings      Listing[]
   notifications Notification[]
+  expenses      Expense[]
+  refunds       Refund[]
 }
 
 model User {
   id                String       @id @default(uuid())
   email             String       @unique
-  matricNumber      String?      @unique
   passwordHash      String
-  role              Role         @default(student)
+  role              Role         @default(customer)
   accountState      AccountState @default(PENDING)
+  isEmailVerified   Boolean      @default(false)
   pushToken         String?
   // Set when accountState is RESTRICTED, cleared on restore — durable "why,"
   // since AuditLog has no payload column to hold it.
   restrictionReason String?
-  departmentId      String?
-  department        Department?  @relation(fields: [departmentId], references: [id])
-  levelId           String?
-  level             Level?       @relation(fields: [levelId], references: [id])
   bookshopId        String?
   bookshop          Bookshop?    @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
   createdAt         DateTime     @default(now())
@@ -126,6 +144,8 @@ model User {
   listings               Listing[]
   preOrderReservations   PreOrderReservation[]
   inventoryMovements     InventoryMovement[]
+  roleId                 String?
+  roleRecord             RoleRecord?  @relation(fields: [roleId], references: [id], onDelete: SetNull)
 }
 
 // --- Users (profile) ---
@@ -158,43 +178,7 @@ model Address {
   orders Order[]
 }
 
-// --- Admin (Schools / Departments / Levels) ---
 
-model School {
-  id          String       @id @default(uuid())
-  name        String
-  bookshopId  String?
-  bookshop    Bookshop?    @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
-  departments Department[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  @@unique([bookshopId, name])
-}
-
-model Department {
-  id        String   @id @default(uuid())
-  name      String
-  schoolId  String
-  school    School   @relation(fields: [schoolId], references: [id])
-  users     User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([schoolId, name])
-}
-
-model Level {
-  id         String    @id @default(uuid())
-  name       String
-  bookshopId String?
-  bookshop   Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
-  users      User[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@unique([bookshopId, name])
-}
 
 model AuditLog {
   id         String   @id @default(uuid())
@@ -209,48 +193,78 @@ model AuditLog {
 // --- Catalogue ---
 
 model Category {
-  id         String    @id @default(uuid())
-  name       String
-  bookshopId String?
-  bookshop   Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
-  books      Book[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id            String        @id @default(uuid())
+  name          String
+  bookshopId    String?
+  bookshop      Bookshop?     @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  books         Book[]
+  subcategories Subcategory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@unique([bookshopId, name])
 }
 
+// Sub-classification within a Category (e.g. Category: "Academic" → Subcategory: "Engineering")
+model Subcategory {
+  id         String   @id @default(uuid())
+  name       String
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  books      Book[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+}
+
 model Book {
-  id               String    @id @default(uuid())
+  id               String         @id @default(uuid())
   title            String
   author           String
   description      String?
-  price            Decimal   @db.Decimal(10, 2)
-  costPrice        Decimal   @default(0) @db.Decimal(10, 2)
+  price            Decimal        @db.Decimal(10, 2)
+  costPrice        Decimal        @default(0) @db.Decimal(10, 2)
   // Undiscounted reference price. When set and greater than `price`, the book
-  // is "on sale" — powers the Book Details savings line, the Home "Bookstore
-  // Savings" tracker, and the Home/Store "Shop Sale" banner. Never fabricated
-  // client-side — see CurriculaMobileDesignSystem.md "Do not use fake discounts".
-  compareAtPrice   Decimal?  @db.Decimal(10, 2)
-  // Course this book is required reading for (e.g. "CSC 301" / "Software
-  // Engineering") — admin-tagged, optional. Powers the Home "Required
-  // Syllabus" tracker.
+  // is "on sale" — powers the Book Details savings line and the Home/Store
+  // "Shop Sale" banner. Never fabricated client-side.
+  compareAtPrice   Decimal?       @db.Decimal(10, 2)
+  // Course this book is required reading for — optional, kept for backward-compat.
   courseCode       String?
   courseTitle      String?
-  isPreOrder       Boolean   @default(false)
+  isPreOrder       Boolean        @default(false)
   releaseDate      DateTime?
   coverUrl         String?
+  // --- Classification ---
   categoryId       String
-  category         Category  @relation(fields: [categoryId], references: [id])
-  stockQuantity    Int       @default(0)
+  category         Category       @relation(fields: [categoryId], references: [id])
+  subcategoryId    String?
+  subcategory      Subcategory?   @relation(fields: [subcategoryId], references: [id])
+  targetAudience   String?        // e.g. "Undergraduate", "General Readers", "Children"
+  // --- Inventory ---
+  stockQuantity    Int            @default(0)
   // Per-book override of the admin dashboard's global low-stock constant.
   // Null means "use the global default" — see InventoryService.getSummary.
   reorderThreshold Int?
+  bookCondition    BookCondition  @default(NEW)
+  // --- Book Anatomy / Bibliographic fields ---
+  isbn             String?
+  publisher        String?
+  edition          String?
+  publicationYear  Int?
+  numberOfPages    Int?
+  language         String?        @default("English")
+  tableOfContents  String?        // Full text or outline
+  bookAnatomy      String?        // Notes on structure, chapters, appendices
+  previewPages     String[]       // Array of image URLs for page previews
+  tags             String[]
+  // --- Legacy JSON attributes (kept for backward-compat) ---
   attributes       Json?
   bookshopId       String?
-  bookshop         Bookshop? @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  bookshop         Bookshop?      @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
   ratings              Rating[]
   favourites           Favourite[]
@@ -259,7 +273,10 @@ model Book {
   inventoryMovements   InventoryMovement[]
 
   @@index([title])
+  @@index([isbn])
   @@index([courseCode])
+  @@index([categoryId])
+  @@index([subcategoryId])
 }
 
 // Discrete, timestamped record of every admin-initiated stock change — see
@@ -343,7 +360,8 @@ model Order {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 
-  items OrderItem[]
+  items   OrderItem[]
+  refunds Refund[]
 }
 
 model OrderItem {
@@ -357,6 +375,22 @@ model OrderItem {
   compareAtPriceSnapshot Decimal? @db.Decimal(10, 2)
   costPriceSnapshot      Decimal  @default(0) @db.Decimal(10, 2)
   quantity               Int
+}
+
+// --- Financials ---
+
+model Expense {
+  id          String   @id @default(uuid())
+  bookshopId  String
+  bookshop    Bookshop @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(10, 2)
+  description String
+  date        DateTime @default(now())
+  category    String?  // Optional: e.g., 'Marketing', 'Rent', 'Supplies'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([bookshopId, date])
 }
 
 // --- Promotions ---
@@ -427,4 +461,49 @@ model NotificationRecipient {
   createdAt      DateTime     @default(now())
 
   @@unique([notificationId, userId])
+}
+
+// --- Dynamic RBAC Role/Permission Configuration ---
+
+model RoleRecord {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  permissions RolePermission[]
+  users       User[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  action      String           @unique
+  description String?
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         RoleRecord  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission  @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// --- Refunds ---
+
+model Refund {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(10, 2)
+  reason      String
+  bookshopId  String
+  bookshop    Bookshop @relation(fields: [bookshopId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([bookshopId, createdAt])
 }

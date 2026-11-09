@@ -78,8 +78,8 @@ export class OrdersController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
-  @Get('admin/orders')
+  @Roles('seller')
+  @Get('seller/orders')
   findAllForAdmin(
     @Query('status')
     status: 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | undefined,
@@ -89,8 +89,8 @@ export class OrdersController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
-  @Get('admin/orders/:id')
+  @Roles('seller')
+  @Get('seller/orders/:id')
   findOneForAdmin(
     @Param('id') id: string,
     @CurrentUser() user: CurrentUserPayload,
@@ -99,9 +99,9 @@ export class OrdersController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('seller')
   @AuditAction('order.status-update')
-  @Patch('admin/orders/:id/status')
+  @Patch('seller/orders/:id/status')
   async updateStatusForAdmin(
     @Param('id') id: string,
     @Body() dto: AdminUpdateOrderStatusDto,
@@ -109,5 +109,22 @@ export class OrdersController {
   ) {
     await this.ordersService.findOne(id, user);
     return this.checkoutService.adminUpdateStatus(id, dto.status, dto.reason);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('seller')
+  @AuditAction('order.refund')
+  @Post('seller/orders/:id/refund')
+  async refundOrder(
+    @Param('id') id: string,
+    @Body() dto: { amount: number; reason: string },
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.ordersService.refundOrder(
+      id,
+      dto.amount,
+      dto.reason,
+      user.bookshopId!,
+    );
   }
 }

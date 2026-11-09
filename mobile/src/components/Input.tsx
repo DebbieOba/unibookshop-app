@@ -1,8 +1,8 @@
-import { ReactNode, useState } from 'react';
-import { Pressable, TextInput, TextInputProps, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { ReactNode, useState } from "react";
+import { Pressable, TextInput, TextInputProps, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -35,25 +35,31 @@ export function Input({
   return (
     <View style={{ gap: theme.spacing.xs }}>
       {label ? (
-        <AppText variant="label" weight="semiBold" style={{ color: theme.colors.textSecondary }}>
+        <AppText
+          variant="label"
+          weight="semiBold"
+          style={{ color: theme.colors.textSecondary }}
+        >
           {label}
         </AppText>
       ) : null}
 
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: multiline ? 'flex-start' : 'center',
+          flexDirection: "row",
+          alignItems: multiline ? "flex-start" : "center",
           height: multiline ? undefined : 48,
           minHeight: multiline ? 96 : undefined,
           borderRadius: multiline ? 16 : 999,
-          backgroundColor: disabled ? theme.colors.surfaceAlt : theme.colors.surfaceAlt,
+          backgroundColor: disabled
+            ? theme.colors.surfaceAlt
+            : theme.colors.surfaceAlt,
           borderWidth: 1,
           borderColor: error
             ? theme.colors.error
             : focused
-            ? theme.colors.primary
-            : theme.colors.border,
+              ? theme.colors.primary
+              : theme.colors.border,
           paddingHorizontal: theme.spacing.md,
           paddingVertical: multiline ? theme.spacing.sm : 0,
           gap: theme.spacing.sm,
@@ -61,14 +67,25 @@ export function Input({
         }}
       >
         {leadingIcon ? (
-          <Ionicons name={leadingIcon} size={18} color={theme.colors.textTertiary} />
+          <Ionicons
+            name={leadingIcon}
+            size={18}
+            color={theme.colors.textTertiary}
+          />
         ) : null}
         <TextInput
           editable={!disabled}
           multiline={multiline}
-          textAlignVertical={multiline ? 'top' : undefined}
+          textAlignVertical={multiline ? "top" : undefined}
           placeholderTextColor={theme.colors.textTertiary}
-          style={[{ flex: 1, color: theme.colors.textPrimary, height: multiline ? undefined : '100%' }, style]}
+          style={[
+            {
+              flex: 1,
+              color: theme.colors.textPrimary,
+              height: multiline ? undefined : "100%",
+            },
+            style,
+          ]}
           onFocus={(e) => {
             setFocused(true);
             rest.onFocus?.(e);

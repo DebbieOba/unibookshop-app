@@ -60,7 +60,7 @@ export function EmailLayout({
               letterSpacing: 2,
             }}
           >
-            CURRICULA
+            UNIBOOKSHOP
           </Text>
           <Heading style={{ color: colors.textPrimary, fontSize: 22 }}>
             {heading}

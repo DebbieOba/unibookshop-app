@@ -25,9 +25,9 @@ import { AdjustInventoryDto } from '../dto/adjust-inventory.dto';
 @ApiTags('admin')
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
-@Roles('admin')
+@Roles('seller')
 @UseInterceptors(AuditLogInterceptor)
-@Controller('admin/inventory')
+@Controller('seller/inventory')
 export class InventoryController {
   constructor(
     private readonly inventoryService: InventoryService,
@@ -35,8 +35,8 @@ export class InventoryController {
   ) {}
 
   @Get()
-  getSummary() {
-    return this.inventoryService.getSummary();
+  getSummary(@CurrentUser() user: CurrentUserPayload) {
+    return this.inventoryService.getSummary(user.bookshopId);
   }
 
   @AuditAction('inventory.adjust')

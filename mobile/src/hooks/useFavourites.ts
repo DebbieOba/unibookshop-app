@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { favouritesApi } from '../api/favourites.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { favouritesApi } from "../api/favourites.api";
 
-const FAVOURITES_KEY = ['catalogue', 'favourites'];
+const FAVOURITES_KEY = ["catalogue", "favourites"];
 
 export function useFavourites() {
   return useQuery({
@@ -12,10 +12,17 @@ export function useFavourites() {
 
 export function useToggleFavourite() {
   const queryClient = useQueryClient();
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: FAVOURITES_KEY });
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: FAVOURITES_KEY });
 
   return useMutation({
-    mutationFn: ({ bookId, isFavourited }: { bookId: string; isFavourited: boolean }) =>
+    mutationFn: ({
+      bookId,
+      isFavourited,
+    }: {
+      bookId: string;
+      isFavourited: boolean;
+    }) =>
       isFavourited ? favouritesApi.remove(bookId) : favouritesApi.add(bookId),
     onSuccess: invalidate,
   });

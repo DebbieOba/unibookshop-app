@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notificationApi } from '../api/notification.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationApi } from "../api/notification.api";
 
-const FEED_KEY = ['notification', 'feed'];
+const FEED_KEY = ["notification", "feed"];
 
 export function useNotifications() {
   return useQuery({

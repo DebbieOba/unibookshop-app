@@ -22,6 +22,7 @@ import { UpsertAddressDto } from '../dto/upsert-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
 import { UpdateNotificationPreferencesDto } from '../dto/update-notification-preferences.dto';
 import { SetPushTokenDto } from '../dto/set-push-token.dto';
+import { DeleteAccountDto } from '../dto/delete-account.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -110,5 +111,18 @@ export class UsersController {
     @Body() dto: SetPushTokenDto,
   ) {
     return this.usersService.setPushToken(user.id, dto.token);
+  }
+
+  @Get('me/export')
+  exportUserData(@CurrentUser() user: CurrentUserPayload) {
+    return this.usersService.exportUserData(user.id);
+  }
+
+  @Post('me/delete-account')
+  deleteAccount(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body() dto: DeleteAccountDto,
+  ) {
+    return this.usersService.deleteAccount(user.id, dto);
   }
 }

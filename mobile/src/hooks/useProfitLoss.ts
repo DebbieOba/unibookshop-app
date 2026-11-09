@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '../api/admin.api';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "../api/seller.api";
 
-export function useProfitLoss(range: string = '30d') {
+export function useProfitLoss(range: string = "30d") {
   return useQuery({
-    queryKey: ['admin', 'profit-loss', range],
+    queryKey: ["seller", "profit-loss", range],
     queryFn: () => adminApi.getProfitLoss(range).then((res) => res.data),
   });
 }

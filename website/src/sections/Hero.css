@@ -103,3 +103,8 @@
     width: 100%;
   }
 }
+
+@media (max-width: 640px) {
+  .hero-container > *, .hero-content { min-width: 0; }
+  .hero-visual { display: none; }
+}

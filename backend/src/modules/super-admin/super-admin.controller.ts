@@ -8,8 +8,20 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  ApiBearerAuth,
+  ApiProperty,
+  ApiPropertyOptional,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import * as argon2 from 'argon2';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -55,26 +67,6 @@ class CreateStaffDto {
   roleId!: string;
 }
 
-class CreateSchoolDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-}
-
-class CreateDepartmentDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-}
-
-class CreateLevelDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-}
 
 @ApiTags('super-admin')
 @ApiBearerAuth()
@@ -96,7 +88,10 @@ export class SuperAdminController {
   }
 
   @Put('roles/:id/permissions')
-  setRolePermissions(@Param('id') id: string, @Body() dto: SetRolePermissionsDto) {
+  setRolePermissions(
+    @Param('id') id: string,
+    @Body() dto: SetRolePermissionsDto,
+  ) {
     return this.superAdminService.setRolePermissions(id, dto.permissionIds);
   }
 
@@ -115,47 +110,12 @@ export class SuperAdminController {
   @Post('staff')
   async createStaff(@Body() dto: CreateStaffDto) {
     const passwordHash = await argon2.hash(dto.password);
-    return this.superAdminService.createStaff(dto.email, dto.fullName, passwordHash, dto.roleId);
+    return this.superAdminService.createStaff(
+      dto.email,
+      dto.fullName,
+      passwordHash,
+      dto.roleId,
+    );
   }
 
-  // --- Schools, Departments, Levels (Global management) ---
-  @Get('schools')
-  getSchools() {
-    return this.superAdminService.getSchools();
-  }
-
-  @Post('schools')
-  createSchool(@Body() dto: CreateSchoolDto) {
-    return this.superAdminService.createSchool(dto.name);
-  }
-
-  @Delete('schools/:id')
-  deleteSchool(@Param('id') id: string) {
-    return this.superAdminService.deleteSchool(id);
-  }
-
-  @Post('schools/:id/departments')
-  createDepartment(@Param('id') schoolId: string, @Body() dto: CreateDepartmentDto) {
-    return this.superAdminService.createDepartment(schoolId, dto.name);
-  }
-
-  @Delete('departments/:id')
-  deleteDepartment(@Param('id') id: string) {
-    return this.superAdminService.deleteDepartment(id);
-  }
-
-  @Get('levels')
-  getLevels() {
-    return this.superAdminService.getLevels();
-  }
-
-  @Post('levels')
-  createLevel(@Body() dto: CreateLevelDto) {
-    return this.superAdminService.createLevel(dto.name);
-  }
-
-  @Delete('levels/:id')
-  deleteLevel(@Param('id') id: string) {
-    return this.superAdminService.deleteLevel(id);
-  }
 }

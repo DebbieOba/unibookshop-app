@@ -17,10 +17,10 @@ export class PermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPermission = this.reflector.getAllAndOverride<string>(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredPermission = this.reflector.getAllAndOverride<string>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredPermission) {
       return true;
@@ -38,8 +38,8 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    // 2. Bookshop Owners (admin role) bypass permission checks for local shop tasks
-    if (user.role === 'admin') {
+    // 2. Bookshop Owners (seller role) bypass permission checks for local shop tasks
+    if (user.role === 'seller') {
       return true;
     }
 
@@ -71,7 +71,9 @@ export class PermissionsGuard implements CanActivate {
       );
 
       if (!hasPermission) {
-        throw new ForbiddenException(`Missing required permission: ${requiredPermission}`);
+        throw new ForbiddenException(
+          `Missing required permission: ${requiredPermission}`,
+        );
       }
 
       return true;

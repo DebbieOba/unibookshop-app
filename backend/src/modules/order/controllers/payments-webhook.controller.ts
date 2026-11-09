@@ -37,6 +37,7 @@ export class PaymentsWebhookController {
     await this.checkoutService.handlePaymentEvent(
       event.reference,
       event.status,
+      event.amount,
     );
     return { received: true };
   }
@@ -51,6 +52,7 @@ export class PaymentsWebhookController {
     await this.checkoutService.handlePaymentEvent(
       event.reference,
       event.status,
+      event.amount,
     );
     return { received: true };
   }

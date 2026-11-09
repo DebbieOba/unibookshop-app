@@ -1,16 +1,22 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import * as argon2 from 'argon2';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database/postgres/prisma.service';
 import { UploadService } from '../../../integrations/object-storage/upload.service';
+import { RedisService } from '../../../database/redis/redis.service';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpsertAddressDto } from '../dto/upsert-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
 import { UpdateNotificationPreferencesDto } from '../dto/update-notification-preferences.dto';
+import { DeleteAccountDto } from '../dto/delete-account.dto';
 
 // Explicit field allowlist for the User relation embedded in every Profile
 // response — deliberately NOT `include: { user: true }`, which would also
@@ -18,11 +24,8 @@ import { UpdateNotificationPreferencesDto } from '../dto/update-notification-pre
 const SAFE_USER_SELECT = {
   id: true,
   email: true,
-  matricNumber: true,
-  departmentId: true,
-  department: true,
-  levelId: true,
-  level: true,
+  bookshop: { select: { id: true, name: true } },
+
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect;
@@ -32,6 +35,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly uploadService: UploadService,
+    private readonly redis: RedisService,
   ) {}
 
   getProfile(userId: string) {
@@ -44,32 +48,7 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
-    const { departmentId, levelId, matricNumber, ...profileFields } = dto;
-
-    if (departmentId || levelId || matricNumber !== undefined) {
-      const normalizedMatric = matricNumber
-        ? matricNumber.trim().toLowerCase()
-        : matricNumber;
-      try {
-        await this.prisma.user.update({
-          where: { id: userId },
-          data: { departmentId, levelId, matricNumber: normalizedMatric },
-        });
-      } catch (err) {
-        // P2002 = unique constraint violation — User.matricNumber is @unique
-        // (schema.prisma), so this is the "someone else already has this
-        // matric number" case, not a real server error.
-        if (
-          err instanceof Prisma.PrismaClientKnownRequestError &&
-          err.code === 'P2002'
-        ) {
-          throw new ConflictException(
-            'This matric number is already registered to another account',
-          );
-        }
-        throw err;
-      }
-    }
+    const profileFields = dto;
 
     return this.prisma.profile.update({
       where: { userId },
@@ -168,5 +147,124 @@ export class UsersService {
       where: { id: userId },
       data: { pushToken: token },
     });
+  }
+
+  /**
+   * Data Subject Access Request (DSAR) - Right to Data Portability (NDPA §38 / GDPR Art. 20)
+   * Exports all personal records, profile, addresses, and order history in machine-readable JSON.
+   */
+  async exportUserData(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        profile: true,
+        addresses: true,
+        orders: {
+          select: {
+            id: true,
+            totalAmount: true,
+            status: true,
+            createdAt: true,
+            items: {
+              select: {
+                quantity: true,
+                unitPrice: true,
+                book: { select: { title: true, author: true, isbn: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+    return {
+      exportedAt: new Date().toISOString(),
+      disclaimer: 'Official data export generated pursuant to NDPA 2023 §38.',
+      data: user,
+    };
+  }
+
+  /**
+   * Account Deletion & Right to Erasure (NDPA §37 / Apple App Store Guideline 5.1.1(v) / Google Play User Data Policy)
+   * Authenticates user ownership via current password, revokes all sessions, cascades profile & addresses,
+   * and anonymizes completed orders to comply with CBN/FIRS 7-year statutory financial accounting laws.
+   */
+  async deleteAccount(userId: string, dto: DeleteAccountDto) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+
+    const isMatch = await argon2.verify(user.passwordHash, dto.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Incorrect password. Account deletion aborted.');
+    }
+
+    // 1. Invalidate all active Redis refresh tokens & session caches
+    try {
+      const keys = await this.redis.keys(`refresh:${userId}:*`);
+      if (keys.length > 0) {
+        await this.redis.del(...keys);
+      }
+      await this.redis.del(`cart:${userId}`);
+    } catch {
+      // Continue even if Redis key removal fails
+    }
+
+    // 2. Perform database cascading erasure & order anonymization in transaction
+    await this.prisma.$transaction(async (tx) => {
+      // Check if user has associated financial orders (Statutory CBN/FIRS 7-year audit retention)
+      const orderCount = await tx.order.count({ where: { userId } });
+
+      // Clean personal addresses, favorites, ratings, pre-orders, and notification links
+      await tx.order.updateMany({
+        where: { userId },
+        data: { addressId: null },
+      });
+      await tx.address.deleteMany({ where: { userId } });
+      await tx.favourite.deleteMany({ where: { userId } });
+      await tx.rating.deleteMany({ where: { userId } });
+      await tx.preOrderReservation.deleteMany({ where: { userId } });
+      await tx.notificationRecipient.deleteMany({ where: { userId } });
+
+      if (orderCount > 0) {
+        // Anonymize personal profile
+        await tx.profile.update({
+          where: { userId },
+          data: {
+            fullName: 'Anonymized Deleted User',
+            phone: null,
+            avatarUrl: null,
+            interests: [],
+          },
+        });
+
+        // Anonymize user record to prevent any future login or identification
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            email: `deleted-${userId}@anonymized.bookdeck.internal`,
+            passwordHash: `ACCOUNT_ERASED_${randomUUID()}`,
+            accountState: 'RESTRICTED',
+            restrictionReason: 'Account permanently erased by user request under NDPA 2023 DSAR.',
+            pushToken: null,
+            isEmailVerified: false,
+          },
+        });
+      } else {
+        // No orders exist: safe to permanently purge core user identity
+        await tx.profile.deleteMany({ where: { userId } });
+        await tx.user.delete({
+          where: { id: userId },
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: 'Your account and personal data have been permanently erased from BOOKDECK.',
+    };
   }
 }

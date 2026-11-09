@@ -1,9 +1,10 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthStackParamList } from './types';
-import { LoginScreen } from '../screens/student/Login/LoginScreen';
-import { SignUpScreen } from '../screens/student/SignUp/SignUpScreen';
-import { ForgotPasswordScreen } from '../screens/student/ForgotPassword/ForgotPasswordScreen';
-import { ResetPasswordScreen } from '../screens/student/ResetPassword/ResetPasswordScreen';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "./types";
+import { LoginScreen } from "../screens/customer/Login/LoginScreen";
+import { SignUpScreen } from "../screens/customer/SignUp/SignUpScreen";
+import { ForgotPasswordScreen } from "../screens/customer/ForgotPassword/ForgotPasswordScreen";
+import { ResetPasswordScreen } from "../screens/customer/ResetPassword/ResetPasswordScreen";
+import { VerifyEmailScreen } from "../screens/customer/VerifyEmail/VerifyEmailScreen";
 
 /**
  * No more role-selection-before-login: the backend resolves role from the
@@ -20,6 +21,7 @@ export function AuthStack() {
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
     </Stack.Navigator>
   );
 }

@@ -8,6 +8,7 @@ export type PaymentStatus = 'PENDING' | 'SUCCESSFUL' | 'FAILED';
 export interface PaymentEvent {
   reference: string;
   status: PaymentStatus;
+  amount?: number;
 }
 
 export interface PaymentOrderInput {

@@ -8,7 +8,7 @@ export function AccountRejectedEmail() {
       heading="Application not approved"
     >
       <Text>
-        Your CURRICULA account application was not approved. If you believe this
+        Your BOOKDECK account application was not approved. If you believe this
         is a mistake, please contact your university administrator for details.
       </Text>
     </EmailLayout>

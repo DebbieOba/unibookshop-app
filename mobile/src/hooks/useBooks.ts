@@ -1,16 +1,20 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BookInput, BrowseBooksParams, catalogueApi } from '../api/catalogue.api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  BookInput,
+  BrowseBooksParams,
+  catalogueApi,
+} from "../api/catalogue.api";
 
 export function useBooks(params: BrowseBooksParams = {}) {
   return useQuery({
-    queryKey: ['catalogue', 'books', params],
+    queryKey: ["catalogue", "books", params],
     queryFn: () => catalogueApi.getBooks(params).then((res) => res.data),
   });
 }
 
 export function useBook(id: string) {
   return useQuery({
-    queryKey: ['catalogue', 'book', id],
+    queryKey: ["catalogue", "book", id],
     queryFn: () => catalogueApi.getBookById(id).then((res) => res.data),
     enabled: !!id,
   });
@@ -18,33 +22,46 @@ export function useBook(id: string) {
 
 export function useCategories(bookshopId?: string) {
   return useQuery({
-    queryKey: ['catalogue', 'categories', bookshopId],
-    queryFn: () => catalogueApi.getCategories(bookshopId).then((res) => res.data),
+    queryKey: ["catalogue", "categories", bookshopId],
+    queryFn: () =>
+      catalogueApi.getCategories(bookshopId).then((res) => res.data),
   });
 }
 
 function useInvalidateBooks() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: ['catalogue', 'books'] });
+  return () =>
+    queryClient.invalidateQueries({ queryKey: ["catalogue", "books"] });
 }
 
 export function useCreateBook() {
   const invalidate = useInvalidateBooks();
-  return useMutation({ mutationFn: catalogueApi.createBook, onSuccess: invalidate });
+  return useMutation({
+    mutationFn: catalogueApi.createBook,
+    onSuccess: invalidate,
+  });
 }
 
 export function useUpdateBook() {
   const invalidate = useInvalidateBooks();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: Partial<BookInput> }) =>
-      catalogueApi.updateBook(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Partial<BookInput>;
+    }) => catalogueApi.updateBook(id, payload),
     onSuccess: invalidate,
   });
 }
 
 export function useDeleteBook() {
   const invalidate = useInvalidateBooks();
-  return useMutation({ mutationFn: catalogueApi.deleteBook, onSuccess: invalidate });
+  return useMutation({
+    mutationFn: catalogueApi.deleteBook,
+    onSuccess: invalidate,
+  });
 }
 
 export function useUploadBookCover() {
@@ -56,13 +73,22 @@ export function useUploadBookCover() {
   });
 }
 
+export function useUploadBookSample() {
+  const invalidate = useInvalidateBooks();
+  return useMutation({
+    mutationFn: ({ bookId, fileUri }: { bookId: string; fileUri: string }) =>
+      catalogueApi.uploadSample(bookId, fileUri),
+    onSuccess: invalidate,
+  });
+}
+
 export function useCreateCategory() {
   const invalidate = useInvalidateBooks();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: catalogueApi.createCategory,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['catalogue', 'categories'] });
+      queryClient.invalidateQueries({ queryKey: ["catalogue", "categories"] });
       invalidate();
     },
   });
@@ -74,7 +100,44 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: catalogueApi.deleteCategory,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['catalogue', 'categories'] });
+      queryClient.invalidateQueries({ queryKey: ["catalogue", "categories"] });
+      invalidate();
+    },
+  });
+}
+
+export function useSubcategories(categoryId?: string) {
+  return useQuery({
+    queryKey: ["catalogue", "subcategories", categoryId],
+    queryFn: () =>
+      catalogueApi.getSubcategories(categoryId).then((res) => res.data),
+    enabled: categoryId !== undefined,
+  });
+}
+
+export function useCreateSubcategory() {
+  const invalidate = useInvalidateBooks();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: catalogueApi.createSubcategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["catalogue", "subcategories"],
+      });
+      invalidate();
+    },
+  });
+}
+
+export function useDeleteSubcategory() {
+  const invalidate = useInvalidateBooks();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: catalogueApi.deleteSubcategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["catalogue", "subcategories"],
+      });
       invalidate();
     },
   });

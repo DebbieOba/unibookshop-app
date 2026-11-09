@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../database/postgres/prisma.service';
 
 @Injectable()
@@ -85,7 +89,12 @@ export class SuperAdminService {
     });
   }
 
-  async createStaff(email: string, fullName: string, passwordHash: string, roleId: string) {
+  async createStaff(
+    email: string,
+    fullName: string,
+    passwordHash: string,
+    roleId: string,
+  ) {
     const existing = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -118,69 +127,4 @@ export class SuperAdminService {
     });
   }
 
-  // --- Schools, Departments, Levels (Global management) ---
-  async getSchools() {
-    return this.prisma.school.findMany({
-      include: { departments: true },
-      orderBy: { name: 'asc' },
-    });
-  }
-
-  async createSchool(name: string) {
-    const existing = await this.prisma.school.findFirst({
-      where: { name, bookshopId: null },
-    });
-    if (existing) {
-      throw new ConflictException('Global school already exists');
-    }
-    return this.prisma.school.create({
-      data: { name },
-    });
-  }
-
-  async deleteSchool(id: string) {
-    return this.prisma.school.delete({ where: { id } });
-  }
-
-  async createDepartment(schoolId: string, name: string) {
-    const school = await this.prisma.school.findUnique({ where: { id: schoolId } });
-    if (!school) {
-      throw new NotFoundException('School not found');
-    }
-    const existing = await this.prisma.department.findUnique({
-      where: { schoolId_name: { schoolId, name } },
-    });
-    if (existing) {
-      throw new ConflictException('Department already exists in this school');
-    }
-    return this.prisma.department.create({
-      data: { name, schoolId },
-    });
-  }
-
-  async deleteDepartment(id: string) {
-    return this.prisma.department.delete({ where: { id } });
-  }
-
-  async getLevels() {
-    return this.prisma.level.findMany({
-      orderBy: { name: 'asc' },
-    });
-  }
-
-  async createLevel(name: string) {
-    const existing = await this.prisma.level.findFirst({
-      where: { name, bookshopId: null },
-    });
-    if (existing) {
-      throw new ConflictException('Global level already exists');
-    }
-    return this.prisma.level.create({
-      data: { name },
-    });
-  }
-
-  async deleteLevel(id: string) {
-    return this.prisma.level.delete({ where: { id } });
-  }
 }

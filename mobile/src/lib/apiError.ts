@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
 
 /** Backend's HttpExceptionFilter error shape (backend-architecture.md §13). */
 interface ApiErrorBody {
@@ -15,7 +15,10 @@ interface ApiErrorBody {
  * request never reached the server" so screens can show something more
  * useful than a generic toast.
  */
-export function getErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
+export function getErrorMessage(
+  error: unknown,
+  fallback = "Something went wrong. Please try again.",
+): string {
   if (!(error instanceof AxiosError)) {
     return fallback;
   }
@@ -24,14 +27,14 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
     const body = error.response.data as ApiErrorBody | undefined;
     const message = body?.message;
     if (Array.isArray(message)) return message[0] ?? fallback;
-    if (typeof message === 'string' && message.length > 0) return message;
+    if (typeof message === "string" && message.length > 0) return message;
     return fallback;
   }
 
-  if (error.code === 'ECONNABORTED') {
-    return 'The request timed out. Check your connection and try again.';
+  if (error.code === "ECONNABORTED") {
+    return "The request timed out. Check your connection and try again.";
   }
-  return 'Could not reach the server. Check your connection and try again.';
+  return "Could not reach the server. Check your connection and try again.";
 }
 
 /** True for errors worth retrying (network-level or a transient 5xx) — never

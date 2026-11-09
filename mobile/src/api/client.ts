@@ -1,8 +1,8 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import Constants from 'expo-constants';
-import { useAuthStore } from '../store/authStore';
-import { secureStorage } from '../lib/secureStorage';
-import { getErrorMessage, isRetryableError } from '../lib/apiError';
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import Constants from "expo-constants";
+import { useAuthStore } from "../store/authStore";
+import { secureStorage } from "../lib/secureStorage";
+import { getErrorMessage, isRetryableError } from "../lib/apiError";
 
 // SET TO true: Connects your local Expo Go app directly to the live production Render server.
 // SET TO false: Connects to your local machine's backend server (requires running local backend on port 3000).
@@ -12,16 +12,17 @@ const USE_PRODUCTION_BACKEND_IN_DEV = false;
 const getBaseURL = () => {
   // Use the production Render server if not in development or if explicitly toggled on
   if (!__DEV__ || USE_PRODUCTION_BACKEND_IN_DEV) {
-    return 'https://curricula-backend-hepr.onrender.com/api/v1';
+    return "https://bookdeck-backend-hepr.onrender.com/api/v1";
   }
 
   // Try multiple ways to resolve the local Metro packager IP address in development
   let host = Constants.expoConfig?.hostUri;
 
   if (!host) {
-    const projectUrl = Constants.manifest2?.extra?.expoGo?.developer?.projectUrl;
+    const projectUrl =
+      Constants.manifest2?.extra?.expoGo?.developer?.projectUrl;
     if (projectUrl) {
-      host = projectUrl.replace('exp://', '');
+      host = projectUrl.replace("exp://", "");
     }
   }
 
@@ -37,37 +38,42 @@ const getBaseURL = () => {
   }
 
   if (host) {
-    const ip = host.split(':')[0];
+    const ip = host.split(":")[0];
     return `http://${ip}:3000/api/v1`;
   }
 
   // Fallback to localhost
-  return 'http://localhost:3000/api/v1';
+  return "http://localhost:3000/api/v1";
 };
 
 const baseURL = getBaseURL();
 
 if (__DEV__) {
   // eslint-disable-next-line no-console
-  console.log('[api] --- Dev API Diagnostic ---');
+  console.log("[api] --- Dev API Diagnostic ---");
   // eslint-disable-next-line no-console
   console.log(`[api] baseURL = ${baseURL}`);
   // eslint-disable-next-line no-console
-  console.log(`[api] Constants.expoConfig = ${JSON.stringify(Constants.expoConfig)}`);
+  console.log(
+    `[api] Constants.expoConfig = ${JSON.stringify(Constants.expoConfig)}`,
+  );
   // eslint-disable-next-line no-console
-  console.log(`[api] Constants.manifest2 = ${JSON.stringify(Constants.manifest2)}`);
+  console.log(
+    `[api] Constants.manifest2 = ${JSON.stringify(Constants.manifest2)}`,
+  );
   // eslint-disable-next-line no-console
   console.log(`[api] Constants.linkingUri = ${Constants.linkingUri}`);
   // eslint-disable-next-line no-console
-  console.log('[api] ---------------------------');
+  console.log("[api] ---------------------------");
 }
-
-
 
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = [500, 1500];
 
-export const api = axios.create({ baseURL, timeout: 60000 });
+// Give Render's free tier enough time to cold-start (can take 60-90s).
+const REQUEST_TIMEOUT_MS = __DEV__ ? 120_000 : 60_000;
+
+export const api = axios.create({ baseURL, timeout: REQUEST_TIMEOUT_MS });
 
 // Dev-only call logging — every request/response/error shows up in the
 // Metro/device logs, so "is the app actually calling the API, and what came
@@ -78,19 +84,26 @@ function logRequest(config: InternalAxiosRequestConfig) {
   if (!__DEV__) return;
   (config as { _loggedAt?: number })._loggedAt = Date.now();
   // eslint-disable-next-line no-console
-  console.log(`[api] → ${config.method?.toUpperCase()} ${pathOnly(config.url, config.baseURL)}`);
+  console.log(
+    `[api] → ${config.method?.toUpperCase()} ${pathOnly(config.url, config.baseURL)}`,
+  );
 }
 
-function logResponse(status: number | 'ERR', config: InternalAxiosRequestConfig | undefined, detail?: string) {
+function logResponse(
+  status: number | "ERR",
+  config: InternalAxiosRequestConfig | undefined,
+  detail?: string,
+) {
   if (!__DEV__ || !config) return;
   const startedAt = (config as { _loggedAt?: number })._loggedAt;
-  const ms = startedAt ? `${Date.now() - startedAt}ms` : '?ms';
-  const isError = status === 'ERR' || (typeof status === 'number' && status >= 400);
-  const icon = status === 'ERR' ? '✗' : isError ? '⚠' : '✓';
+  const ms = startedAt ? `${Date.now() - startedAt}ms` : "?ms";
+  const isError =
+    status === "ERR" || (typeof status === "number" && status >= 400);
+  const icon = status === "ERR" ? "✗" : isError ? "⚠" : "✓";
   const line = `[api] ${icon} ${config.method?.toUpperCase()} ${pathOnly(config.url, config.baseURL)} ${status} (${ms})`;
   if (isError) {
     // eslint-disable-next-line no-console
-    console.warn(line, detail ?? '');
+    console.warn(line, detail ?? "");
   } else {
     // eslint-disable-next-line no-console
     console.log(line);
@@ -98,7 +111,7 @@ function logResponse(status: number | 'ERR', config: InternalAxiosRequestConfig 
 }
 
 function pathOnly(url?: string, base?: string) {
-  if (!url) return '';
+  if (!url) return "";
   return base && url.startsWith(base) ? url.slice(base.length) : url;
 }
 
@@ -118,7 +131,11 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error instanceof AxiosError) {
-      logResponse(error.response?.status ?? 'ERR', error.config, getErrorMessage(error));
+      logResponse(
+        error.response?.status ?? "ERR",
+        error.config,
+        getErrorMessage(error),
+      );
     }
     throw error;
   },
@@ -136,10 +153,12 @@ api.interceptors.response.use(
     // with a short backoff rather than immediately surfacing an error. Never
     // retries mutating requests (POST/PATCH/DELETE), since we can't tell
     // whether they already reached the server.
-    if (original.method?.toLowerCase() === 'get' && isRetryableError(error)) {
+    if (original.method?.toLowerCase() === "get" && isRetryableError(error)) {
       original._retryCount = (original._retryCount ?? 0) + 1;
       if (original._retryCount <= MAX_RETRIES) {
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS[original._retryCount - 1] ?? 1500));
+        await new Promise((resolve) =>
+          setTimeout(resolve, RETRY_DELAY_MS[original._retryCount - 1] ?? 1500),
+        );
         return api(original);
       }
     }
@@ -153,7 +172,7 @@ api.interceptors.response.use(
     const outcome = await refreshing;
     refreshing = null;
 
-    if (outcome === 'network-error') {
+    if (outcome === "network-error") {
       // The refresh attempt itself couldn't reach the server — this is not
       // proof the session is invalid, so don't log the user out over a
       // connectivity blip. Surface the original 401 and let the next
@@ -174,33 +193,65 @@ api.interceptors.response.use(
 /** Returns the new access token, `null` if the refresh token is genuinely
  * invalid/expired (server said so), or `'network-error'` if the refresh
  * request never got a response at all. */
-async function refreshAccessToken(): Promise<string | null | 'network-error'> {
+async function refreshAccessToken(): Promise<string | null | "network-error"> {
   const refreshToken = await secureStorage.getRefreshToken();
   if (!refreshToken) return null;
 
   const startedAt = Date.now();
   if (__DEV__) {
     // eslint-disable-next-line no-console
-    console.log('[api] → POST /auth/refresh');
+    console.log("[api] → POST /auth/refresh");
   }
 
   try {
-    const { data } = await axios.post(`${baseURL}/auth/refresh`, { refreshToken }, { timeout: 60000 });
+    const { data } = await axios.post(
+      `${baseURL}/auth/refresh`,
+      { refreshToken },
+      { timeout: 60000 },
+    );
     if (__DEV__) {
       // eslint-disable-next-line no-console
-      console.log(`[api] ✓ POST /auth/refresh 200 (${Date.now() - startedAt}ms)`);
+      console.log(
+        `[api] ✓ POST /auth/refresh 200 (${Date.now() - startedAt}ms)`,
+      );
     }
     await secureStorage.setRefreshToken(data.refreshToken);
     return data.accessToken as string;
   } catch (err) {
     if (__DEV__) {
-      const status = err instanceof AxiosError ? (err.response?.status ?? 'ERR') : 'ERR';
+      const status =
+        err instanceof AxiosError ? (err.response?.status ?? "ERR") : "ERR";
       // eslint-disable-next-line no-console
-      console.warn(`[api] ✗ POST /auth/refresh ${status} (${Date.now() - startedAt}ms)`, getErrorMessage(err));
+      console.warn(
+        `[api] ✗ POST /auth/refresh ${status} (${Date.now() - startedAt}ms)`,
+        getErrorMessage(err),
+      );
     }
     if (err instanceof AxiosError && !err.response) {
-      return 'network-error';
+      return "network-error";
     }
     return null;
   }
+}
+
+/**
+ * Fire-and-forget ping that wakes the Render free-tier server before the user
+ * tries to register/login. Call this once, early in the app lifecycle.
+ * Ignores all errors — if the server is unreachable, the real requests will
+ * surface a proper error message.
+ */
+export function warmupServer() {
+  // /health is registered on the server root (no /api/v1 prefix)
+  const serverRoot = baseURL.replace(/\/api\/v1\/?$/, "");
+  if (__DEV__) {
+    console.log("[api] Warming up server at", serverRoot);
+  }
+  axios
+    .get(`${serverRoot}/health`, { timeout: REQUEST_TIMEOUT_MS })
+    .then(() => {
+      if (__DEV__) console.log("[api] Server is warm ✓");
+    })
+    .catch(() => {
+      // Ignore — the TCP handshake itself is enough to wake Render.
+    });
 }

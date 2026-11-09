@@ -34,7 +34,7 @@ describe('CheckoutService', () => {
   const user: CurrentUserPayload = {
     id: 'user-1',
     email: 'student@example.com',
-    role: 'student',
+    role: 'customer',
     accountState: 'APPROVED',
   };
 
@@ -417,7 +417,7 @@ describe('CheckoutService', () => {
       const admin: CurrentUserPayload = {
         id: 'admin-1',
         email: 'admin@example.com',
-        role: 'admin',
+        role: 'seller',
         accountState: 'APPROVED',
       };
       prisma.order.findUnique.mockResolvedValue({

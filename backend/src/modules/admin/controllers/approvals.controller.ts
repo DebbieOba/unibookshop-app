@@ -27,9 +27,9 @@ class DecideApprovalDto {
 @ApiTags('admin')
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
-@Roles('admin')
+@Roles('seller')
 @UseInterceptors(AuditLogInterceptor)
-@Controller('admin/approvals')
+@Controller('seller/approvals')
 export class ApprovalsController {
   constructor(private readonly approvalsService: ApprovalsService) {}
 

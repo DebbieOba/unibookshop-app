@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, TextInput, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../hooks/useTheme';
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
 
 interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   /** Debounce delay in ms before `onChangeText` fires — keeps typing from
-   * firing a network request on every keystroke (CurriculaMobileDesignSystem.md
+   * firing a network request on every keystroke (BookdeckMobileDesignSystem.md
    * §8.4: "Search must be debounced. Do not request on every keystroke."). */
   debounceMs?: number;
   /** Shows a small spinner in place of the search icon while a request from
@@ -18,11 +18,19 @@ interface SearchBarProps {
 
 /** Single reusable search input — debounced, with a clear button once text is
  * present and a highlighted focus border, used everywhere search appears. */
-export function SearchBar({ value, onChangeText, placeholder = 'Search', debounceMs = 350, isSearching }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChangeText,
+  placeholder = "Search",
+  debounceMs = 350,
+  isSearching,
+}: SearchBarProps) {
   const theme = useTheme();
   const [text, setText] = useState(value);
   const [focused, setFocused] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   // Keep in sync when the parent resets the value externally (e.g. "Clear
   // filters"), without fighting local keystrokes in between.
@@ -37,16 +45,16 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search', debounc
   };
 
   const handleClear = () => {
-    setText('');
+    setText("");
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    onChangeText('');
+    onChangeText("");
   };
 
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         height: 48,
         borderRadius: 999,
         backgroundColor: theme.colors.surfaceAlt,
@@ -59,7 +67,11 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search', debounc
       {isSearching ? (
         <ActivityIndicator size="small" color={theme.colors.textTertiary} />
       ) : (
-        <Ionicons name="search-outline" size={18} color={theme.colors.textTertiary} />
+        <Ionicons
+          name="search-outline"
+          size={18}
+          color={theme.colors.textTertiary}
+        />
       )}
       <TextInput
         value={text}
@@ -72,7 +84,11 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search', debounc
       />
       {text.length > 0 ? (
         <Pressable onPress={handleClear} hitSlop={8}>
-          <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+          <Ionicons
+            name="close-circle"
+            size={18}
+            color={theme.colors.textTertiary}
+          />
         </Pressable>
       ) : null}
     </View>

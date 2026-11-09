@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -34,11 +35,14 @@ export class OrdersService {
       },
     });
     if (!order) throw new NotFoundException('Order not found');
-    if (order.userId !== requestingUser.id && requestingUser.role !== 'admin') {
+    if (
+      order.userId !== requestingUser.id &&
+      requestingUser.role !== 'seller'
+    ) {
       throw new ForbiddenException();
     }
     if (
-      requestingUser.role === 'admin' &&
+      requestingUser.role === 'seller' &&
       requestingUser.bookshopId &&
       order.bookshopId !== requestingUser.bookshopId
     ) {
@@ -58,6 +62,27 @@ export class OrdersService {
       },
       include: { items: true, user: { select: { email: true } } },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async refundOrder(orderId: string, amount: number, reason: string, bookshopId: string) {
+    if (!bookshopId) throw new BadRequestException('Seller must be associated with a bookshop');
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId, bookshopId },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+
+    if (amount <= 0) {
+      throw new BadRequestException('Refund amount must be greater than zero');
+    }
+    
+    return this.prisma.refund.create({
+      data: {
+        orderId,
+        amount,
+        reason,
+        bookshopId,
+      },
     });
   }
 }

@@ -31,7 +31,7 @@ export class NotifyService {
 
   async broadcast(
     notification: NotificationPayload,
-    audience: 'student' | 'admin' | 'all' = 'student',
+    audience: 'customer' | 'seller' | 'all' = 'customer',
   ) {
     const where = audience === 'all' ? {} : { role: audience };
     const users = await this.prisma.user.findMany({

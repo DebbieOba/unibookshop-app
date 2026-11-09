@@ -1,10 +1,10 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'student' | 'admin' | 'staff' | 'superadmin';
-  accountState: 'PENDING' | 'APPROVED' | 'REJECTED' | 'RESTRICTED';
+  role: "customer" | "seller" | "staff" | "superadmin";
+  accountState: "PENDING" | "APPROVED" | "REJECTED" | "RESTRICTED";
   bookshopId?: string | null;
 }
 
@@ -33,7 +33,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   needsOnboarding: false,
   setSession: (accessToken, user) => set({ accessToken, user }),
   setAccessToken: (accessToken) => set({ accessToken }),
-  clearSession: () => set({ accessToken: null, user: null, needsOnboarding: false }),
+  clearSession: () =>
+    set({ accessToken: null, user: null, needsOnboarding: false }),
   setHydrating: (value) => set({ isHydrating: value }),
   setNeedsOnboarding: (value) => set({ needsOnboarding: value }),
 }));

@@ -115,7 +115,7 @@ export class CheckoutService {
   }
 
   /** Called from the provider webhook controllers after signature verification. */
-  async handlePaymentEvent(reference: string, status: PaymentStatus) {
+  async handlePaymentEvent(reference: string, status: PaymentStatus, verifiedAmount?: number) {
     if (status === 'PENDING') return; // nothing resolved yet — order stays PROCESSING
 
     const order = await this.prisma.order.findUnique({
@@ -123,6 +123,17 @@ export class CheckoutService {
       include: { items: true },
     });
     if (!order) return;
+
+    // Security Verification: Assert webhook payment amount matches order total amount
+    if (status === 'SUCCESSFUL' && verifiedAmount !== undefined) {
+      const orderTotal = Number(order.totalAmount);
+      // Allow minor floating point epsilon (< 0.01 NGN)
+      if (Math.abs(verifiedAmount - orderTotal) > 0.01) {
+        throw new BadRequestException(
+          `Payment amount mismatch: received ${verifiedAmount}, expected ${orderTotal}`,
+        );
+      }
+    }
 
     await this.applyPaymentStatus(order, order.items, status);
   }
@@ -141,7 +152,10 @@ export class CheckoutService {
       include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
-    if (order.userId !== requestingUser.id && requestingUser.role !== 'admin') {
+    if (
+      order.userId !== requestingUser.id &&
+      requestingUser.role !== 'seller'
+    ) {
       throw new ForbiddenException();
     }
 
@@ -246,6 +260,27 @@ export class CheckoutService {
       body: `Order ${order.id} is now ${newStatus.toLowerCase()}.`,
       data: { orderId: order.id },
     });
+
+    // Notify the bookshop seller about the new sale
+    if (newStatus === 'COMPLETED' && order.bookshopId) {
+      const sellers = await this.prisma.user.findMany({
+        where: { bookshopId: order.bookshopId, role: 'seller' as any },
+        select: { id: true, email: true },
+      });
+      const itemSummary = items
+        .slice(0, 2)
+        .map((i) => `${i.quantity}x ${i.titleSnapshot}`)
+        .join(', ');
+      const moreItems = items.length > 2 ? ` +${items.length - 2} more` : '';
+      for (const seller of sellers) {
+        await this.notify.notifyUser(seller, {
+          type: 'NEW_SALE' as any,
+          title: '💰 New Sale!',
+          body: `A customer purchased ${itemSummary}${moreItems}. Order #${order.id.slice(-6)} — ₦${Math.round(Number(updated.totalAmount)).toLocaleString()}`,
+          data: { orderId: order.id },
+        });
+      }
+    }
 
     return updated;
   }

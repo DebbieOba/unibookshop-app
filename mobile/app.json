@@ -1,22 +1,41 @@
 {
   "expo": {
-    "name": "CURRICULA",
-    "slug": "curricula",
-    "scheme": "curricula",
+    "name": "BOOKDECK",
+    "slug": "bookdeck",
+    "scheme": "bookdeck",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/BOOKDECK.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/BOOKDECK-2.png",
+        "backgroundColor": "#121212"
+      }
+    },
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.bookdeck.app",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }
+      },
+      "splash": {
+        "image": "./assets/BOOKDECK.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "image": "./assets/BOOKDECK-2.png",
+          "backgroundColor": "#121212"
+        }
       }
     },
     "android": {
-      "package": "com.curricula.app",
+      "package": "com.bookdeck.app",
       "softwareKeyboardLayoutMode": "adjustResize",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -25,11 +44,16 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
+      "splash": {
+        "image": "./assets/BOOKDECK.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "image": "./assets/BOOKDECK-2.png",
+          "backgroundColor": "#121212"
+        }
+      },
       "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
       ]
@@ -38,12 +62,24 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/BOOKDECK.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/BOOKDECK-2.png",
+            "backgroundColor": "#121212"
+          }
+        }
+      ],
       "expo-secure-store",
       "expo-image",
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow CURRICULA to access your photos to set a profile picture."
+          "photosPermission": "Allow BOOKDECK to access your photos to set a profile picture."
         }
       ],
       "expo-font",
@@ -58,12 +94,12 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow CURRICULA to use your location to fill in your delivery address."
+          "locationWhenInUsePermission": "Allow BOOKDECK to use your location to fill in your delivery address."
         }
       ]
     ],
     "extra": {
-      "apiBaseUrl": "https://curricula-backend-hepr.onrender.com/api/v1",
+      "apiBaseUrl": "https://bookdeck-backend-hepr.onrender.com/api/v1",
       "eas": {
         "projectId": "36211cd3-32ed-46fb-b2ab-452350dcbdf6"
       }

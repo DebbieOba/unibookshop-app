@@ -1,6 +1,6 @@
-import { View } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
-import { AppText } from './AppText';
+import { View } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { AppText } from "./AppText";
 
 interface ScreenPlaceholderProps {
   title: string;
@@ -15,15 +15,18 @@ export function ScreenPlaceholder({ title, subtitle }: ScreenPlaceholderProps) {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         gap: theme.spacing.sm,
         padding: theme.spacing.xl,
       }}
     >
       <AppText variant="title">{title}</AppText>
       {subtitle ? (
-        <AppText variant="body" style={{ color: theme.colors.textSecondary, textAlign: 'center' }}>
+        <AppText
+          variant="body"
+          style={{ color: theme.colors.textSecondary, textAlign: "center" }}
+        >
           {subtitle}
         </AppText>
       ) : null}

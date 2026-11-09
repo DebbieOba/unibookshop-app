@@ -24,7 +24,8 @@
 }
 
 .footer-logo {
-  height: 32px;
+  height: 40px;
+  filter: brightness(0) invert(1);
 }
 
 .footer-description {

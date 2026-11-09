@@ -1,16 +1,12 @@
 import {
   IsEmail,
+  IsIn,
   IsOptional,
   IsString,
   IsUUID,
-  Matches,
   MinLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  MATRIC_NUMBER_MESSAGE,
-  MATRIC_NUMBER_REGEX,
-} from '../../../common/validators/matric-number.validator';
 
 export class RegisterDto {
   @ApiProperty()
@@ -25,33 +21,33 @@ export class RegisterDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  fullName?: string;
+  firstName?: string;
 
-  @ApiPropertyOptional({ example: 'EEE/34/1234' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  @Matches(MATRIC_NUMBER_REGEX, { message: MATRIC_NUMBER_MESSAGE })
-  matricNumber?: string;
+  lastName?: string;
 
-  // Collected post-signup on CompleteProfileScreen instead — see
-  // frontend-architecture.md's auth flow notes.
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsUUID()
-  departmentId?: string;
+  @IsString()
+  fullName?: string;
 
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
   @IsUUID()
   bookshopId?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Name of a new bookstore to create (seller signup)',
+  })
   @IsOptional()
   @IsString()
   bookshopName?: string;
 
-  @ApiPropertyOptional({ example: 'student' })
+  /** 'seller' creates a new bookstore; 'customer' joins an existing one. */
+  @ApiPropertyOptional({ enum: ['customer', 'seller'], example: 'customer' })
   @IsOptional()
-  @IsString()
-  role?: string;
+  @IsIn(['customer', 'seller'])
+  role?: 'customer' | 'seller';
 }

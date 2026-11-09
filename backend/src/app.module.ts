@@ -22,6 +22,7 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { ExchangeModule } from './modules/exchange/exchange.module';
 import { ObjectStorageModule } from './integrations/object-storage/object-storage.module';
 import { SisModule } from './integrations/sis/sis.module';
+import { FinancialsModule } from './modules/financials/financials.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SisModule } from './integrations/sis/sis.module';
     SuperAdminModule,
     PromotionsModule,
     ExchangeModule,
+    FinancialsModule,
   ],
   controllers: [AppController],
   providers: [

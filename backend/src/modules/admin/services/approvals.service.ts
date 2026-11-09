@@ -16,7 +16,7 @@ export class ApprovalsService {
   findPending() {
     return this.prisma.user.findMany({
       where: { accountState: 'PENDING' },
-      include: { profile: true, department: true },
+      include: { profile: true },
     });
   }
 
@@ -24,7 +24,7 @@ export class ApprovalsService {
   findActive() {
     return this.prisma.user.findMany({
       where: { accountState: { in: ['APPROVED', 'RESTRICTED'] } },
-      include: { profile: true, department: true },
+      include: { profile: true },
     });
   }
 

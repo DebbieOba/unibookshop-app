@@ -1,7 +1,9 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
@@ -10,6 +12,14 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export enum BookConditionDto {
+  NEW = 'NEW',
+  LIKE_NEW = 'LIKE_NEW',
+  GOOD = 'GOOD',
+  FAIR = 'FAIR',
+  POOR = 'POOR',
+}
 
 export class CreateBookDto {
   @ApiProperty()
@@ -51,6 +61,114 @@ export class CreateBookDto {
   @Min(0)
   compareAtPrice?: number;
 
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  categoryId!: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Sub-classification within the category',
+  })
+  @IsOptional()
+  @IsUUID()
+  subcategoryId?: string;
+
+  @ApiPropertyOptional({
+    description: 'e.g. "Undergraduate", "General Readers", "Children"',
+  })
+  @IsOptional()
+  @IsString()
+  targetAudience?: string;
+
+  @ApiProperty({ minimum: 0 })
+  @IsInt()
+  @Min(0)
+  stockQuantity!: number;
+
+  @ApiPropertyOptional({
+    minimum: 0,
+    description:
+      "Per-book override of the admin dashboard's global low-stock threshold",
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  reorderThreshold?: number;
+
+  @ApiPropertyOptional({ enum: BookConditionDto, default: 'NEW' })
+  @IsOptional()
+  @IsEnum(BookConditionDto)
+  bookCondition?: BookConditionDto;
+
+  // --- Bibliographic fields ---
+
+  @ApiPropertyOptional({ description: 'ISBN-10 or ISBN-13' })
+  @IsOptional()
+  @IsString()
+  isbn?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  publisher?: string;
+
+  @ApiPropertyOptional({ description: 'e.g. "3rd Edition"' })
+  @IsOptional()
+  @IsString()
+  edition?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  publicationYear?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  numberOfPages?: number;
+
+  @ApiPropertyOptional({ default: 'English' })
+  @IsOptional()
+  @IsString()
+  language?: string;
+
+  @ApiPropertyOptional({
+    description: 'Full text or outline of table of contents',
+  })
+  @IsOptional()
+  @IsString()
+  tableOfContents?: string;
+
+  @ApiPropertyOptional({
+    description: 'Notes on book structure, chapters, appendices',
+  })
+  @IsOptional()
+  @IsString()
+  bookAnatomy?: string;
+
+  @ApiPropertyOptional({
+    description: 'Array of image URLs for page previews',
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  previewPages?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Searchable tags for the book',
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  // --- Legacy fields (kept for backward-compat) ---
+
   @ApiPropertyOptional({
     description: 'e.g. "CSC 301" — course this book is required reading for',
   })
@@ -80,24 +198,4 @@ export class CreateBookDto {
   @IsOptional()
   @IsString()
   coverUrl?: string;
-
-  @ApiProperty({ format: 'uuid' })
-  @IsUUID()
-  categoryId!: string;
-
-  @ApiProperty({ minimum: 0 })
-  @IsInt()
-  @Min(0)
-  stockQuantity!: number;
-
-  @ApiPropertyOptional({
-    minimum: 0,
-    description:
-      "Per-book override of the admin dashboard's global low-stock threshold",
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  reorderThreshold?: number;
 }

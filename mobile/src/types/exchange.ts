@@ -1,5 +1,5 @@
-export type ListingCondition = 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR' | 'POOR';
-export type ListingStatus = 'AVAILABLE' | 'SOLD' | 'REMOVED';
+export type ListingCondition = "NEW" | "LIKE_NEW" | "GOOD" | "FAIR" | "POOR";
+export type ListingStatus = "AVAILABLE" | "SOLD" | "REMOVED";
 
 export interface ListingSeller {
   id: string;
