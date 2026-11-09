@@ -74,7 +74,11 @@ export class CheckoutService {
         promoCodeId: promo?.id,
         totalAmount: total,
         paymentProvider: dto.paymentProvider,
-        bookshopId: user.bookshopId,
+        bookshopId:
+          user.bookshopId ??
+          ((items[0]?.book as { bookshopId?: string | null } | undefined)
+            ?.bookshopId ??
+            null),
         // paymentReference is set in the follow-up update below, once the
         // provider gives us one — nullable in the schema for exactly this gap.
         items: {

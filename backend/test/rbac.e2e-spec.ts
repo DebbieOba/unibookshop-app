@@ -150,30 +150,30 @@ describe('RBAC regression (e2e)', () => {
     await app.close();
   }, 15000);
 
-  describe('role-guarded admin mutation (POST /admin/schools)', () => {
+  describe('role-guarded seller mutation (POST /categories)', () => {
     it('rejects an unauthenticated request with 401', async () => {
       await request(app.getHttpServer())
-        .post('/api/v1/admin/schools')
+        .post('/api/v1/categories')
         .send({ name: 'Should Not Be Created' })
         .expect(401);
     });
 
-    it('rejects an approved student with 403', async () => {
+    it('rejects an approved customer with 403', async () => {
       await request(app.getHttpServer())
-        .post('/api/v1/admin/schools')
+        .post('/api/v1/categories')
         .set('Authorization', `Bearer ${approvedStudentToken}`)
         .send({ name: 'Should Not Be Created' })
         .expect(403);
     });
 
-    it('allows an admin through the guard layer', async () => {
+    it('allows a seller through the guard layer', async () => {
       const res = await request(app.getHttpServer())
-        .post('/api/v1/admin/schools')
+        .post('/api/v1/categories')
         .set('Authorization', `Bearer ${adminToken}`)
-        .send({ name: `RBAC Test School ${Date.now()}` });
+        .send({ name: `RBAC Test Category ${Date.now()}` });
 
       expect(res.status).toBe(201);
-      await prisma.school.delete({ where: { id: res.body.id } });
+      await prisma.category.delete({ where: { id: res.body.id } });
     });
   });
 
@@ -224,25 +224,25 @@ describe('RBAC regression (e2e)', () => {
     });
   });
 
-  describe('role-guarded admin mutation (PATCH /admin/inventory/:id/adjust)', () => {
+  describe('role-guarded seller mutation (PATCH /seller/inventory/:id/adjust)', () => {
     it('rejects an unauthenticated request with 401', async () => {
       await request(app.getHttpServer())
-        .patch(`/api/v1/admin/inventory/${testBookId}/adjust`)
+        .patch(`/api/v1/seller/inventory/${testBookId}/adjust`)
         .send({ type: 'RESTOCK', quantityDelta: 1, reason: 'RBAC test' })
         .expect(401);
     });
 
-    it('rejects an approved student with 403', async () => {
+    it('rejects an approved customer with 403', async () => {
       await request(app.getHttpServer())
-        .patch(`/api/v1/admin/inventory/${testBookId}/adjust`)
+        .patch(`/api/v1/seller/inventory/${testBookId}/adjust`)
         .set('Authorization', `Bearer ${approvedStudentToken}`)
         .send({ type: 'RESTOCK', quantityDelta: 1, reason: 'RBAC test' })
         .expect(403);
     });
 
-    it('allows an admin through the guard layer and records the movement', async () => {
+    it('allows a seller through the guard layer and records the movement', async () => {
       const res = await request(app.getHttpServer())
-        .patch(`/api/v1/admin/inventory/${testBookId}/adjust`)
+        .patch(`/api/v1/seller/inventory/${testBookId}/adjust`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ type: 'RESTOCK', quantityDelta: 1, reason: 'RBAC test' });
 
@@ -251,55 +251,55 @@ describe('RBAC regression (e2e)', () => {
     });
   });
 
-  describe('role-guarded admin mutation (POST /admin/approvals/:id/restrict, /restore)', () => {
+  describe('role-guarded seller mutation (POST /seller/approvals/:id/restrict, /restore)', () => {
     it('rejects an unauthenticated request with 401', async () => {
       await request(app.getHttpServer())
-        .post(`/api/v1/admin/approvals/${restrictableStudentId}/restrict`)
+        .post(`/api/v1/seller/approvals/${restrictableStudentId}/restrict`)
         .send({ reason: 'RBAC test' })
         .expect(401);
     });
 
-    it('rejects an approved student with 403', async () => {
+    it('rejects an approved customer with 403', async () => {
       await request(app.getHttpServer())
-        .post(`/api/v1/admin/approvals/${restrictableStudentId}/restrict`)
+        .post(`/api/v1/seller/approvals/${restrictableStudentId}/restrict`)
         .set('Authorization', `Bearer ${approvedStudentToken}`)
         .send({ reason: 'RBAC test' })
         .expect(403);
     });
 
-    it('allows an admin to restrict then restore the account', async () => {
+    it('allows a seller to restrict then restore the account', async () => {
       const restrictRes = await request(app.getHttpServer())
-        .post(`/api/v1/admin/approvals/${restrictableStudentId}/restrict`)
+        .post(`/api/v1/seller/approvals/${restrictableStudentId}/restrict`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ reason: 'RBAC test' });
       expect(restrictRes.status).toBe(201);
       expect(restrictRes.body.accountState).toBe('RESTRICTED');
 
       const restoreRes = await request(app.getHttpServer())
-        .post(`/api/v1/admin/approvals/${restrictableStudentId}/restore`)
+        .post(`/api/v1/seller/approvals/${restrictableStudentId}/restore`)
         .set('Authorization', `Bearer ${adminToken}`);
       expect(restoreRes.status).toBe(201);
       expect(restoreRes.body.accountState).toBe('APPROVED');
     });
   });
 
-  describe('role-guarded admin mutation (PATCH /admin/orders/:id/status)', () => {
+  describe('role-guarded seller mutation (PATCH /seller/orders/:id/status)', () => {
     // Guards run before the route handler/service, so a nonexistent order id
     // is sufficient to prove 401/403 are enforced at the guard layer — no
     // real order needs to exist for this test to be meaningful.
     it('rejects an unauthenticated request with 401', async () => {
       await request(app.getHttpServer())
         .patch(
-          '/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status',
+          '/api/v1/seller/orders/00000000-0000-0000-0000-000000000000/status',
         )
         .send({ status: 'CANCELLED', reason: 'RBAC test' })
         .expect(401);
     });
 
-    it('rejects an approved student with 403', async () => {
+    it('rejects an approved customer with 403', async () => {
       await request(app.getHttpServer())
         .patch(
-          '/api/v1/admin/orders/00000000-0000-0000-0000-000000000000/status',
+          '/api/v1/seller/orders/00000000-0000-0000-0000-000000000000/status',
         )
         .set('Authorization', `Bearer ${approvedStudentToken}`)
         .send({ status: 'CANCELLED', reason: 'RBAC test' })

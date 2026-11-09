@@ -16,18 +16,27 @@ export class FinancialsService {
     return { start, end };
   }
 
-  async getDashboardData(bookshopId: string, startDate?: string, endDate?: string) {
-    if (!bookshopId) return null;
+  private async resolveBookshop(bookshopId?: string | null) {
+    if (bookshopId) {
+      const found = await this.prisma.bookshop.findUnique({
+        where: { id: bookshopId },
+      });
+      if (found) return found;
+    }
+    return this.prisma.bookshop.findFirst({ orderBy: { createdAt: 'asc' } });
+  }
 
-    const bookshop = await this.prisma.bookshop.findUnique({
-      where: { id: bookshopId },
-    });
-    if (!bookshop) return null;
+  async getDashboardData(bookshopId?: string | null, startDate?: string, endDate?: string) {
+    const bookshop = await this.resolveBookshop(bookshopId);
+    const resolvedId = bookshop?.id;
 
     const { start, end } = this.parseDates(startDate, endDate);
 
     // 1. Fetch Orders (Sales)
-    const ordersWhere: any = { bookshopId, status: 'COMPLETED' };
+    const ordersWhere: any = {
+      ...(resolvedId ? { bookshopId: resolvedId } : {}),
+      status: 'COMPLETED',
+    };
     if (start || end) {
       ordersWhere.createdAt = {};
       if (start) ordersWhere.createdAt.gte = start;
@@ -41,7 +50,7 @@ export class FinancialsService {
     });
 
     // 2. Fetch Refunds
-    const refundsWhere: any = { bookshopId };
+    const refundsWhere: any = resolvedId ? { bookshopId: resolvedId } : {};
     if (start || end) {
       refundsWhere.createdAt = {};
       if (start) refundsWhere.createdAt.gte = start;
@@ -52,7 +61,7 @@ export class FinancialsService {
     });
 
     // 3. Fetch Expenses
-    const expensesWhere: any = { bookshopId };
+    const expensesWhere: any = resolvedId ? { bookshopId: resolvedId } : {};
     if (start || end) {
       expensesWhere.date = {};
       if (start) expensesWhere.date.gte = start;
@@ -134,7 +143,7 @@ export class FinancialsService {
       .sort((a, b) => b.profit - a.profit).slice(0, 5);
 
     return {
-      bookshopName: bookshop.name,
+      bookshopName: bookshop?.name ?? 'BOOKDECK Bookstore',
       summary: {
         totalRevenue: Math.round(totalRevenue),
         netSales: Math.round(netSales),
@@ -159,8 +168,9 @@ export class FinancialsService {
     };
   }
 
-  async getTransactions(bookshopId: string, startDate?: string, endDate?: string) {
-    if (!bookshopId) return [];
+  async getTransactions(bookshopId?: string | null, startDate?: string, endDate?: string) {
+    const bookshop = await this.resolveBookshop(bookshopId);
+    const resolvedId = bookshop?.id;
     const { start, end } = this.parseDates(startDate, endDate);
 
     // Fetch Orders, Refunds, Expenses and combine them
@@ -171,16 +181,18 @@ export class FinancialsService {
       return Object.keys(filter).length > 0 ? { [field]: filter } : {};
     };
 
+    const scopeWhere = resolvedId ? { bookshopId: resolvedId } : {};
+
     const [orders, refunds, expenses] = await Promise.all([
       this.prisma.order.findMany({
-        where: { bookshopId, status: 'COMPLETED', ...dateFilter('createdAt') },
+        where: { ...scopeWhere, status: 'COMPLETED', ...dateFilter('createdAt') },
         include: { items: true },
       }),
       this.prisma.refund.findMany({
-        where: { bookshopId, ...dateFilter('createdAt') },
+        where: { ...scopeWhere, ...dateFilter('createdAt') },
       }),
       this.prisma.expense.findMany({
-        where: { bookshopId, ...dateFilter('date') },
+        where: { ...scopeWhere, ...dateFilter('date') },
       }),
     ]);
 
@@ -219,11 +231,12 @@ export class FinancialsService {
     return transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
-  async getInventoryValue(bookshopId: string) {
-    if (!bookshopId) return null;
+  async getInventoryValue(bookshopId?: string | null) {
+    const bookshop = await this.resolveBookshop(bookshopId);
+    const resolvedId = bookshop?.id;
 
     const books = await this.prisma.book.findMany({
-      where: { bookshopId },
+      where: resolvedId ? { bookshopId: resolvedId } : {},
       select: { stockQuantity: true, costPrice: true, price: true },
     });
 

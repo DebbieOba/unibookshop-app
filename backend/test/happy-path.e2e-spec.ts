@@ -43,12 +43,10 @@ describe('Happy path (e2e)', () => {
     },
   };
 
-  let schoolId: string;
-  let departmentId: string;
   let categoryId: string;
   let bookId: string;
-  let studentUserId: string;
-  let studentToken: string;
+  let customerUserId: string;
+  let customerToken: string;
   let orderId: string;
 
   beforeAll(async () => {
@@ -72,14 +70,6 @@ describe('Happy path (e2e)', () => {
 
     prisma = moduleFixture.get(PrismaService);
 
-    const school = await prisma.school.create({
-      data: { name: `Happy Path School ${suffix}` },
-    });
-    schoolId = school.id;
-    const department = await prisma.department.create({
-      data: { name: `Happy Path Dept ${suffix}`, schoolId },
-    });
-    departmentId = department.id;
     const category = await prisma.category.create({
       data: { name: `Happy Path Category ${suffix}` },
     });
@@ -100,7 +90,7 @@ describe('Happy path (e2e)', () => {
     if (orderId)
       await prisma.order.delete({ where: { id: orderId } }).catch(() => {});
     await prisma.user.deleteMany({
-      where: { id: { in: [studentUserId].filter(Boolean) } },
+      where: { id: { in: [customerUserId].filter(Boolean) } },
     });
     if (bookId)
       await prisma.book.delete({ where: { id: bookId } }).catch(() => {});
@@ -108,40 +98,33 @@ describe('Happy path (e2e)', () => {
       await prisma.category
         .delete({ where: { id: categoryId } })
         .catch(() => {});
-    if (departmentId)
-      await prisma.department
-        .delete({ where: { id: departmentId } })
-        .catch(() => {});
-    if (schoolId)
-      await prisma.school.delete({ where: { id: schoolId } }).catch(() => {});
     await app.close();
   }, 15000);
 
-  it('registers a new student (auto-approved)', async () => {
+  it('registers a new customer (auto-approved)', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/register')
       .send({
         email: studentEmail,
         password,
-        fullName: 'Happy Path Student',
-        departmentId,
+        fullName: 'Happy Path Customer',
       });
 
     expect(res.status).toBe(201);
     expect(res.body.accountState).toBe('APPROVED');
-    studentUserId = res.body.id;
+    customerUserId = res.body.id;
   });
 
-  it('logs the newly-registered student in and can use a normal endpoint immediately', async () => {
+  it('logs the newly-registered customer in and can use a normal endpoint immediately', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/login')
       .send({ identifier: studentEmail, password });
     expect(res.status).toBe(201);
-    studentToken = res.body.accessToken;
+    customerToken = res.body.accessToken;
 
     const allowed = await request(app.getHttpServer())
       .get('/api/v1/favourites')
-      .set('Authorization', `Bearer ${studentToken}`);
+      .set('Authorization', `Bearer ${customerToken}`);
     expect(allowed.status).toBe(200);
   });
 
@@ -149,7 +132,7 @@ describe('Happy path (e2e)', () => {
     const res = await request(app.getHttpServer())
       .get('/api/v1/books')
       .query({ search: 'Happy Path Test Book' })
-      .set('Authorization', `Bearer ${studentToken}`);
+      .set('Authorization', `Bearer ${customerToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body.data.some((b: { id: string }) => b.id === bookId)).toBe(
@@ -160,7 +143,7 @@ describe('Happy path (e2e)', () => {
   it('favourites the book', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/favourites')
-      .set('Authorization', `Bearer ${studentToken}`)
+      .set('Authorization', `Bearer ${customerToken}`)
       .send({ bookId });
     expect(res.status).toBe(201);
   });
@@ -168,7 +151,7 @@ describe('Happy path (e2e)', () => {
   it('adds the book to the cart', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/cart')
-      .set('Authorization', `Bearer ${studentToken}`)
+      .set('Authorization', `Bearer ${customerToken}`)
       .send({ bookId, quantity: 2 });
 
     expect(res.status).toBe(201);
@@ -178,7 +161,7 @@ describe('Happy path (e2e)', () => {
   it('checks out, reserving stock and starting a fake Paystack session', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/checkout')
-      .set('Authorization', `Bearer ${studentToken}`)
+      .set('Authorization', `Bearer ${customerToken}`)
       .send({ deliveryMethod: 'PICKUP', paymentProvider: 'PAYSTACK' });
 
     expect(res.status).toBe(201);
@@ -200,10 +183,10 @@ describe('Happy path (e2e)', () => {
     expect(res.status).toBe(201);
   });
 
-  it('shows the order as COMPLETED to the student', async () => {
+  it('shows the order as COMPLETED to the customer', async () => {
     const res = await request(app.getHttpServer())
       .get(`/api/v1/orders/${orderId}`)
-      .set('Authorization', `Bearer ${studentToken}`);
+      .set('Authorization', `Bearer ${customerToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('COMPLETED');

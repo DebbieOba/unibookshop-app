@@ -22,7 +22,10 @@ type Props = NativeStackScreenProps<SellerStackParamList, "BookstoreSettings">;
 const schema = z.object({
   name: z.string().min(1, "Bookstore name is required"),
   description: z.string().optional().nullable(),
-  email: z.string().email("Valid email required").optional().nullable(),
+  email: z
+    .union([z.literal(""), z.string().email("Valid email required")])
+    .optional()
+    .nullable(),
   phone: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
@@ -43,13 +46,12 @@ export function BookstoreSettingsScreen({ navigation }: Props) {
   const bookshopId = user?.bookshopId;
 
   const { data: bookshop, isLoading } = useQuery({
-    queryKey: ["bookshop", bookshopId],
+    queryKey: ["bookshop", bookshopId ?? "me"],
     queryFn: async () => {
-      if (!bookshopId) throw new Error("No bookshop ID");
-      const res = await api.get(`/bookshop/${bookshopId}`);
+      const endpoint = bookshopId ? `/bookshop/${bookshopId}` : "/bookshop/me";
+      const res = await api.get(endpoint);
       return res.data;
     },
-    enabled: !!bookshopId,
   });
 
   const {
@@ -90,12 +92,14 @@ export function BookstoreSettingsScreen({ navigation }: Props) {
 
   const updateBookshop = useMutation({
     mutationFn: async (values: FormValues) => {
-      if (!bookshopId) throw new Error("No bookshop ID");
-      const res = await api.patch(`/bookshop/${bookshopId}`, values);
+      const targetId = bookshopId ?? bookshop?.id;
+      const endpoint = targetId ? `/bookshop/${targetId}` : "/bookshop/me";
+      const res = await api.patch(endpoint, values);
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bookshop", bookshopId] });
+      queryClient.invalidateQueries({ queryKey: ["bookshop"] });
+      queryClient.invalidateQueries({ queryKey: ["users", "profile"] });
       navigation.goBack();
     },
     onError: (error) => {

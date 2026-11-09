@@ -35,6 +35,13 @@ export class BrowseBooksDto extends PaginationDto {
   @IsString()
   targetAudience?: string;
 
+  @ApiPropertyOptional({
+    description: 'Alias for targetAudience used by mobile filter sheet',
+  })
+  @IsOptional()
+  @IsString()
+  audience?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -44,6 +51,14 @@ export class BrowseBooksDto extends PaginationDto {
   @IsOptional()
   @IsString()
   bookCondition?: string;
+
+  @ApiPropertyOptional({
+    enum: BookConditionDto,
+    description: 'Alias for bookCondition used by mobile filter sheet',
+  })
+  @IsOptional()
+  @IsString()
+  condition?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

@@ -26,9 +26,6 @@ export class DashboardController {
     @Query('range') range: string,
     @CurrentUser() user: CurrentUserPayload,
   ) {
-    if (!user.bookshopId) {
-      throw new Error('User has no bookshop associated');
-    }
     return this.dashboardService.getProfitLoss(user.bookshopId, range);
   }
 }

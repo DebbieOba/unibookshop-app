@@ -28,8 +28,10 @@ export class BooksService {
       categoryId,
       subcategoryId,
       targetAudience,
+      audience,
       language,
       bookCondition,
+      condition,
       publisher,
       isbn,
       minPrice,
@@ -41,6 +43,9 @@ export class BooksService {
       sort,
       bookshopId,
     } = query;
+
+    const resolvedAudience = targetAudience ?? audience;
+    const resolvedCondition = bookCondition ?? condition;
 
     const orderBy: Prisma.BookOrderByWithRelationInput | undefined =
       sort === 'newest'
@@ -63,9 +68,9 @@ export class BooksService {
       }),
       ...(categoryId && { categoryId }),
       ...(subcategoryId && { subcategoryId }),
-      ...(targetAudience && { targetAudience }),
+      ...(resolvedAudience && { targetAudience: resolvedAudience }),
       ...(language && { language }),
-      ...(bookCondition && { bookCondition: bookCondition as any }),
+      ...(resolvedCondition && { bookCondition: resolvedCondition as any }),
       ...(publisher && {
         publisher: { contains: publisher, mode: 'insensitive' },
       }),

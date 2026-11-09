@@ -77,7 +77,7 @@ export class DashboardService {
     };
   }
 
-  async getProfitLoss(bookshopId: string, range = '30d') {
+  async getProfitLoss(bookshopId?: string | null, range = '30d') {
     let startDate: Date | undefined;
     const today = new Date();
 
@@ -97,7 +97,7 @@ export class DashboardService {
 
     const orders = await this.prisma.order.findMany({
       where: {
-        bookshopId,
+        ...(bookshopId ? { bookshopId } : {}),
         status: 'COMPLETED',
         ...(startDate && { createdAt: { gte: startDate } }),
       },
@@ -184,7 +184,7 @@ export class DashboardService {
 
       const prevOrders = await this.prisma.order.findMany({
         where: {
-          bookshopId,
+          ...(bookshopId ? { bookshopId } : {}),
           status: 'COMPLETED',
           createdAt: {
             gte: prevStartDate,

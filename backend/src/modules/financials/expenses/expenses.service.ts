@@ -6,8 +6,18 @@ import { CreateExpenseDto, UpdateExpenseDto } from '../dto/expense.dto';
 export class ExpensesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateExpenseDto, bookshopId: string) {
-    if (!bookshopId) {
+  private async resolveBookshopId(bookshopId?: string | null): Promise<string | null> {
+    if (bookshopId) return bookshopId;
+    const first = await this.prisma.bookshop.findFirst({
+      orderBy: { createdAt: 'asc' },
+      select: { id: true },
+    });
+    return first?.id ?? null;
+  }
+
+  async create(dto: CreateExpenseDto, bookshopId?: string | null) {
+    const resolvedId = await this.resolveBookshopId(bookshopId);
+    if (!resolvedId) {
       throw new BadRequestException('Seller must be associated with a bookshop');
     }
 
@@ -17,15 +27,15 @@ export class ExpensesService {
         description: dto.description,
         category: dto.category,
         date: dto.date ? new Date(dto.date) : new Date(),
-        bookshopId,
+        bookshopId: resolvedId,
       },
     });
   }
 
-  async findAll(bookshopId: string, startDate?: string, endDate?: string) {
-    if (!bookshopId) return [];
+  async findAll(bookshopId?: string | null, startDate?: string, endDate?: string) {
+    const resolvedId = await this.resolveBookshopId(bookshopId);
 
-    const where: any = { bookshopId };
+    const where: any = resolvedId ? { bookshopId: resolvedId } : {};
 
     if (startDate || endDate) {
       where.date = {};
@@ -45,9 +55,10 @@ export class ExpensesService {
     });
   }
 
-  async update(id: string, dto: UpdateExpenseDto, bookshopId: string) {
+  async update(id: string, dto: UpdateExpenseDto, bookshopId?: string | null) {
+    const resolvedId = await this.resolveBookshopId(bookshopId);
     const expense = await this.prisma.expense.findFirst({
-      where: { id, bookshopId },
+      where: { id, ...(resolvedId ? { bookshopId: resolvedId } : {}) },
     });
 
     if (!expense) {
@@ -66,9 +77,10 @@ export class ExpensesService {
     });
   }
 
-  async remove(id: string, bookshopId: string) {
+  async remove(id: string, bookshopId?: string | null) {
+    const resolvedId = await this.resolveBookshopId(bookshopId);
     const expense = await this.prisma.expense.findFirst({
-      where: { id, bookshopId },
+      where: { id, ...(resolvedId ? { bookshopId: resolvedId } : {}) },
     });
 
     if (!expense) {

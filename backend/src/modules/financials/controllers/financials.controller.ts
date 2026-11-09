@@ -15,21 +15,16 @@ export class FinancialsController {
   constructor(private readonly financialsService: FinancialsService) {}
 
   @Get('dashboard')
-  async getDashboardData(
+  getDashboardData(
     @CurrentUser() user: CurrentUserPayload,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    try {
-      return await this.financialsService.getDashboardData(
-        user.bookshopId!,
-        startDate,
-        endDate,
-      );
-    } catch (e) {
-      require('fs').writeFileSync('error_log.txt', e.message + '\\n' + e.stack);
-      throw new (require('@nestjs/common').HttpException)(e.message, 500);
-    }
+    return this.financialsService.getDashboardData(
+      user.bookshopId,
+      startDate,
+      endDate,
+    );
   }
 
   @Get('transactions')
@@ -39,7 +34,7 @@ export class FinancialsController {
     @Query('endDate') endDate?: string,
   ) {
     return this.financialsService.getTransactions(
-      user.bookshopId!,
+      user.bookshopId,
       startDate,
       endDate,
     );
@@ -47,6 +42,6 @@ export class FinancialsController {
 
   @Get('inventory-value')
   getInventoryValue(@CurrentUser() user: CurrentUserPayload) {
-    return this.financialsService.getInventoryValue(user.bookshopId!);
+    return this.financialsService.getInventoryValue(user.bookshopId);
   }
 }
