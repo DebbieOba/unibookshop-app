@@ -1,0 +1,25 @@
+# Exclude everything outside mobile
+backend/
+website/
+app-screenshots-figma-mockups/
+figma-mockups/
+figma-mockups-png/
+.qa/
+.compliance/
+.claude/
+scripts/
+thesis/
+release/
+*.docx
+*.pdf
+*.md
+*.ps1
+*.sql
+
+# Inside mobile exclusions
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+mobile/.claude/
+mobile/*.log
